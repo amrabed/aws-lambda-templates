@@ -1,0 +1,39 @@
+site_name: Project Documentation
+repo_url: https://github.com/amrabed/python-project-template
+repo_name: amrabed/python-project-template
+edit_uri: edit/main/docs/
+# copyright: Copyright &copy; 2024 
+
+theme:
+  name: material
+  features:
+  - announce.dismiss
+  - content.action.edit
+  - content.action.view
+  - content.code.annotate
+  - content.code.copy
+  - content.tooltips
+  - navigation.footer
+  - navigation.indexes
+  - navigation.sections
+  - navigation.tabs
+  - navigation.tabs.sticky
+  - navigation.top
+  - search.highlight
+  - search.suggest
+  - toc.follow
+
+nav:
+  - Overview:
+    - Overview: README.md
+    - Contributing: CONTRIBUTING.md
+  - Reference:
+    - App: reference/app.md
+
+plugins:
+  - search
+  - mkdocstrings:
+      handlers:
+        python:
+          options:
+            docstring_style: google  # Or numpy, reST, etc., based on your code style

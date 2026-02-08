@@ -1,0 +1,15 @@
+.pytest_cache
+__pycache__
+
+Dockerfile
+LICENSE
+
+.git
+.github
+.gitignore
+.dockerignore
+.vscode
+.devcontainer
+
+.coverage
+coverage.xml
