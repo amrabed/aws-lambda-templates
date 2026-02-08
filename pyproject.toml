@@ -6,7 +6,7 @@ select = ["E", "I"]
 
 [tool.coverage.run]
 branch = true
-source = ["project"]
+source = ["aws_lambda_template"]
 
 [tool.coverage.report]
 omit = ["tests/*"]
@@ -17,7 +17,7 @@ exclude = ["**/__pycache__", "**/.pytest_cache"]
 reportMissingImports = "error"
 
 [tool.poetry]
-name = "project"
+name = "aws_lambda_template"
 version = "0.1.0"
 description = "Python Project Template"
 authors = ["Amr Abed <amrabed>"]
@@ -25,7 +25,7 @@ license = "MIT"
 readme = "docs/README.md"
 
 [tool.poetry.scripts]
-app = "project.app:main"
+app = "aws_lambda_template.app:main"
 
 [tool.poetry.dependencies]
 python = "^3.12"

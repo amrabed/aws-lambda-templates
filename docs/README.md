@@ -1,9 +1,9 @@
-# Python Project Template
+# AWS Lambda Template - Python (WIP)
 ![Python](https://img.shields.io/badge/python-3.12+-3776AB.svg?logo=python&style=flat-square)
 [![Code style: ruff](https://img.shields.io/badge/code%20style-ruff-D7FF64.svg?logo=ruff&style=flat-square)](https://docs.astral.sh/ruff)
 [![License](https://img.shields.io/badge/license-MIT-blue.svg?style=flat-square)](/LICENSE)
 
-A Python project template that comes out of the box with configuration for:
+A production-ready Lambda function template that comes out of the box with configuration for:
 
 - Packaging and dependency management using [Poetry](https://python-poetry.org)
 - Command Line Interface (CLI) using [click](https://click.palletsprojects.com)

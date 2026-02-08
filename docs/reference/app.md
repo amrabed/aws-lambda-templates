@@ -1,2 +1,2 @@
 # App
-::: project.app
+::: aws_lambda_template.app
