@@ -33,7 +33,7 @@ click = "^8.1.8"
 
 [tool.poetry.group.dev.dependencies]
 pytest = "^9.0.1"
-ruff = "^0.14.1"
+ruff = "^0.15.2"
 coverage = "^7.6.9"
 pre-commit = "^4.0.1"
 pyright = "^1.1.391"
