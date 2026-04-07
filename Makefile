@@ -60,4 +60,22 @@ docs: # Build and deploy documentation to GitHub pages
 local: # Serve documentation on a local server
 	poetry run mkdocs serve
 
+STACK_MAP_api    = ApiGatewayDynamodbStack
+STACK_MAP_stream = DynamodbStreamStack
+CDK_STACK        = $(STACK_MAP_$(STACK))
+
+.PHONY: deploy
+deploy:
+	@[ -n "$(STACK)" ] || { echo "Usage: make deploy STACK=<api|stream>"; exit 1; }
+	@[ -n "$(CDK_STACK)" ] || { echo "Error: unknown stack '$(STACK)'"; exit 1; }
+	STACK=$(STACK) cdk deploy --app "python infra/app.py" $(CDK_STACK) \
+		$(if $(AWS_PROFILE),--profile $(AWS_PROFILE),)
+
+.PHONY: destroy
+destroy:
+	@[ -n "$(STACK)" ] || { echo "Usage: make destroy STACK=<api|stream>"; exit 1; }
+	@[ -n "$(CDK_STACK)" ] || { echo "Error: unknown stack '$(STACK)'"; exit 1; }
+	STACK=$(STACK) cdk destroy --force --app "python infra/app.py" $(CDK_STACK) \
+		$(if $(AWS_PROFILE),--profile $(AWS_PROFILE),)
+
 all: poetry install precommit lint test venv
