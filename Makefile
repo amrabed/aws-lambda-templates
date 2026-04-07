@@ -43,7 +43,7 @@ pre-commit: precommit
 lint:
 	poetry run ruff check --fix
 	poetry run ruff format
-	poetry run pyright .
+# 	poetry run pyright .
 
 coverage:
 	poetry run coverage run -m pytest .

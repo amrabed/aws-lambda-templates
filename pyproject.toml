@@ -6,7 +6,7 @@ select = ["E", "I"]
 
 [tool.coverage.run]
 branch = true
-source = ["aws_lambda_template"]
+source = ["template"]
 
 [tool.coverage.report]
 omit = ["tests/*"]
@@ -17,7 +17,8 @@ exclude = ["**/__pycache__", "**/.pytest_cache"]
 reportMissingImports = "error"
 
 [tool.poetry]
-name = "aws_lambda_template"
+name = "template"
+packages = [{include = "template"}]
 version = "0.1.0"
 description = "Python Project Template"
 authors = ["Amr Abed <amrabed>"]
@@ -25,11 +26,16 @@ license = "MIT"
 readme = "docs/README.md"
 
 [tool.poetry.scripts]
-app = "aws_lambda_template.app:main"
+app = "template.app:main"
 
 [tool.poetry.dependencies]
 python = "^3.12"
 click = "^8.1.8"
+aws-lambda-powertools = "^3.27.0"
+pydantic-settings = "^2.13.1"
+boto3 = "^1.42.84"
+aws-cdk-lib = "^2.248.0"
+constructs = "^10.6.0"
 
 [tool.poetry.group.dev.dependencies]
 pytest = "^9.0.1"
@@ -40,6 +46,9 @@ pyright = "^1.1.391"
 mkdocs = "^1.6.1"
 mkdocstrings = { version = "^1.0.0", extras=["python"] }
 mkdocs-material = "^9.6.20"
+pytest-mock = "^3.15.1"
+moto = "^5.1.22"
+hypothesis = "^6.151.11"
 
 [build-system]
 requires = ["poetry-core"]
