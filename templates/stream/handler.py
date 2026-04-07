@@ -20,12 +20,26 @@ processor = BatchProcessor(event_type=EventType.DynamoDBStreams)
 
 
 class Handler:
+    """Processes DynamoDB Stream records and writes results to a destination table."""
+
     def __init__(self, repository: Repository) -> None:
+        """Initialize the handler with a destination repository.
+
+        Args:
+            repository: The repository used to write processed items.
+        """
         self._repository = repository
 
     @tracer.capture_method
     def _process(self, item: SourceItem) -> DestinationItem | None:
-        """Process received item into a DestinationItem"""
+        """Transform a source item into a destination item.
+
+        Args:
+            item: The source item to process.
+
+        Returns:
+            A `DestinationItem` on success, or `None` if validation fails.
+        """
         try:
             # TODO: process here
             return DestinationItem.model_validate(item.model_dump(by_alias=True))
@@ -35,6 +49,18 @@ class Handler:
 
     @tracer.capture_method
     def handle_record(self, record: DynamoDBRecord) -> None:
+        """Handle a single DynamoDB Stream record.
+
+        Processes INSERT and MODIFY events by transforming and writing the new image
+        to the destination table. Handles REMOVE events by deleting the corresponding
+        item from the destination table.
+
+        Args:
+            record: The DynamoDB Stream record to process.
+
+        Raises:
+            ValueError: If the record cannot be transformed into a `DestinationItem`.
+        """
         event_name = record.event_name
 
         if event_name and event_name.name in ("INSERT", "MODIFY"):
@@ -54,6 +80,15 @@ handler = Handler(repository)
 @tracer.capture_lambda_handler
 @metrics.log_metrics
 def main(event: dict, context: LambdaContext) -> dict:
+    """Lambda entry point for the DynamoDB Streams handler.
+
+    Args:
+        event: The DynamoDB Streams event containing a batch of records.
+        context: The Lambda execution context.
+
+    Returns:
+        A partial batch response indicating which records failed processing.
+    """
     return process_partial_response(
         event=event,
         record_handler=handler.handle_record,

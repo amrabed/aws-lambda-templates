@@ -1,23 +1,32 @@
-# AWS Lambda Template - Python (WIP)
-![Python](https://img.shields.io/badge/python-3.12+-3776AB.svg?logo=python&style=flat-square)
+# AWS Lambda Template - Python
+![Python](https://img.shields.io/badge/python-3.14+-3776AB.svg?logo=python&style=flat-square)
 [![Code style: ruff](https://img.shields.io/badge/code%20style-ruff-D7FF64.svg?logo=ruff&style=flat-square)](https://docs.astral.sh/ruff)
-[![License](https://img.shields.io/badge/license-MIT-blue.svg?style=flat-square)](/LICENSE)
+[![License](https://img.shields.io/badge/license-MIT-blue.svg?style=flat-square)]({{ config.repo_url }}/blob/main/LICENSE)
 
-A production-ready Lambda function template that comes out of the box with configuration for:
+A production-ready Python AWS Lambda templates for different trigger scenarios:
+
+- **REST API** (REST API via API Gateway + DynamoDB)
+- **DynamoDB Stream** (DynamoDB Streams replication)
+
+## Overview
+
+All templates come pre-wired with:
 
 - Packaging and dependency management using [Poetry](https://python-poetry.org)
-- Command Line Interface (CLI) using [click](https://click.palletsprojects.com)
-- Testing using [pytest](https://pytest.org)
+- Command Line Interface (CLI) using [Click](https://click.palletsprojects.com)
+- Testing using [pytest](https://pytest.org) and [Hypothesis](https://hypothesis.readthedocs.io) for property-based testing
 - Code coverage using [coverage](https://coverage.readthedocs.io)
-- Fomatting, import sorting, and linting using [ruff](https://docs.astral.sh/ruff) 
+- Formatting, import sorting, and linting using [ruff](https://docs.astral.sh/ruff)
 - Type checking using [pyright](https://microsoft.github.io/pyright)
 - Pre-commit validations using [pre-commit](https://pre-commit.com)
 - Workflow automation using [GitHub Actions](https://github.com/features/actions)
-- Automated dependency update using [Dependabot](https://docs.github.com/en/code-security/dependabot)
-- Dockerized development environment using [Dev containers](https://code.visualstudio.com/docs/devcontainers/containers)
-- Automatic documentation from code using [mkdocs](https://www.mkdocs.org) and [mkdocstrings](https://mkdocstrings.github.io)
-- Documentation auto-deployment to [GiHub Pages](https://pages.github.com)
+- Automated dependency updates using [Dependabot](https://docs.github.com/en/code-security/dependabot)
+- Dockerized development environment using [Dev Containers](https://code.visualstudio.com/docs/devcontainers/containers)
+- Automatic documentation from code using [MkDocs](https://www.mkdocs.org) and [mkdocstrings](https://mkdocstrings.github.io)
+- Documentation auto-deployment to [GitHub Pages](https://pages.github.com)
 - App container using [Docker](https://docker.com)
+- Infrastructure as code using [AWS CDK](https://aws.amazon.com/cdk/)
+- Observability using [AWS Lambda Powertools](https://docs.aws.amazon.com/powertools/python) (logger, tracer, metrics)
 
 
 ### GitHub files
@@ -36,108 +45,158 @@ The repository also comes pre-loaded with these GitHub files:
 ## How to use
 Click this button to create a new repository for your project, then clone the new repository. Enjoy!
 
-[![Use this template]( https://img.shields.io/badge/Use%20this%20template-238636?style=for-the-badge)](https://github.com/amrabed/python/generate)
+[![Use this template](https://img.shields.io/badge/Use%20this%20template-238636?style=for-the-badge)]({{ config.repo_url }}/generate)
 
 ### Rename the project
-After cloning the repository, rename the project by running:
+Run `make project` once after cloning, before any other setup steps:
+
 ```bash
-make project NAME="" DESCRIPTION="" AUTHOR="" EMAIL="" GITHUB="" SOURCE=""
+make project NAME="my-project" DESCRIPTION="My project description" AUTHOR="Jane Doe" EMAIL="jane" GITHUB="janedoe"
 ```
+
 Pass the following parameters:
 
 Parameter | Description
 --- | ---
 `NAME` | Project new name
 `DESCRIPTION` | Project short description
-`SOURCE` | (optional) Source folder name
 `AUTHOR` | Author name
-`EMAIL`| Author email 
-`GITHUB`| GitHub username (for GitHub funding)
-
+`EMAIL` | Author email
+`GITHUB` | GitHub username (for GitHub funding)
+`SOURCE` | (optional) Source folder name
 
 ## Prerequisites
+
 ### Dev container
 - Docker
 
 ### Local environment
-- Python 3.12+ (You can update the [`pyproject.toml`](../pyproject.toml#L39) for lower versions)
-- Pipx (*optional* - used to install Poetry if not already installed)
+- Python 3.14+
+- Poetry
+- Docker (for Dev Containers)
+- AWS CDK CLI (for deployment)
 
 ## Setup
 
-### Install Poetry
-To install poetry, if not installed (requires pipx), run:
-```bash
-make poetry
-```
-
-### Install / Update dependencies
-To install the project dependencies defined in the [pyproject.toml](../pyproject.toml) file, run:
+### Install dependencies
+To install the project dependencies defined in `pyproject.toml`, run:
 ```bash
 make install
 ```
 
-To update the project dependencies, run:
-```bash
-make update
-```
-
 ### Install pre-commit hooks
-To install the pre-commit hooks for the project to format and lint your code automatically before commiting, run: 
+To install the pre-commit hooks for the project to format and lint your code automatically before committing, run:
 ```bash
 make precommit
 ```
 
-### Activate virtual environemnt
+### Activate virtual environment
 To activate the virtual environment, run:
 ```bash
 make venv
 ```
 
-### Format and Lint code
+### Format and lint code
 To format and lint project code, run:
 ```bash
 make lint
 ```
 
 ### Run tests with coverage
-To run the unit tests defined under the [tests](../tests/) folder and show coverage report, run:
+To run all tests (including Hypothesis property-based tests) and show the coverage report, run:
 ```bash
 make test
 ```
 
-## Running the project
-A Poetry script, with the name `app`, is defined in the [pyproject.toml](../pyproject.toml#L36) file, to let you to run the project as a shell command.
+`make test` runs both standard pytest tests and Hypothesis property-based tests in a single command.
 
-### Local / Dev container
-> Make sure to activate the virtual environment using `make venv` to be able to run `app` without `poetry run`
+## Scenarios
 
-Try running `app -h` or `app --help` to get the help message of your app:
+### REST API — API Gateway + DynamoDB Table
+
+A REST API Lambda function integrated with API Gateway and a single DynamoDB table. See [`templates/api`]({{ config.repo_url }}/tree/main/templates/api).
+
+#### Endpoints
+
+Endpoint | Description | Response codes
+--- | --- | ---
+`GET /items/{id}` | Retrieve an item by ID | 200, 404, 500
+`POST /items` | Create a new item | 201, 422, 500
+
+#### Item model
+
+Field | Type | Description
+--- | --- | ---
+`id` | UUID string | Unique item identifier (auto-generated)
+`name` | string | Human-readable item name
+
+#### Environment variables
+
+Variable | Description
+--- | ---
+`TABLE_NAME` | DynamoDB table name
+`SERVICE_NAME` | Powertools service name
+`METRICS_NAMESPACE` | Powertools metrics namespace
+
+### DynamoDB Stream — Partial Batch Processing
+
+A Lambda function triggered by DynamoDB Streams that replicates INSERT and MODIFY events to a destination table and propagates REMOVE events as deletes. Partial batch failure reporting is enabled so that individual record failures do not cause the entire batch to be retried. 
+See [`templates/stream`]({{ config.repo_url }}/tree/main/templates/stream).
+
+#### Data models
+
+Model | Description
+--- | ---
+`SourceItem` | Read from the source table stream (`id`, `name`)
+`DestinationItem` | Written to the destination table (`id`, `name`)
+
+#### Environment variables
+
+Variable | Description
+--- | ---
+`SOURCE_TABLE_NAME` | Source DynamoDB table name (stream source)
+`DESTINATION_TABLE_NAME` | Destination DynamoDB table name
+`SERVICE_NAME` | Powertools service name
+`METRICS_NAMESPACE` | Powertools metrics namespace
+
+## CDK Infrastructure and Deployment
+
+Infrastructure is defined as AWS CDK stacks under `infra/stacks/`. The CDK entry point is `infra/app.py`; the `STACK` environment variable selects which stack to synthesise.
+
+Stack | Class | Deploy command
+--- | --- | ---
+API scenario | `ApiGatewayDynamodbStack` | `make deploy STACK=api`
+Stream scenario | `DynamodbStreamStack` | `make deploy STACK=stream`
+
+### Deploy a stack
 ```bash
-Usage: app [OPTIONS]
-
-  Say hello
-
-Options:
-  -n, --name TEXT  Name  [default: World]
-  -h, --help       Show this message and exit.
+make deploy STACK=api
+# or
+make deploy STACK=stream
 ```
 
-### Docker
-To run in a Docker container, use:
+Pass `AWS_PROFILE` to use a named AWS CLI profile:
 ```bash
-docker compose run app -h
+make deploy STACK=api AWS_PROFILE=my-profile
+```
+
+### Destroy a stack
+```bash
+make destroy STACK=api
+# or
+make destroy STACK=stream AWS_PROFILE=my-profile
 ```
 
 ## Generating documentation
-To generate and publish the project documentation to GitHub pages, run:
+
+To build and publish the project documentation to GitHub Pages, run:
 ```bash
 make docs
 ```
-That pushes the new documentation to the gh-pages branch. 
-Make sure GitHub Pages is enableed in your repository settings and using the gh-pages branch for the documentation to be publicly available.
 
-### Local
+That pushes the new documentation to the `gh-pages` branch. Make sure GitHub Pages is enabled in your repository settings and using the `gh-pages` branch for the documentation to be publicly available.
+
+### Local preview
 To serve the documentation on a local server, run:
 ```bash
 make local
@@ -149,39 +208,59 @@ make local
 ├── .devcontainer                   # Dev container folder
 │   ├── devcontainer.json           # Dev container configuration
 │   └── Dockerfile                  # Dev container Dockerfile
-├── .github                         # Github folder
+├── .github                         # GitHub folder
 │   ├── dependabot.yaml             # Dependabot configuration
 │   ├── CODEOWNERS                  # Code owners
-│   ├── FUNDING.md                  # GitHub funding
+│   ├── FUNDING.yml                 # GitHub funding
 │   ├── PULL_REQUEST_TEMPLATE.md    # Pull request template
 │   ├── ISSUE_TEMPLATE              # Issue templates
 │   │   ├── bug.md                  # Bug report template
 │   │   ├── feature.md              # Feature request template
 │   │   └── question.md             # Question template
-│   └── workflows                   # Github Actions Workflows
+│   └── workflows                   # GitHub Actions workflows
 │       ├── check.yml               # Workflow to validate code on push
-│       └── docs.yml                # Woukflow to publish documentation
+│       └── docs.yml                # Workflow to publish documentation
 ├── .gitignore                      # Git-ignored file list
 ├── .pre-commit-config.yaml         # Pre-commit configuration file
-├── .vscode                         # VS code folder
-│   └── settings.json               # VS code settings
+├── .vscode                         # VS Code folder
+│   └── settings.json               # VS Code settings
 ├── .dockerignore                   # Docker-ignored file list
-├── compose.yml                     # Docker-compose file
+├── compose.yml                     # Docker Compose file
 ├── Dockerfile                      # App container Dockerfile
 ├── LICENSE                         # Project license
 ├── Makefile                        # Make commands
 ├── pyproject.toml                  # Configuration file for different tools
-├── docs                            # Documentaion folder
-│   ├── mkdocs.yml                  # mkdocs configuration file
-│   ├── README.md                   # Read-me file & Documentation home page
+├── mkdocs.yml                      # MkDocs configuration file
+├── docs                            # Documentation folder
+│   ├── README.md                   # Read-me file & documentation home page
 │   ├── CONTRIBUTING.md             # Contributing guidelines
 │   └── reference                   # Reference section
-│       └── app.md                  # App reference page
-├── project                         # Main project folder
-│   ├── __init__.py                 # Init file of the main package
-│   └── app.py                      # Main Python file of the project
+│       ├── app.md                  # App reference page
+│       ├── repository.md           # Repository reference page
+│       ├── api.md                  # API scenario reference page
+│       └── stream.md               # Stream scenario reference page
+├── templates                       # Main package
+│   ├── app.py                      # CLI entry point
+│   ├── repository.py               # DynamoDB repository
+│   ├── api                         # API Gateway + DynamoDB scenario
+│   │   ├── handler.py              # Lambda handler
+│   │   ├── models.py               # Pydantic data models
+│   │   └── settings.py             # Environment variable settings
+│   └── stream                      # DynamoDB Streams scenario
+│       ├── handler.py              # Lambda handler
+│       ├── models.py               # Pydantic data models
+│       └── settings.py             # Environment variable settings
+├── infra                           # AWS CDK infrastructure
+│   ├── app.py                      # CDK entry point
+│   └── stacks                      # CDK stack definitions
+│       ├── api.py                  # ApiGatewayDynamodbStack
+│       └── stream.py               # DynamodbStreamStack
 └── tests                           # Test folder
-    ├── __init__.py                 # Init file fo the test package
-    ├── conftest.py                 # Pytest configuration, and fixtures, and hooks
-    └── test_app.py                 # Sample test file
+    ├── conftest.py                 # Pytest configuration, fixtures, and hooks
+    ├── test_app.py                 # App tests
+    ├── test_repository.py          # Repository tests
+    ├── api                         # API scenario tests
+    │   └── test_handler.py         # API handler tests
+    └── stream                      # Stream scenario tests
+        └── test_handler.py         # Stream handler tests
 ```

@@ -1,3 +1,6 @@
+.PHONY: help
+help: # Show available targets
+	@grep -E '^[a-zA-Z_-]+:.*# .*$$' $(MAKEFILE_LIST) | awk 'BEGIN {FS = ":.*# "}; {printf "  %-12s %s\n", $$1, $$2}'
 
 NAME ?= project
 DESCRIPTION ?= Python Project Template
@@ -65,14 +68,14 @@ STACK_MAP_stream = DynamodbStreamStack
 CDK_STACK        = $(STACK_MAP_$(STACK))
 
 .PHONY: deploy
-deploy:
+deploy: # Deploy an CDK stack
 	@[ -n "$(STACK)" ] || { echo "Usage: make deploy STACK=<api|stream>"; exit 1; }
 	@[ -n "$(CDK_STACK)" ] || { echo "Error: unknown stack '$(STACK)'"; exit 1; }
 	STACK=$(STACK) cdk deploy --app "python infra/app.py" $(CDK_STACK) \
 		$(if $(AWS_PROFILE),--profile $(AWS_PROFILE),)
 
 .PHONY: destroy
-destroy:
+destroy: # Destroy a deployed CDK stack
 	@[ -n "$(STACK)" ] || { echo "Usage: make destroy STACK=<api|stream>"; exit 1; }
 	@[ -n "$(CDK_STACK)" ] || { echo "Error: unknown stack '$(STACK)'"; exit 1; }
 	STACK=$(STACK) cdk destroy --force --app "python infra/app.py" $(CDK_STACK) \

@@ -22,6 +22,14 @@ app = APIGatewayRestResolver()
 
 @app.get("/items/<id>")
 def get_item(id: str) -> Response:
+    """Retrieve an item by ID.
+
+    Args:
+        id: The unique identifier of the item.
+
+    Returns:
+        200 with the item, 404 if not found, or 500 on error.
+    """
     try:
         item = repository.get_item(id)
     except Exception as exc:
@@ -38,6 +46,11 @@ def get_item(id: str) -> Response:
 
 @app.post("/items")
 def create_item() -> Response:
+    """Create a new item from the request body.
+
+    Returns:
+        201 with the created item, 422 on validation error, or 500 on error.
+    """
     body = app.current_event.json_body
 
     try:
@@ -60,4 +73,13 @@ def create_item() -> Response:
 @tracer.capture_lambda_handler
 @metrics.log_metrics
 def main(event: dict, context: LambdaContext) -> dict:
+    """Lambda entry point for the API Gateway handler.
+
+    Args:
+        event: The API Gateway proxy event.
+        context: The Lambda execution context.
+
+    Returns:
+        The API Gateway proxy response.
+    """
     return app.resolve(event, context)

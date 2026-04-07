@@ -1,8 +1,8 @@
-site_name: Project Documentation
+site_name: AWS Lambda Template - Python
 repo_url: https://github.com/amrabed/aws-lambda-template
 repo_name: amrabed/aws-lambda-template
 edit_uri: edit/main/docs/
-# copyright: Copyright &copy; 2024 
+copyright: Copyright &copy; 2026 
 
 theme:
   name: material
@@ -29,11 +29,16 @@ nav:
     - Contributing: CONTRIBUTING.md
   - Reference:
     - App: reference/app.md
+    - Repository: reference/repository.md
+    - API: reference/api.md
+    - Stream: reference/stream.md
 
 plugins:
   - search
+  - macros
   - mkdocstrings:
       handlers:
         python:
+          paths: [.]
           options:
             docstring_style: google  # Or numpy, reST, etc., based on your code style

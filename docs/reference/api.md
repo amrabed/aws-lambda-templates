@@ -1,0 +1,2 @@
+# API
+::: templates.api.handler
