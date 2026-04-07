@@ -1,20 +1,16 @@
-"""Unit tests for the api handler.
-
-Requirements: 9.1, 9.2, 9.4
-"""
-from __future__ import annotations
+"""Unit tests for the REST API handler"""
 
 import importlib
-import json
 import sys
+from json import dumps, loads
 from typing import Any
 from unittest.mock import MagicMock, patch
 
-import pytest
+from pytest import MonkeyPatch, fixture, main
 
 
-@pytest.fixture()
-def handler_module(monkeypatch: pytest.MonkeyPatch):
+@fixture()
+def handler_module(monkeypatch: MonkeyPatch):
     """Set required env vars, then import (or reload) the handler module fresh."""
     monkeypatch.setenv("TABLE_NAME", "test-table")
     monkeypatch.setenv("SERVICE_NAME", "test-service")
@@ -24,7 +20,7 @@ def handler_module(monkeypatch: pytest.MonkeyPatch):
     monkeypatch.setenv("POWERTOOLS_METRICS_DISABLED", "true")
 
     for mod_name in list(sys.modules.keys()):
-        if "template.scenarios.api" in mod_name:
+        if "templates.api" in mod_name or "templates.repository" in mod_name:
             del sys.modules[mod_name]
 
     mock_tracer_instance = MagicMock()
@@ -40,7 +36,7 @@ def handler_module(monkeypatch: pytest.MonkeyPatch):
         patch("aws_lambda_powertools.Tracer", mock_tracer_cls),
         patch("boto3.resource", mock_boto3_resource),
     ):
-        mod = importlib.import_module("template.scenarios.api.handler")
+        mod = importlib.import_module("templates.api.handler")
 
     return mod
 
@@ -55,7 +51,7 @@ def _apigw_event(method: str, path: str, path_params: dict[str, str] | None = No
         "multiValueQueryStringParameters": None,
         "headers": {"Content-Type": "application/json"},
         "multiValueHeaders": {},
-        "body": json.dumps(body) if body is not None else None,
+        "body": dumps(body) if body is not None else None,
         "isBase64Encoded": False,
         "requestContext": {
             "resourcePath": path,
@@ -84,13 +80,13 @@ def test_get_item_found(handler_module: Any, mocker: Any) -> None:
     """GET /items/{id} returns 200 with item data when the item exists."""
     mock_repo = MagicMock()
     mock_repo.get_item.return_value = {"id": "abc", "name": "Widget"}
-    mocker.patch("template.scenarios.api.handler.Repository", return_value=mock_repo)
+    mocker.patch.object(handler_module, "repository", mock_repo)
 
     event = _apigw_event("GET", "/items/abc", path_params={"id": "abc"})
     response = handler_module.main(event, _lambda_context())
 
     assert response["statusCode"] == 200
-    body = json.loads(response["body"])
+    body = loads(response["body"])
     assert body["id"] == "abc"
     assert body["name"] == "Widget"
     mock_repo.get_item.assert_called_once_with("abc")
@@ -100,13 +96,13 @@ def test_post_item_created(handler_module: Any, mocker: Any) -> None:
     """POST /items returns 201 with the created item when the body is valid."""
     mock_repo = MagicMock()
     mock_repo.put_item.return_value = None
-    mocker.patch("template.scenarios.api.handler.Repository", return_value=mock_repo)
+    mocker.patch.object(handler_module, "repository", mock_repo)
 
     event = _apigw_event("POST", "/items", body={"id": "xyz", "name": "Gadget"})
     response = handler_module.main(event, _lambda_context())
 
     assert response["statusCode"] == 201
-    body = json.loads(response["body"])
+    body = loads(response["body"])
     assert body["id"] == "xyz"
     assert body["name"] == "Gadget"
     mock_repo.put_item.assert_called_once_with({"id": "xyz", "name": "Gadget"})
@@ -116,7 +112,7 @@ def test_get_item_not_found(handler_module: Any, mocker: Any) -> None:
     """GET /items/{id} returns 404 when the item does not exist."""
     mock_repo = MagicMock()
     mock_repo.get_item.return_value = None
-    mocker.patch("template.scenarios.api.handler.Repository", return_value=mock_repo)
+    mocker.patch.object(handler_module, "repository", mock_repo)
 
     event = _apigw_event("GET", "/items/missing", path_params={"id": "missing"})
     response = handler_module.main(event, _lambda_context())
@@ -127,13 +123,13 @@ def test_get_item_not_found(handler_module: Any, mocker: Any) -> None:
 def test_post_item_invalid_body(handler_module: Any, mocker: Any) -> None:
     """POST /items returns 422 when the request body fails Pydantic validation."""
     mock_repo = MagicMock()
-    mocker.patch("template.scenarios.api.handler.Repository", return_value=mock_repo)
+    mocker.patch.object(handler_module, "repository", mock_repo)
 
     event = _apigw_event("POST", "/items", body={"id": "no-name"})
     response = handler_module.main(event, _lambda_context())
 
     assert response["statusCode"] == 422
-    body = json.loads(response["body"])
+    body = loads(response["body"])
     assert "errors" in body
 
 
@@ -141,7 +137,7 @@ def test_get_item_dynamodb_error(handler_module: Any, mocker: Any) -> None:
     """GET /items/{id} returns 500 when the repository raises an exception."""
     mock_repo = MagicMock()
     mock_repo.get_item.side_effect = Exception("DynamoDB unavailable")
-    mocker.patch("template.scenarios.api.handler.Repository", return_value=mock_repo)
+    mocker.patch.object(handler_module, "repository", mock_repo)
 
     event = _apigw_event("GET", "/items/boom", path_params={"id": "boom"})
     response = handler_module.main(event, _lambda_context())
@@ -153,11 +149,15 @@ def test_post_item_dynamodb_error(handler_module: Any, mocker: Any) -> None:
     """POST /items returns 500 when the repository raises during put_item."""
     mock_repo = MagicMock()
     mock_repo.put_item.side_effect = Exception("DynamoDB unavailable")
-    mocker.patch("template.scenarios.api.handler.Repository", return_value=mock_repo)
+    mocker.patch.object(handler_module, "repository", mock_repo)
 
     event = _apigw_event("POST", "/items", body={"id": "err", "name": "Broken"})
     response = handler_module.main(event, _lambda_context())
 
     assert response["statusCode"] == 500
-    body = json.loads(response["body"])
+    body = loads(response["body"])
     assert "message" in body
+
+
+if __name__ == "__main__":
+    main()

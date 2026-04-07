@@ -1,9 +1,7 @@
-from __future__ import annotations
-
 from aws_cdk import Stack
-from aws_cdk import aws_apigateway as apigateway
-from aws_cdk import aws_dynamodb as dynamodb
-from aws_cdk import aws_lambda as lambda_
+from aws_cdk.aws_apigateway import LambdaIntegration, RestApi
+from aws_cdk.aws_dynamodb import Attribute, AttributeType, BillingMode, Table
+from aws_cdk.aws_lambda import Code, Function, Runtime
 from constructs import Construct
 
 
@@ -11,19 +9,19 @@ class ApiGatewayDynamodbStack(Stack):
     def __init__(self, scope: Construct, construct_id: str, **kwargs: object) -> None:
         super().__init__(scope, construct_id, **kwargs)
 
-        table = dynamodb.Table(
+        table = Table(
             self,
             "ItemsTable",
-            partition_key=dynamodb.Attribute(name="id", type=dynamodb.AttributeType.STRING),
-            billing_mode=dynamodb.BillingMode.PAY_PER_REQUEST,
+            partition_key=Attribute(name="id", type=AttributeType.STRING),
+            billing_mode=BillingMode.PAY_PER_REQUEST,
         )
 
-        function = lambda_.Function(
+        function = Function(
             self,
             "ApiGatewayDynamodbFunction",
-            runtime=lambda_.Runtime.PYTHON_3_12,
-            handler="template.scenarios.api.handler.main",
-            code=lambda_.Code.from_asset("."),
+            runtime=Runtime.PYTHON_3_13,
+            handler="templates.api.handler.main",
+            code=Code.from_asset("."),
             environment={
                 "TABLE_NAME": table.table_name,
                 "SERVICE_NAME": "api-gateway-dynamodb",
@@ -33,8 +31,8 @@ class ApiGatewayDynamodbStack(Stack):
 
         table.grant_read_write_data(function)
 
-        api = apigateway.RestApi(self, "ApiGatewayDynamodbApi")
-        proxy_integration = apigateway.LambdaIntegration(function, proxy=True)
+        api = RestApi(self, "ApiGatewayDynamodbApi")
+        proxy_integration = LambdaIntegration(function, proxy=True)
         api.root.add_proxy(
             default_integration=proxy_integration,
             any_method=True,

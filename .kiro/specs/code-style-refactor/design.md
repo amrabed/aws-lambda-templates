@@ -89,8 +89,8 @@ source = ["template"]
 | `template/scenarios/dynamodb_stream/` | `template/scenarios/stream/` |
 
 Infra handler strings update to:
-- `template.scenarios.api.handler.main`
-- `template.scenarios.stream.handler.main`
+- `templates.api.handler.main`
+- `templates.stream.handler.main`
 
 ### 3. Settings classes
 
@@ -224,8 +224,8 @@ def main(event: DynamoDBStreamEvent, context: LambdaContext) -> None:
 
 | Concern | Before | After |
 |---|---|---|
-| Import path | `aws_lambda_template.scenarios.api_gateway_dynamodb.handler` | `template.scenarios.api.handler` |
-| Module cache flush | keys containing `api_gateway_dynamodb` / `dynamodb_stream` | keys containing `template.scenarios.api` / `template.scenarios.stream` |
+| Import path | `aws_lambda_templates.api_gateway_dynamodb.handler` | `templates.api.handler` |
+| Module cache flush | keys containing `api_gateway_dynamodb` / `dynamodb_stream` | keys containing `templates.api` / `templates.stream` |
 | DynamoDB mock | `mocker.patch.object(handler_module, "table")` | `mocker.patch.object(handler_module.Handler, ...)` or mock `Repository` instance |
 | Entry point | `handler_module.handler(event, ctx)` | `handler_module.main(event, ctx)` |
 

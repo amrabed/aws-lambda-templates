@@ -1,8 +1,7 @@
-from __future__ import annotations
-
 from aws_cdk import Stack, aws_lambda_event_sources
-from aws_cdk import aws_dynamodb as dynamodb
-from aws_cdk import aws_lambda as lambda_
+from aws_cdk.aws_dynamodb import Attribute, AttributeType, BillingMode, StartingPosition, StreamViewType, Table
+from aws_cdk.aws_lambda import Code, Function, Runtime
+from aws_lambda_event_sources import DynamoDBEventSource
 from constructs import Construct
 
 
@@ -10,27 +9,27 @@ class DynamodbStreamStack(Stack):
     def __init__(self, scope: Construct, construct_id: str, **kwargs: object) -> None:
         super().__init__(scope, construct_id, **kwargs)
 
-        source_table = dynamodb.Table(
+        source_table = Table(
             self,
             "SourceTable",
-            partition_key=dynamodb.Attribute(name="id", type=dynamodb.AttributeType.STRING),
-            billing_mode=dynamodb.BillingMode.PAY_PER_REQUEST,
-            stream=dynamodb.StreamViewType.NEW_AND_OLD_IMAGES,
+            partition_key=Attribute(name="id", type=AttributeType.STRING),
+            billing_mode=BillingMode.PAY_PER_REQUEST,
+            stream=StreamViewType.NEW_AND_OLD_IMAGES,
         )
 
-        destination_table = dynamodb.Table(
+        destination_table = Table(
             self,
             "DestinationTable",
-            partition_key=dynamodb.Attribute(name="id", type=dynamodb.AttributeType.STRING),
-            billing_mode=dynamodb.BillingMode.PAY_PER_REQUEST,
+            partition_key=Attribute(name="id", type=AttributeType.STRING),
+            billing_mode=BillingMode.PAY_PER_REQUEST,
         )
 
-        function = lambda_.Function(
+        function = Function(
             self,
             "DynamodbStreamFunction",
-            runtime=lambda_.Runtime.PYTHON_3_12,
-            handler="template.scenarios.stream.handler.main",
-            code=lambda_.Code.from_asset("."),
+            runtime=Runtime.PYTHON_3_13,
+            handler="templates.stream.handler.main",
+            code=Code.from_asset("."),
             environment={
                 "SOURCE_TABLE_NAME": source_table.table_name,
                 "DESTINATION_TABLE_NAME": destination_table.table_name,
@@ -43,8 +42,9 @@ class DynamodbStreamStack(Stack):
         destination_table.grant_read_write_data(function)
 
         function.add_event_source(
-            aws_lambda_event_sources.DynamoDBEventSource(
+            DynamoDBEventSource(
                 source_table,
-                starting_position=lambda_.StartingPosition.TRIM_HORIZON,
+                starting_position=StartingPosition.TRIM_HORIZON,
+                report_batch_item_failures=True,
             )
         )

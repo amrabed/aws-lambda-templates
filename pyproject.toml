@@ -6,7 +6,7 @@ select = ["E", "I"]
 
 [tool.coverage.run]
 branch = true
-source = ["template"]
+source = ["templates"]
 
 [tool.coverage.report]
 omit = ["tests/*"]
@@ -17,19 +17,19 @@ exclude = ["**/__pycache__", "**/.pytest_cache"]
 reportMissingImports = "error"
 
 [tool.poetry]
-name = "template"
-packages = [{include = "template"}]
+name = "templates"
+packages = [{include = "templates"}]
 version = "0.1.0"
-description = "Python Project Template"
+description = "AWS Lambda Templates"
 authors = ["Amr Abed <amrabed>"]
 license = "MIT"
 readme = "docs/README.md"
 
 [tool.poetry.scripts]
-app = "template.app:main"
+app = "templates.app:main"
 
 [tool.poetry.dependencies]
-python = "^3.12"
+python = "^3.14"
 click = "^8.1.8"
 aws-lambda-powertools = "^3.27.0"
 pydantic-settings = "^2.13.1"

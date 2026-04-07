@@ -41,6 +41,7 @@ precommit: # Install pre-commit hooks
 pre-commit: precommit
 
 lint:
+	poetry run ruff format
 	poetry run ruff check --fix
 	poetry run ruff format
 # 	poetry run pyright .

@@ -45,8 +45,8 @@ No new runtime behaviour is introduced; all existing tests must continue to pass
 
 1. THE Scenario previously named `api_gateway_dynamodb` SHALL be located at `template/scenarios/api/`.
 2. THE Scenario previously named `dynamodb_stream` SHALL be located at `template/scenarios/stream/`.
-3. WHEN the infra stacks reference a scenario handler, THE infra stack SHALL use the new path (e.g. `template.scenarios.api.handler.main`).
-4. WHEN tests import a scenario module, THE tests SHALL use the new module path (e.g. `template.scenarios.api.handler`).
+3. WHEN the infra stacks reference a scenario handler, THE infra stack SHALL use the new path (e.g. `templates.api.handler.main`).
+4. WHEN tests import a scenario module, THE tests SHALL use the new module path (e.g. `templates.api.handler`).
 
 ---
 
@@ -109,8 +109,8 @@ No new runtime behaviour is introduced; all existing tests must continue to pass
 #### Acceptance Criteria
 
 1. THE Main_Function in each `Handler_File` SHALL be named `main`.
-2. THE infra handler path for the `api` scenario SHALL be `template.scenarios.api.handler.main`.
-3. THE infra handler path for the `stream` scenario SHALL be `template.scenarios.stream.handler.main`.
+2. THE infra handler path for the `api` scenario SHALL be `templates.api.handler.main`.
+3. THE infra handler path for the `stream` scenario SHALL be `templates.stream.handler.main`.
 4. THE `handler` function name SHALL NOT appear as the Lambda entry point in any infra stack after the rename.
 
 ---
@@ -134,8 +134,8 @@ No new runtime behaviour is introduced; all existing tests must continue to pass
 
 #### Acceptance Criteria
 
-1. THE test modules SHALL import from `template.scenarios.api.handler` and `template.scenarios.stream.handler` respectively.
-2. WHEN a test fixture imports the handler module, THE fixture SHALL clear cached modules whose names contain `template.scenarios.api` or `template.scenarios.stream` (not the old names).
+1. THE test modules SHALL import from `templates.api.handler` and `templates.stream.handler` respectively.
+2. WHEN a test fixture imports the handler module, THE fixture SHALL clear cached modules whose names contain `templates.api` or `templates.stream` (not the old names).
 3. WHEN a test needs to verify DynamoDB interactions, THE test SHALL mock the `Repository` class or instance rather than patching `boto3.resource` at the module level.
 4. THE test for the `api` scenario SHALL call `handler_module.main` as the Lambda entry point.
 5. THE test for the `stream` scenario SHALL call `handler_module.main` as the Lambda entry point.

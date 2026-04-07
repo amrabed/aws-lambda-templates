@@ -16,8 +16,8 @@ Each task builds on the previous one. No task leaves orphaned code that is not w
   - _Requirements: 1.1, 1.2, 1.3, 1.4, 1.5_
 
 - [x] 2. Rename scenarios and migrate source files
-  - [x] 2.1 Create `template/scenarios/api/` with placeholder `__init__.py`; copy `handler.py`, `models.py`, `settings.py` from `aws_lambda_template/scenarios/api_gateway_dynamodb/`, updating all internal imports to use `template.scenarios.api.*`
-  - [x] 2.2 Create `template/scenarios/stream/` with placeholder `__init__.py`; copy `handler.py`, `models.py`, `settings.py` from `aws_lambda_template/scenarios/dynamodb_stream/`, updating all internal imports to use `template.scenarios.stream.*`
+  - [x] 2.1 Create `template/scenarios/api/` with placeholder `__init__.py`; copy `handler.py`, `models.py`, `settings.py` from `aws_lambda_template/scenarios/api_gateway_dynamodb/`, updating all internal imports to use `templates.api.*`
+  - [x] 2.2 Create `template/scenarios/stream/` with placeholder `__init__.py`; copy `handler.py`, `models.py`, `settings.py` from `aws_lambda_template/scenarios/dynamodb_stream/`, updating all internal imports to use `templates.stream.*`
   - [x] 2.3 Delete `aws_lambda_template/scenarios/api_gateway_dynamodb/` and `aws_lambda_template/scenarios/dynamodb_stream/` (and the now-empty `aws_lambda_template/` tree if not already removed in task 1)
   - _Requirements: 2.1, 2.2_
 
@@ -46,25 +46,25 @@ Each task builds on the previous one. No task leaves orphaned code that is not w
 
 - [x] 6. Refactor `api` handler to `Handler` class + `main` entry point
   - [x] 6.1 Rewrite `template/scenarios/api/handler.py`: move all route logic into a `Handler` class (`__init__` accepts `Repository`; `_register_routes`, `_get_item`, `_create_item` as private methods; `handle(event, context)` delegates to `self._app.resolve`); add module-level `main` function that instantiates `Repository(table)` and `Handler(repo)` and calls `handle`; apply Powertools decorators to `main` only
-  - [x] 6.2 Update `infra/stacks/api_gateway_dynamodb_stack.py`: change handler string to `template.scenarios.api.handler.main`
+  - [x] 6.2 Update `infra/stacks/api_gateway_dynamodb_stack.py`: change handler string to `templates.api.handler.main`
   - _Requirements: 6.3, 7.1, 7.2, 7.4, 8.1, 8.2, 8.3, 8.4_
 
 - [x] 7. Refactor `stream` handler to `Handler` class + `main` entry point
   - [x] 7.1 Rewrite `template/scenarios/stream/handler.py`: move all record-processing logic into a `Handler` class (`__init__` accepts `Repository`; `handle(event, context)` iterates records and calls repository methods); add module-level `main` function that instantiates `Repository(destination_table)` and `Handler(repo)` and calls `handle`; apply Powertools decorators to `main` only
-  - [x] 7.2 Update `infra/stacks/dynamodb_stream_stack.py`: change handler string to `template.scenarios.stream.handler.main`
+  - [x] 7.2 Update `infra/stacks/dynamodb_stream_stack.py`: change handler string to `templates.stream.handler.main`
   - _Requirements: 6.3, 7.1, 7.3, 7.4, 8.1, 8.2, 8.3, 8.4_
 
 - [x] 8. Checkpoint — ensure all source changes are consistent
   - Ensure all tests pass, ask the user if questions arise.
 
 - [x] 9. Update `api` scenario tests
-  - [x] 9.1 Rename/move `tests/scenarios/api_gateway_dynamodb/` to `tests/scenarios/api/`; update `test_handler.py`: change import to `template.scenarios.api.handler`; update module-cache flush to match `template.scenarios.api`; replace `mocker.patch.object(handler_module, "table")` with a mock `Repository` instance injected via `mocker.patch`; call `handler_module.main` as the entry point; cover all six test cases listed in the design (`test_get_item_found`, `test_post_item_created`, `test_get_item_not_found`, `test_post_item_invalid_body`, `test_get_item_dynamodb_error`, `test_post_item_dynamodb_error`)
+  - [x] 9.1 Rename/move `tests/scenarios/api_gateway_dynamodb/` to `tests/scenarios/api/`; update `test_handler.py`: change import to `templates.api.handler`; update module-cache flush to match `templates.api`; replace `mocker.patch.object(handler_module, "table")` with a mock `Repository` instance injected via `mocker.patch`; call `handler_module.main` as the entry point; cover all six test cases listed in the design (`test_get_item_found`, `test_post_item_created`, `test_get_item_not_found`, `test_post_item_invalid_body`, `test_get_item_dynamodb_error`, `test_post_item_dynamodb_error`)
   - [x] 9.2 Write unit tests for `Repository` methods in `tests/scenarios/api/test_repository.py` (mock the boto3 table; verify `get_item` and `put_item` call the table with correct arguments)
     - _Requirements: 6.4, 9.3_
   - _Requirements: 9.1, 9.2, 9.4_
 
 - [x] 10. Update `stream` scenario tests
-  - [x] 10.1 Rename/move `tests/scenarios/dynamodb_stream/` to `tests/scenarios/stream/`; update `test_handler.py`: change import to `template.scenarios.stream.handler`; update module-cache flush; replace `mocker.patch.object(handler_module, "destination_table")` with a mock `Repository` instance; call `handler_module.main` as the entry point; cover all five test cases (`test_insert_record_calls_put_item`, `test_modify_record_calls_put_item`, `test_remove_record_calls_delete_item`, `test_deserialisation_failure_continues`, `test_dynamodb_write_failure_continues`)
+  - [x] 10.1 Rename/move `tests/scenarios/dynamodb_stream/` to `tests/scenarios/stream/`; update `test_handler.py`: change import to `templates.stream.handler`; update module-cache flush; replace `mocker.patch.object(handler_module, "destination_table")` with a mock `Repository` instance; call `handler_module.main` as the entry point; cover all five test cases (`test_insert_record_calls_put_item`, `test_modify_record_calls_put_item`, `test_remove_record_calls_delete_item`, `test_deserialisation_failure_continues`, `test_dynamodb_write_failure_continues`)
   - [x] 10.2 Write unit tests for `Repository` methods in `tests/scenarios/stream/test_repository.py` (mock the boto3 table; verify `put_item` and `delete_item` call the table correctly)
     - _Requirements: 6.4, 9.3_
   - _Requirements: 9.1, 9.2, 9.5_
