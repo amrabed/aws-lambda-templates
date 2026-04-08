@@ -1,16 +1,13 @@
 """Unit tests for the stream handler."""
 
-import importlib
-import sys
 from typing import Any
-from unittest.mock import MagicMock, patch
 
-from pytest import MonkeyPatch, fixture, main
+from pytest import fixture, main
 
 
-@fixture()
-def handler_module(monkeypatch: MonkeyPatch):
-    """Set required env vars, then import the handler module fresh."""
+@fixture(autouse=True)
+def env(monkeypatch):
+    """Set required environment variables for the handler module."""
     monkeypatch.setenv("SOURCE_TABLE_NAME", "source-table")
     monkeypatch.setenv("DESTINATION_TABLE_NAME", "dest-table")
     monkeypatch.setenv("SERVICE_NAME", "test-service")
@@ -20,31 +17,19 @@ def handler_module(monkeypatch: MonkeyPatch):
     monkeypatch.setenv("POWERTOOLS_TRACE_DISABLED", "true")
     monkeypatch.setenv("POWERTOOLS_METRICS_DISABLED", "true")
 
-    for mod_name in list(sys.modules.keys()):
-        if "templates.stream" in mod_name or "templates.repository" in mod_name:
-            del sys.modules[mod_name]
 
-    mock_tracer_instance = MagicMock()
-    mock_tracer_instance.capture_lambda_handler = lambda fn=None, **kw: (fn if fn else lambda f: f)
-    mock_tracer_instance.capture_method = lambda fn=None, **kw: (fn if fn else lambda f: f)
-    mock_tracer_cls = MagicMock(return_value=mock_tracer_instance)
+@fixture()
+def mock_repo(mocker):
+    """Patch the handler's internal repository with a MagicMock."""
+    mocker.patch("templates.repository.resource")
+    import templates.stream.handler as handler_module
 
-    mock_dest_table = MagicMock()
-    mock_dynamodb = MagicMock()
-    mock_dynamodb.Table.return_value = mock_dest_table
-    mock_boto3_resource = MagicMock(return_value=mock_dynamodb)
-
-    with (
-        patch("aws_lambda_powertools.Tracer", mock_tracer_cls),
-        patch("boto3.resource", mock_boto3_resource),
-    ):
-        mod = importlib.import_module("templates.stream.handler")
-
-    return mod
+    return mocker.patch.object(handler_module.handler, "_repository")
 
 
-def _lambda_context() -> MagicMock:
-    ctx = MagicMock()
+@fixture
+def lambda_context(mocker):
+    ctx = mocker.MagicMock()
     ctx.function_name = "test-function"
     ctx.memory_limit_in_mb = 128
     ctx.invoked_function_arn = "arn:aws:lambda:us-east-1:123456789012:function:test-function"
@@ -88,49 +73,45 @@ def _remove_record(item_id: str = "abc") -> dict:
     }
 
 
-def test_insert_record_calls_put_item(handler_module: Any, mocker: Any) -> None:
+def test_insert_record_calls_put_item(mock_repo, lambda_context):
     """INSERT record: put_item is called with the deserialised NewImage."""
-    mock_repo = MagicMock()
-    handler_module.handler._repository = mock_repo
+    import templates.stream.handler as handler_module
 
     event = _stream_event(_insert_record("abc", "Widget"))
-    result = handler_module.main(event, _lambda_context())
+    result = handler_module.main(event, lambda_context)
 
     mock_repo.put_item.assert_called_once_with({"id": "abc", "name": "Widget"})
     mock_repo.delete_item.assert_not_called()
     assert result == {"batchItemFailures": []}
 
 
-def test_modify_record_calls_put_item(handler_module: Any, mocker: Any) -> None:
+def test_modify_record_calls_put_item(mock_repo, lambda_context):
     """MODIFY record: put_item is called with the deserialised NewImage."""
-    mock_repo = MagicMock()
-    handler_module.handler._repository = mock_repo
+    import templates.stream.handler as handler_module
 
     event = _stream_event(_modify_record("abc", "Updated"))
-    result = handler_module.main(event, _lambda_context())
+    result = handler_module.main(event, lambda_context)
 
     mock_repo.put_item.assert_called_once_with({"id": "abc", "name": "Updated"})
     mock_repo.delete_item.assert_not_called()
     assert result == {"batchItemFailures": []}
 
 
-def test_remove_record_calls_delete_item(handler_module: Any, mocker: Any) -> None:
+def test_remove_record_calls_delete_item(mock_repo, lambda_context):
     """REMOVE record: delete_item is called with the deserialised key."""
-    mock_repo = MagicMock()
-    handler_module.handler._repository = mock_repo
+    import templates.stream.handler as handler_module
 
     event = _stream_event(_remove_record("abc"))
-    result = handler_module.main(event, _lambda_context())
+    result = handler_module.main(event, lambda_context)
 
     mock_repo.delete_item.assert_called_once_with({"id": "abc"})
     mock_repo.put_item.assert_not_called()
     assert result == {"batchItemFailures": []}
 
 
-def test_deserialisation_failure_reports_batch_item_failure(handler_module: Any, mocker: Any) -> None:
+def test_deserialisation_failure_reports_batch_item_failure(mock_repo, lambda_context):
     """A record with an invalid NewImage is reported as a batch item failure; processing continues."""
-    mock_repo = MagicMock()
-    handler_module.handler._repository = mock_repo
+    import templates.stream.handler as handler_module
 
     bad_record = {
         "eventName": "INSERT",
@@ -143,20 +124,20 @@ def test_deserialisation_failure_reports_batch_item_failure(handler_module: Any,
     good_record = _insert_record("ok", "Good")
 
     event = _stream_event(bad_record, good_record)
-    result = handler_module.main(event, _lambda_context())
+    result = handler_module.main(event, lambda_context)
 
     mock_repo.put_item.assert_called_once_with({"id": "ok", "name": "Good"})
     assert len(result["batchItemFailures"]) == 1
 
 
-def test_dynamodb_write_failure_reports_batch_item_failure(handler_module: Any, mocker: Any) -> None:
+def test_dynamodb_write_failure_reports_batch_item_failure(mock_repo, lambda_context):
     """A repository put_item failure is reported; subsequent records are still processed."""
-    mock_repo = MagicMock()
+    import templates.stream.handler as handler_module
+
     mock_repo.put_item.side_effect = [Exception("DynamoDB unavailable"), None]
-    handler_module.handler._repository = mock_repo
 
     event = _stream_event(_insert_record("fail", "Broken"), _insert_record("ok", "Fine"))
-    result = handler_module.main(event, _lambda_context())
+    result = handler_module.main(event, lambda_context)
 
     assert mock_repo.put_item.call_count == 2
     assert len(result["batchItemFailures"]) == 1
