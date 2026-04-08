@@ -71,7 +71,7 @@ CDK_STACK        = $(STACK_MAP_$(STACK))
 deploy: # Deploy an CDK stack
 	@[ -n "$(STACK)" ] || { echo "Usage: make deploy STACK=<api|stream>"; exit 1; }
 	@[ -n "$(CDK_STACK)" ] || { echo "Error: unknown stack '$(STACK)'"; exit 1; }
-	STACK=$(STACK) cdk deploy --app "python infra/app.py" $(CDK_STACK) \
+	STACK=$(STACK) cdk deploy --app "python infra/app.py" --require-approval never $(CDK_STACK) \
 		$(if $(AWS_PROFILE),--profile $(AWS_PROFILE),)
 
 .PHONY: destroy
