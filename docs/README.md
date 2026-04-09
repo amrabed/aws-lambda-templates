@@ -3,30 +3,27 @@
 [![Code style: ruff](https://img.shields.io/badge/code%20style-ruff-D7FF64.svg?logo=ruff&style=flat-square)](https://docs.astral.sh/ruff)
 [![License](https://img.shields.io/badge/license-MIT-blue.svg?style=flat-square)]({{ config.repo_url }}/blob/main/LICENSE)
 
-A production-ready Python AWS Lambda templates for different trigger scenarios:
+A production-ready Python AWS Lambda templates for different trigger scenarios.
+See avialble templates [here](templates.md).
 
-- **REST API** (REST API via API Gateway + DynamoDB)
-- **DynamoDB Stream** (DynamoDB Streams replication)
-
-## Overview
+## Features
 
 All templates come pre-wired with:
 
-- Packaging and dependency management using [Poetry](https://python-poetry.org)
-- Command Line Interface (CLI) using [Click](https://click.palletsprojects.com)
+- Observability using [AWS Lambda Powertools](https://docs.aws.amazon.com/powertools/python) (logger, tracer, metrics)
+- Infrastructure as code using [AWS CDK](https://aws.amazon.com/cdk/)
 - Testing using [pytest](https://pytest.org) and [Hypothesis](https://hypothesis.readthedocs.io) for property-based testing
+- Workflow automation using [GitHub Actions](https://github.com/features/actions)
+- Automatic documentation from code using [MkDocs](https://www.mkdocs.org) and [mkdocstrings](https://mkdocstrings.github.io)
+- Packaging and dependency management using [Poetry](https://python-poetry.org)
 - Code coverage using [coverage](https://coverage.readthedocs.io)
 - Formatting, import sorting, and linting using [ruff](https://docs.astral.sh/ruff)
 - Type checking using [pyright](https://microsoft.github.io/pyright)
 - Pre-commit validations using [pre-commit](https://pre-commit.com)
-- Workflow automation using [GitHub Actions](https://github.com/features/actions)
 - Automated dependency updates using [Dependabot](https://docs.github.com/en/code-security/dependabot)
 - Dockerized development environment using [Dev Containers](https://code.visualstudio.com/docs/devcontainers/containers)
-- Automatic documentation from code using [MkDocs](https://www.mkdocs.org) and [mkdocstrings](https://mkdocstrings.github.io)
 - Documentation auto-deployment to [GitHub Pages](https://pages.github.com)
 - App container using [Docker](https://docker.com)
-- Infrastructure as code using [AWS CDK](https://aws.amazon.com/cdk/)
-- Observability using [AWS Lambda Powertools](https://docs.aws.amazon.com/powertools/python) (logger, tracer, metrics)
 
 
 ### GitHub files
@@ -110,64 +107,6 @@ make test
 
 `make test` runs both standard pytest tests and Hypothesis property-based tests in a single command.
 
-## Scenarios
-
-### REST API — API Gateway + DynamoDB Table
-
-A REST API Lambda function integrated with API Gateway and a single DynamoDB table. See [`templates/api`]({{ config.repo_url }}/tree/main/templates/api).
-
-#### Endpoints
-
-Endpoint | Description | Response codes
---- | --- | ---
-`GET /items/{id}` | Retrieve an item by ID | 200, 404, 500
-`POST /items` | Create a new item | 201, 422, 500
-
-#### Item model
-
-Field | Type | Description
---- | --- | ---
-`id` | UUID string | Unique item identifier (auto-generated)
-`name` | string | Human-readable item name
-
-#### Environment variables
-
-Variable | Description
---- | ---
-`TABLE_NAME` | DynamoDB table name
-`SERVICE_NAME` | Powertools service name
-`METRICS_NAMESPACE` | Powertools metrics namespace
-
-### DynamoDB Stream — Partial Batch Processing
-
-A Lambda function triggered by DynamoDB Streams that replicates INSERT and MODIFY events to a destination table and propagates REMOVE events as deletes. Partial batch failure reporting is enabled so that individual record failures do not cause the entire batch to be retried. 
-See [`templates/stream`]({{ config.repo_url }}/tree/main/templates/stream).
-
-#### Data models
-
-Model | Description
---- | ---
-`SourceItem` | Read from the source table stream (`id`, `name`)
-`DestinationItem` | Written to the destination table (`id`, `name`)
-
-#### Environment variables
-
-Variable | Description
---- | ---
-`SOURCE_TABLE_NAME` | Source DynamoDB table name (stream source)
-`DESTINATION_TABLE_NAME` | Destination DynamoDB table name
-`SERVICE_NAME` | Powertools service name
-`METRICS_NAMESPACE` | Powertools metrics namespace
-
-## CDK Infrastructure and Deployment
-
-Infrastructure is defined as AWS CDK stacks under `infra/stacks/`. The CDK entry point is `infra/app.py`; the `STACK` environment variable selects which stack to synthesise.
-
-Stack | Class | Deploy command
---- | --- | ---
-API scenario | `ApiGatewayDynamodbStack` | `make deploy STACK=api`
-Stream scenario | `DynamodbStreamStack` | `make deploy STACK=stream`
-
 ### Deploy a stack
 ```bash
 make deploy STACK=api
@@ -201,6 +140,17 @@ To serve the documentation on a local server, run:
 ```bash
 make local
 ```
+
+## CDK Infrastructure Deployment
+
+Infrastructure is defined as AWS CDK stacks under [`infra/stacks/`]({{ config.repo_url }}/tree/main/infra/stacks). 
+The CDK entry point is [`infra/app.py`]({{ config.repo_url }}/tree/main/infra/app.py). 
+The `STACK` environment variable selects which stack to synthesise.
+
+Stack | Class | Deploy command
+--- | --- | ---
+API | `ApiGatewayDynamodbStack` | `make deploy STACK=api`
+Stream | `DynamodbStreamStack` | `make deploy STACK=stream`
 
 ## Project Structure
 

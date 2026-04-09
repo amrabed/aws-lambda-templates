@@ -26,12 +26,12 @@ theme:
 nav:
   - Overview:
     - Overview: README.md
-    - Contributing: CONTRIBUTING.md
+    - Templates: templates.md
   - Reference:
-    - App: reference/app.md
-    - Repository: reference/repository.md
     - API: reference/api.md
     - Stream: reference/stream.md
+    - Repository: reference/repository.md
+  - Contributing: CONTRIBUTING.md
 
 plugins:
   - search
