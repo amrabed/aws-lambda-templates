@@ -1,2 +1,3 @@
 - [REST API](api.md)
 - [DynamoDB Stream](stream.md)
+- [EventBridge API Caller](eventbridge.md)
