@@ -73,6 +73,7 @@ make project NAME=my-project DESCRIPTION="My description" AUTHOR="Name" EMAIL=ha
 
 - Use pytest, not unittest
 - Use `pytest` monkeypatch and `pytest-mock` for mocking instead of `unittest.MagicMock`
+- Use `moto.mock_aws` for mocking AWS services in tests (e.g. DynamoDB, S3, Secrets Manager)
 - Do not cheat! Never modify source code just to make a failing test pass. Fix real bugs in source code and fix incorrect assertions in tests
 
 ## Make Targets
@@ -101,7 +102,7 @@ class Item(BaseModel, populate_by_name=True, alias_generator=to_camel):
 
 ### camelCase alias convention
 
-All `BaseModel` subclasses must be defined with `populate_by_name=True` and `alias_generator=to_camel` so that JSON payloads can use camelCase while Python attributes use snake_case.
+All `BaseModel` subclasses must be defined with `populate_by_name=True` and `alias_generator=to_camel` so that JSON payloads can use camelCase while Python attributes use snake_case. Always serialise with `model_dump(by_alias=True, exclude_none=True)` to produce camelCase JSON output and omit unset optional fields.
 
 ```python
 from uuid import uuid4
@@ -112,7 +113,7 @@ class Item(BaseModel, populate_by_name=True, alias_generator=to_camel):
     item_id: str = Field(description="Unique item identifier.", default_factory=str(uuid4()))
     # Accepts {"itemId": "..."} from JSON; attribute is item.item_id
     # model_dump() → {"item_id": ...}
-    # model_dump(by_alias=True) → {"itemId": ...}
+    # model_dump(by_alias=True, exclude_none=True) → {"itemId": ...}
 ```
 
 ### No `model_config` class attribute

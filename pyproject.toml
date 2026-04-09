@@ -36,6 +36,7 @@ pydantic-settings = "^2.13.1"
 boto3 = "^1.42.84"
 aws-cdk-lib = "^2.248.0"
 constructs = "^10.6.0"
+requests = "^2.33.1"
 
 [tool.poetry.group.dev.dependencies]
 pytest = "^9.0.1"

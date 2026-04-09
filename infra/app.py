@@ -4,10 +4,12 @@ import sys
 from aws_cdk import App
 
 from infra.stacks.api import ApiGatewayDynamodbStack
+from infra.stacks.eventbridge import EventBridgeApiCallerStack
 from infra.stacks.stream import DynamodbStreamStack
 
 STACK_REGISTRY: dict[str, type] = {
     "api": ApiGatewayDynamodbStack,
+    "eventbridge-api-caller": EventBridgeApiCallerStack,
     "stream": DynamodbStreamStack,
 }
 

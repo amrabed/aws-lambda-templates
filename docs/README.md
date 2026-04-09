@@ -11,7 +11,7 @@ See available templates [here](template/index.md).
 
 All templates come pre-wired with:
 
-- Observability using [AWS Lambda Powertools](https://docs.aws.amazon.com/powertools/python) (logger, tracer, metrics)
+- Clean AWS Lambda code following best practices using [AWS Lambda Powertools](https://docs.aws.amazon.com/powertools/python)
 - Infrastructure as code using [AWS CDK](https://aws.amazon.com/cdk/)
 - Testing using [pytest](https://pytest.org) and [Hypothesis](https://hypothesis.readthedocs.io) for property-based testing
 - Workflow automation using [GitHub Actions](https://github.com/features/actions)

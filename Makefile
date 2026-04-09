@@ -66,20 +66,21 @@ docs: # Build and deploy documentation to GitHub pages
 local: # Serve documentation on a local server
 	poetry run mkdocs serve
 
-STACK_MAP_api    = ApiGatewayDynamodbStack
-STACK_MAP_stream = DynamodbStreamStack
-CDK_STACK        = $(STACK_MAP_$(STACK))
+STACK_MAP_api                    = ApiGatewayDynamodbStack
+STACK_MAP_stream                 = DynamodbStreamStack
+STACK_MAP_eventbridge-api-caller = EventBridgeApiCallerStack
+CDK_STACK                        = $(STACK_MAP_$(STACK))
 
 .PHONY: deploy
 deploy: # Deploy an CDK stack
-	@[ -n "$(STACK)" ] || { echo "Usage: make deploy STACK=<api|stream>"; exit 1; }
+	@[ -n "$(STACK)" ] || { echo "Usage: make deploy STACK=<api|stream|eventbridge-api-caller>"; exit 1; }
 	@[ -n "$(CDK_STACK)" ] || { echo "Error: unknown stack '$(STACK)'"; exit 1; }
 	STACK=$(STACK) cdk deploy --app "python infra/app.py" --require-approval never $(CDK_STACK) \
 		$(if $(AWS_PROFILE),--profile $(AWS_PROFILE),)
 
 .PHONY: destroy
 destroy: # Destroy a deployed CDK stack
-	@[ -n "$(STACK)" ] || { echo "Usage: make destroy STACK=<api|stream>"; exit 1; }
+	@[ -n "$(STACK)" ] || { echo "Usage: make destroy STACK=<api|stream|eventbridge-api-caller>"; exit 1; }
 	@[ -n "$(CDK_STACK)" ] || { echo "Error: unknown stack '$(STACK)'"; exit 1; }
 	STACK=$(STACK) cdk destroy --force --app "python infra/app.py" $(CDK_STACK) \
 		$(if $(AWS_PROFILE),--profile $(AWS_PROFILE),)
