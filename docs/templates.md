@@ -9,9 +9,9 @@ A Lambda function that handles GET/POST requests from a REST API and loads/store
 
 ### Code
 
-- **Function code**: [`templates/api`]({{ config.repo_url }}/tree/main/templates/api)
-- **Unit tests**: [`tests/api`]({{ config.repo_url }}/tree/main/tests/api)
-- **Infra stack**: [`infra/stacks/api.py`]({{ config.repo_url }}/tree/main/infra/stacks/api.py)
+- **Function code**: [`templates/api`](templates/api)
+- **Unit tests**: [`tests/api`](tests/api)
+- **Infra stack**: [`infra/stacks/api.py`](infra/stacks/api.py)
 
 ### Endpoints
 
@@ -47,9 +47,9 @@ Partial batch failure reporting is enabled so that individual record failures do
 
 
 ### Code
-- **Function code**: [`templates/stream`]({{ config.repo_url }}/tree/main/templates/stream)
-- **Unit tests**: [`tests/stream`]({{ config.repo_url }}/tree/main/tests/stream)
-- **Infra stack**: [`infra/stacks/stream.py`]({{ config.repo_url }}/tree/main/infra/stacks/stream.py)
+- **Function code**: [`templates/stream`](templates/stream)
+- **Unit tests**: [`tests/stream`](tests/stream)
+- **Infra stack**: [`infra/stacks/stream.py`](infra/stacks/stream.py)
 
 ### Data models
 
