@@ -4,7 +4,7 @@ A Lambda function that handles GET/POST requests from a REST API and loads/store
 - **Trigger**: API Gateway - REST API
 - **Destination**: DynamoDB Table
 
-![](../diagrams/api.png)
+![](diagrams/api.png)
 
 ### Code
 

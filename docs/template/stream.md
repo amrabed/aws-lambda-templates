@@ -5,7 +5,7 @@ Partial batch failure reporting is enabled so that individual record failures do
 - **Trigger**: DynamoDB Streams
 - **Destination**: DynamoDB Table
 
-![](../diagrams/stream.png)
+![](diagrams/stream.png)
 
 
 ### Code

@@ -1,10 +1,11 @@
 # AWS Lambda Templates - Python
 [![Python](https://img.shields.io/badge/python-3.14+-3776AB.svg?logo=python&style=flat-square)](https://python.org)
 [![Code style: ruff](https://img.shields.io/badge/code%20style-ruff-D7FF64.svg?logo=ruff&style=flat-square)](https://docs.astral.sh/ruff)
-[![License](https://img.shields.io/badge/license-MIT-blue.svg?style=flat-square)](LICENSE)
+[![License](https://img.shields.io/badge/license-MIT-blue.svg?style=flat-square)](LICENSE.md)
 
-A production-ready Python AWS Lambda templates for different scenarios.
-See available templates [here](template/api).
+A production-ready Python AWS Lambda templates for different scenarios. 
+See available templates [here](template/index.md).
+
 
 ## Features
 

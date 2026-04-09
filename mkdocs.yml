@@ -27,7 +27,8 @@ nav:
   - Overview:
     - Overview: README.md
     - License: LICENSE.md
-  - Templates: 
+  - Templates:
+    - Templates: template/index.md
     - Rest API: template/api.md
     - DynamoDB Stream: template/stream.md
   - Reference:
