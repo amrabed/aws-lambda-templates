@@ -3,8 +3,8 @@
 [![Code style: ruff](https://img.shields.io/badge/code%20style-ruff-D7FF64.svg?logo=ruff&style=flat-square)](https://docs.astral.sh/ruff)
 [![License](https://img.shields.io/badge/license-MIT-blue.svg?style=flat-square)](LICENSE)
 
-A production-ready Python AWS Lambda templates for different trigger scenarios.
-See avialble templates [here](templates.md).
+A production-ready Python AWS Lambda templates for different scenarios.
+See available templates [here](templates.md).
 
 ## Features
 
