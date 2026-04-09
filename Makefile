@@ -56,6 +56,9 @@ coverage:
 
 test: coverage
 
+install-docs:
+	poetry install --only docs
+
 .PHONY: docs
 docs: # Build and deploy documentation to GitHub pages
 	poetry run mkdocs gh-deploy --force

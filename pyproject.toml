@@ -43,12 +43,14 @@ ruff = "^0.14.1"
 coverage = "^7.6.9"
 pre-commit = "^4.0.1"
 pyright = "^1.1.391"
-mkdocs = "^1.6.1"
-mkdocstrings = { version = "^1.0.0", extras=["python"] }
-mkdocs-material = "^9.6.20"
 pytest-mock = "^3.15.1"
 moto = "^5.1.22"
 hypothesis = "^6.151.11"
+
+[tool.poetry.group.docs.dependencies]
+mkdocs = "^1.6.1"
+mkdocstrings = { version = "^1.0.0", extras=["python"] }
+mkdocs-material = "^9.6.20"
 mkdocs-macros-plugin = "^1.5.0"
 
 [build-system]
