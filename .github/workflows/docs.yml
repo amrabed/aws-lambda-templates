@@ -27,6 +27,6 @@ jobs:
           restore-keys: |
             mkdocs-material-
       - name: Install dependencies
-        run: pip install mkdocs-material mkdocstrings[python]
+        run: make poetry install-docs
       - name: Publish to GitHub Pages
-        run: mkdocs gh-deploy --force
+        run: make docs
