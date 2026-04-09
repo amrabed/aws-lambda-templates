@@ -1,7 +1,7 @@
 # AWS Lambda Template - Python
 ![Python](https://img.shields.io/badge/python-3.14+-3776AB.svg?logo=python&style=flat-square)
 [![Code style: ruff](https://img.shields.io/badge/code%20style-ruff-D7FF64.svg?logo=ruff&style=flat-square)](https://docs.astral.sh/ruff)
-[![License](https://img.shields.io/badge/license-MIT-blue.svg?style=flat-square)]({{ config.repo_url }}/blob/main/LICENSE)
+[![License](https://img.shields.io/badge/license-MIT-blue.svg?style=flat-square)](LICENSE)
 
 A production-ready Python AWS Lambda templates for different trigger scenarios.
 See avialble templates [here](templates.md).
@@ -42,7 +42,7 @@ The repository also comes pre-loaded with these GitHub files:
 ## How to use
 Click this button to create a new repository for your project, then clone the new repository. Enjoy!
 
-[![Use this template](https://img.shields.io/badge/Use%20this%20template-238636?style=for-the-badge)]({{ config.repo_url }}/generate)
+[![Use this template](https://img.shields.io/badge/Use%20this%20template-238636?style=for-the-badge)](/new)
 
 ### Rename the project
 Run `make project` once after cloning, before any other setup steps:
@@ -143,8 +143,8 @@ make local
 
 ## CDK Infrastructure Deployment
 
-Infrastructure is defined as AWS CDK stacks under [`infra/stacks/`]({{ config.repo_url }}/tree/main/infra/stacks). 
-The CDK entry point is [`infra/app.py`]({{ config.repo_url }}/tree/main/infra/app.py). 
+Infrastructure is defined as AWS CDK stacks under [`infra/stacks/`](infra/stacks). 
+The CDK entry point is [`infra/app.py`](infra/app.py). 
 The `STACK` environment variable selects which stack to synthesise.
 
 Stack | Class | Deploy command
