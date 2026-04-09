@@ -51,7 +51,6 @@ hypothesis = "^6.151.11"
 mkdocs = "^1.6.1"
 mkdocstrings = { version = "^1.0.0", extras=["python"] }
 mkdocs-material = "^9.6.20"
-mkdocs-macros-plugin = "^1.5.0"
 
 [build-system]
 requires = ["poetry-core"]

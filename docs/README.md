@@ -1,10 +1,10 @@
-# AWS Lambda Template - Python
-![Python](https://img.shields.io/badge/python-3.14+-3776AB.svg?logo=python&style=flat-square)
+# AWS Lambda Templates - Python
+[![Python](https://img.shields.io/badge/python-3.14+-3776AB.svg?logo=python&style=flat-square)](https://python.org)
 [![Code style: ruff](https://img.shields.io/badge/code%20style-ruff-D7FF64.svg?logo=ruff&style=flat-square)](https://docs.astral.sh/ruff)
 [![License](https://img.shields.io/badge/license-MIT-blue.svg?style=flat-square)](LICENSE)
 
 A production-ready Python AWS Lambda templates for different scenarios.
-See available templates [here](templates.md).
+See available templates [here](template/api).
 
 ## Features
 
@@ -143,8 +143,8 @@ make local
 
 ## CDK Infrastructure Deployment
 
-Infrastructure is defined as AWS CDK stacks under [`infra/stacks/`](infra/stacks). 
-The CDK entry point is [`infra/app.py`](infra/app.py). 
+Infrastructure is defined as AWS CDK stacks under [`infra/stacks/`](/infra/stacks). 
+The CDK entry point is [`infra/app.py`](/infra/app.py). 
 The `STACK` environment variable selects which stack to synthesise.
 
 Stack | Class | Deploy command

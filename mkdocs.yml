@@ -1,6 +1,6 @@
-site_name: AWS Lambda Template - Python
-repo_url: https://github.com/amrabed/aws-lambda-template
-repo_name: amrabed/aws-lambda-template
+site_name: AWS Lambda Templates - Python
+repo_url: https://github.com/amrabed/aws-lambda-templates
+repo_name: amrabed/aws-lambda-templates
 edit_uri: edit/main/docs/
 copyright: Copyright &copy; 2026 
 
@@ -26,7 +26,10 @@ theme:
 nav:
   - Overview:
     - Overview: README.md
-    - Templates: templates.md
+    - License: LICENSE.md
+  - Templates: 
+    - Rest API: template/api.md
+    - DynamoDB Stream: template/stream.md
   - Reference:
     - API: reference/api.md
     - Stream: reference/stream.md
@@ -35,7 +38,6 @@ nav:
 
 plugins:
   - search
-  - macros
   - mkdocstrings:
       handlers:
         python:
