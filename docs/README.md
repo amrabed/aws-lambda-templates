@@ -43,7 +43,7 @@ The repository also comes pre-loaded with these GitHub files:
 ## How to use
 Click this button to create a new repository for your project, then clone the new repository. Enjoy!
 
-[![Use this template](https://img.shields.io/badge/Use%20this%20template-238636?style=for-the-badge)](/new)
+[![Use this template](https://img.shields.io/badge/Use%20this%20template-238636?style=for-the-badge)](/generate)
 
 ### Rename the project
 Run `make project` once after cloning, before any other setup steps:
