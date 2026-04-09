@@ -76,6 +76,10 @@ When contributing to this project, please make sure that all code is well docume
 
 The project uses [Google-style docstrings](https://google.github.io/styleguide/pyguide.html#38-comments-and-docstrings) formatted according to [PEP 257](https://www.python.org/dev/peps/pep-0257/) guidelines. (See [Example Google Style Python Docstrings](https://sphinxcontrib-napoleon.readthedocs.io/en/latest/example_google.html) for further examples.)
 
+### Property-Based Testing
+
+The project uses [Hypothesis](https://hypothesis.readthedocs.io) for property-based testing. New property-based tests should be placed in the `tests/` directory alongside standard pytest tests and follow the same naming conventions.
+
 ### Project Documentation
 
 Project Documentation is written in Markdown and built using [Material for MkDocs](https://squidfunk.github.io/mkdocs-material/). API documentation is build from docstrings using [mkdocstrings](https://mkdocstrings.github.io/).

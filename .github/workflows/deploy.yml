@@ -1,0 +1,57 @@
+name: Deploy
+
+on:
+  # Uncomment one of these to deploy ALL stacks to AWS
+  # NOTE: Uncomment only one to avoid duplicate deployments on the same event
+  # release:  # on publishing new release
+  #   types: [published]
+  # push:  # on push to main
+  #   branches: [main]
+  # pull_request:  # on merging pull requests to main (closed includes unmerged; deploy job guards with merged == true)
+  #   branches: [main]
+  #   types: [closed]
+  workflow_dispatch:
+    inputs:
+      stack:
+        description: "CDK stack to deploy"
+        required: true
+        type: choice
+        options:
+          - api
+          - stream
+          - all
+
+permissions:
+  id-token: write
+  contents: read
+
+jobs:
+  check:
+    uses: ./.github/workflows/check.yml
+
+  deploy:
+    needs: check
+    if: github.event_name != 'pull_request' || github.event.pull_request.merged == true
+    runs-on: ubuntu-latest
+    strategy:
+      max-parallel: 1
+      matrix:
+        stack: [api, stream]
+    steps:
+      - uses: actions/checkout@v6
+      - name: Setup Python
+        uses: actions/setup-python@v6
+        with:
+          python-version: 3.14
+      - name: Install dependencies
+        run: make poetry install
+      - name: Install AWS CDK CLI
+        run: npm install -g aws-cdk
+      - name: Configure AWS credentials
+        uses: aws-actions/configure-aws-credentials@v4
+        with:
+          role-to-assume: ${{ secrets.AWS_DEPLOY_ROLE_ARN }}
+          aws-region: ${{ vars.AWS_REGION }}
+      - name: Deploy stack
+        if: github.event_name != 'workflow_dispatch' || inputs.stack == 'all' || contains(inputs.stack, matrix.stack)
+        run: make deploy STACK=${{ matrix.stack }}

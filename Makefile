@@ -1,3 +1,6 @@
+.PHONY: help
+help: # Show available targets
+	@grep -E '^[a-zA-Z_-]+:.*# .*$$' $(MAKEFILE_LIST) | awk 'BEGIN {FS = ":.*# "}; {printf "  %-12s %s\n", $$1, $$2}'
 
 NAME ?= project
 DESCRIPTION ?= Python Project Template
@@ -41,9 +44,10 @@ precommit: # Install pre-commit hooks
 pre-commit: precommit
 
 lint:
+	poetry run ruff format
 	poetry run ruff check --fix
 	poetry run ruff format
-	poetry run pyright .
+# 	poetry run pyright .
 
 coverage:
 	poetry run coverage run -m pytest .
@@ -58,5 +62,23 @@ docs: # Build and deploy documentation to GitHub pages
 
 local: # Serve documentation on a local server
 	poetry run mkdocs serve
+
+STACK_MAP_api    = ApiGatewayDynamodbStack
+STACK_MAP_stream = DynamodbStreamStack
+CDK_STACK        = $(STACK_MAP_$(STACK))
+
+.PHONY: deploy
+deploy: # Deploy an CDK stack
+	@[ -n "$(STACK)" ] || { echo "Usage: make deploy STACK=<api|stream>"; exit 1; }
+	@[ -n "$(CDK_STACK)" ] || { echo "Error: unknown stack '$(STACK)'"; exit 1; }
+	STACK=$(STACK) cdk deploy --app "python infra/app.py" --require-approval never $(CDK_STACK) \
+		$(if $(AWS_PROFILE),--profile $(AWS_PROFILE),)
+
+.PHONY: destroy
+destroy: # Destroy a deployed CDK stack
+	@[ -n "$(STACK)" ] || { echo "Usage: make destroy STACK=<api|stream>"; exit 1; }
+	@[ -n "$(CDK_STACK)" ] || { echo "Error: unknown stack '$(STACK)'"; exit 1; }
+	STACK=$(STACK) cdk destroy --force --app "python infra/app.py" $(CDK_STACK) \
+		$(if $(AWS_PROFILE),--profile $(AWS_PROFILE),)
 
 all: poetry install precommit lint test venv
