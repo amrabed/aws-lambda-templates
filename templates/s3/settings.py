@@ -10,11 +10,7 @@ class Settings(BaseSettings, case_sensitive=False):
 
     @field_validator("sqs_queue_url")
     @classmethod
-    def validate_sqs_queue_url(cls, v: str) -> str:
-        if not v or not v.strip():
+    def validate_sqs_queue_url(cls, value: str) -> str:
+        if not value or not value.strip():
             raise ValueError("SQS_QUEUE_URL cannot be empty")
-        return v
-
-
-def get_settings() -> Settings:
-    return Settings()  # type: ignore
+        return value

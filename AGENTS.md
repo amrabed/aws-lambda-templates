@@ -166,3 +166,22 @@ Every test file must end with:
 if __name__ == "__main__":
     main()
 ```
+
+### Data Models
+- Always move all data models to a separate `models.py` file within the template directory.
+
+### Event Types
+- Always use AWS Lambda Powertools event types for parsing and type hinting incoming events.
+
+### SQS Interactions
+- Use a separate `queue.py` module with a `Queue` class to encapsulate all SQS interactions (initialization, publishing, etc.).
+
+### Handler Structure
+- Create a `Handler` class with a `handle_record` (or similar) method.
+- Pass the `Handler` instance to the main Lambda entry point.
+- Decorate handler methods with `@tracer.capture_method`.
+- For batch events (SQS, DynamoDB Streams), use the Lambda Powertools `BatchProcessor`.
+- For S3 events, manually iterate over records and raise an exception if any record fails to ensure the entire batch is retried by the S3 event source.
+
+### Lambda Entry Point
+- The main Lambda entry point should be named `main`.
