@@ -6,11 +6,13 @@ from aws_cdk import App
 from infra.stacks.api import ApiGatewayDynamodbStack
 from infra.stacks.eventbridge import EventBridgeApiCallerStack
 from infra.stacks.stream import DynamodbStreamStack
+from infra.stacks.s3 import S3SqsStack
 
 STACK_REGISTRY: dict[str, type] = {
     "api": ApiGatewayDynamodbStack,
     "eventbridge-api-caller": EventBridgeApiCallerStack,
     "stream": DynamodbStreamStack,
+    "s3": S3SqsStack,
 }
 
 stack_name = os.environ.get("STACK")

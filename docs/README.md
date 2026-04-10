@@ -113,6 +113,8 @@ make test
 make deploy STACK=api
 # or
 make deploy STACK=stream
+# or
+make deploy STACK=s3
 ```
 
 Pass `AWS_PROFILE` to use a named AWS CLI profile:
@@ -125,6 +127,8 @@ make deploy STACK=api AWS_PROFILE=my-profile
 make destroy STACK=api
 # or
 make destroy STACK=stream AWS_PROFILE=my-profile
+# or
+make destroy STACK=s3 AWS_PROFILE=my-profile
 ```
 
 ## Generating documentation
@@ -152,6 +156,7 @@ Stack | Class | Deploy command
 --- | --- | ---
 API | `ApiGatewayDynamodbStack` | `make deploy STACK=api`
 Stream | `DynamodbStreamStack` | `make deploy STACK=stream`
+S3 | `S3SqsStack` | `make deploy STACK=s3`
 
 ## Project Structure
 
@@ -189,7 +194,8 @@ Stream | `DynamodbStreamStack` | `make deploy STACK=stream`
 │       ├── app.md                  # App reference page
 │       ├── repository.md           # Repository reference page
 │       ├── api.md                  # API scenario reference page
-│       └── stream.md               # Stream scenario reference page
+│       ├── stream.md               # Stream scenario reference page
+│       └── s3.md                   # S3 scenario reference page
 ├── templates                       # Main package
 │   ├── app.py                      # CLI entry point
 │   ├── repository.py               # DynamoDB repository
@@ -197,21 +203,29 @@ Stream | `DynamodbStreamStack` | `make deploy STACK=stream`
 │   │   ├── handler.py              # Lambda handler
 │   │   ├── models.py               # Pydantic data models
 │   │   └── settings.py             # Environment variable settings
-│   └── stream                      # DynamoDB Streams scenario
+│   ├── stream                      # DynamoDB Streams scenario
+│   │   ├── handler.py              # Lambda handler
+│   │   ├── models.py               # Pydantic data models
+│   │   └── settings.py             # Environment variable settings
+│   └── s3                          # S3 to SQS scenario
 │       ├── handler.py              # Lambda handler
 │       ├── models.py               # Pydantic data models
+│       ├── queue.py                # SQS queue interaction
 │       └── settings.py             # Environment variable settings
 ├── infra                           # AWS CDK infrastructure
 │   ├── app.py                      # CDK entry point
 │   └── stacks                      # CDK stack definitions
 │       ├── api.py                  # ApiGatewayDynamodbStack
-│       └── stream.py               # DynamodbStreamStack
+│       ├── stream.py               # DynamodbStreamStack
+│       └── s3.py                   # S3SqsStack
 └── tests                           # Test folder
     ├── conftest.py                 # Pytest configuration, fixtures, and hooks
     ├── test_app.py                 # App tests
     ├── test_repository.py          # Repository tests
     ├── api                         # API scenario tests
     │   └── test_handler.py         # API handler tests
-    └── stream                      # Stream scenario tests
-        └── test_handler.py         # Stream handler tests
+    ├── stream                      # Stream scenario tests
+    │   └── test_handler.py         # Stream handler tests
+    └── s3                          # S3 scenario tests
+        └── test_handler.py         # S3 handler tests
 ```
