@@ -155,6 +155,7 @@ The `STACK` environment variable selects which stack to synthesise.
 Stack | Class | Deploy command
 --- | --- | ---
 API | `ApiGatewayDynamodbStack` | `make deploy STACK=api`
+EventBridge | `EventBridgeApiCallerStack` | `make deploy STACK=eventbridge`
 Stream | `DynamodbStreamStack` | `make deploy STACK=stream`
 S3 | `S3SqsStack` | `make deploy STACK=s3`
 

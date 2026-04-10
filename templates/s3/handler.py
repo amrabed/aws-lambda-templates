@@ -3,70 +3,35 @@ from aws_lambda_powertools.utilities.data_classes import S3Event
 from aws_lambda_powertools.utilities.data_classes.s3_event import S3EventRecord
 from aws_lambda_powertools.utilities.typing import LambdaContext
 
-from templates.s3.models import EventSource, ProcessedMessage
-from templates.s3.queue import Queue
+from templates.queue import Queue
+from templates.s3.models import ProcessedMessage
 from templates.s3.settings import Settings
 
 settings = Settings()  # type: ignore
 
-logger = Logger(service=settings.powertools_service_name)
-tracer = Tracer(service=settings.powertools_service_name)
-metrics = Metrics(namespace="S3SQSProcessor", service=settings.powertools_service_name)
+logger = Logger(service=settings.service_name)
+tracer = Tracer(service=settings.service_name)
+metrics = Metrics(namespace=settings.metrics_namespace, service=settings.service_name)
 
-queue = Queue(settings)
-
-
-class Handler:
-    """Processes S3 events and publishes results to SQS."""
-
-    def __init__(self, queue: Queue) -> None:
-        """Initialize the handler with an SQS queue.
-
-        Args:
-            queue: The queue used to publish processed messages.
-        """
-        self._queue = queue
-
-    @tracer.capture_method
-    def _build_message(self, record: S3EventRecord) -> ProcessedMessage:
-        """Construct a ProcessedMessage from an S3 record.
-
-        Args:
-            record: The S3 event record to process.
-
-        Returns:
-            A ProcessedMessage instance.
-        """
-        return ProcessedMessage(
-            bucket=record.s3.bucket.name,
-            key=record.s3.get_object.key,
-            event_time=record.event_time,
-            source=EventSource.s3,
-        )
-
-    @tracer.capture_method
-    def handle_record(self, record: S3EventRecord) -> None:
-        """Handle a single S3 event record.
-
-        Args:
-            record: The S3 event record to process.
-        """
-        bucket = record.s3.bucket.name
-        key = record.s3.get_object.key
-        event_time = record.event_time
-
-        msg = self._build_message(record)
-        self._queue.publish(msg, bucket)
-        logger.info("Processed record", extra={"bucket": bucket, "key": key, "event_time": event_time})
+queue = Queue(settings.queue_url, settings.queue_region)
 
 
-handler = Handler(queue)
+@tracer.capture_method
+def handle_record(record: S3EventRecord) -> None:
+    """Handle a single S3 event record.
+
+    Args:
+        record: The S3 event record to process.
+    """
+    message = {"bucket": record.s3.bucket.name, "key": record.s3.get_object.key, "event_time": record.event_time}
+    queue.publish(ProcessedMessage.model_validate(message).model_dump_json(by_alias=True, exclude_none=True))
+    logger.info("Processed record", extra=message)
 
 
 @logger.inject_lambda_context
 @tracer.capture_lambda_handler
 @metrics.log_metrics
-def main(event: dict, context: LambdaContext) -> dict:
+def main(event: S3Event, context: LambdaContext) -> dict:
     """Lambda entry point for the S3-to-SQS handler.
 
     Args:
@@ -80,24 +45,18 @@ def main(event: dict, context: LambdaContext) -> dict:
         ValueError: If the event shape is invalid.
         Exception: If any record fails to ensure retry by the S3 event source.
     """
-    if not isinstance(event, dict) or "Records" not in event or not isinstance(event["Records"], list):
-        raise ValueError("Invalid S3 event shape: missing or invalid 'Records' key")
-
-    s3_event = S3Event(event)
-    success_count = 0
+    processed = 0
     errors = []
-
-    for record in s3_event.records:
+    for record in event.records:
         try:
-            with tracer.provider.in_subsegment("process_record"):
-                handler.handle_record(record)
-                success_count += 1
-        except Exception as exc:
-            logger.error("Failed to process record", exc_info=exc)
+            handle_record(record)
+            processed += 1
+        except Exception as error:
+            logger.error("Failed to process record", exc_info=error)
             metrics.add_metric(name="publish_failure", unit="Count", value=1)
-            errors.append(exc)
+            errors.append(error)
 
-    metrics.add_metric(name="records_processed", unit="Count", value=success_count)
+    metrics.add_metric(name="records_processed", unit="Count", value=processed)
 
     if errors:
         raise Exception(f"Batch processing failed with {len(errors)} errors. First error: {errors[0]}")

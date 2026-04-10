@@ -12,4 +12,4 @@ class ProcessedMessage(BaseModel, populate_by_name=True, alias_generator=to_came
     bucket: str = Field(description="S3 bucket name")
     key: str = Field(description="S3 object key")
     event_time: str = Field(description="ISO-8601 event timestamp")
-    source: EventSource = Field(description="Origin event source")
+    source: EventSource = Field(default=EventSource.s3, description="Origin event source")
