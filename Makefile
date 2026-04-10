@@ -2,27 +2,27 @@
 help: # Show available targets
 	@grep -E '^[a-zA-Z_-]+:.*# .*$$' \$(MAKEFILE_LIST) | awk 'BEGIN {FS = ":.*# "}; {printf "  %-12s %s\n", \$\$1, \$\$2}'
 
-NAME ?= project
+NAME ?= templates
 DESCRIPTION ?= Python Project Template
 AUTHOR ?= Amr Abed
 EMAIL ?= amrabed
 GITHUB ?= amrabed
-SOURCE ?= \$(shell echo \${NAME} | tr '-' '_' | tr '[:upper:]' '[:lower:]')
+SOURCE ?= $(shell echo ${NAME} | tr '-' '_' | tr '[:upper:]' '[:lower:]')
 
 .PHONY: project
 project: # Rename project (run once)
-	@if [ -d project ]; then mv project \${SOURCE}; fi
-	@sed -i '' 's/^::: project\.app/::: \${SOURCE}\.app/' docs/reference/app.md
-	@sed -i '' 's/^repo_name: .*/repo_name: \${GITHUB}\/\${NAME}/' mkdocs.yml
-	@sed -i '' 's/^repo_url: .*/repo_url: https:\/\/github.com\/\${GITHUB}\/\${NAME}/' mkdocs.yml
-	@sed -i '' 's/^source = \[.*\]/source = \["\${SOURCE}"\]/' pyproject.toml
-	@sed -i '' 's/^app = "project\.app:main"/app = "\${SOURCE}\.app:main"/' pyproject.toml
-	@sed -i '' 's/^name = ".*"/name = "\${SOURCE}"/' pyproject.toml
-	@sed -i '' 's/^description = ".*"/description = "\${DESCRIPTION}"/' pyproject.toml
-	@sed -i '' 's/^authors = \[.*\]/authors = \["\${AUTHOR} <\${EMAIL}>"\]/' pyproject.toml
-	@sed -i '' 's/^# .*/# \${DESCRIPTION}/' docs/README.md
-	@sed -i '' 's/@.*/@\${GITHUB}/' .github/CODEOWNERS
-	@sed -i '' 's/^github: \[.*\]/github: \[\${GITHUB}\]/' .github/FUNDING.yml
+	@if [ -d project ]; then mv project ${SOURCE}; fi
+	@sed -i '' 's/^::: project\.app/::: ${SOURCE}\.app/' docs/reference/app.md
+	@sed -i '' 's/^repo_name: .*/repo_name: ${GITHUB}\/${NAME}/' mkdocs.yml
+	@sed -i '' 's/^repo_url: .*/repo_url: https:\/\/github.com\/${GITHUB}\/${NAME}/' mkdocs.yml
+	@sed -i '' 's/^source = \[.*\]/source = \["${SOURCE}"\]/' pyproject.toml
+	@sed -i '' 's/^app = "project\.app:main"/app = "${SOURCE}\.app:main"/' pyproject.toml
+	@sed -i '' 's/^name = ".*"/name = "${SOURCE}"/' pyproject.toml
+	@sed -i '' 's/^description = ".*"/description = "${DESCRIPTION}"/' pyproject.toml
+	@sed -i '' 's/^authors = \[.*\]/authors = \["${AUTHOR} <${EMAIL}>"\]/' pyproject.toml
+	@sed -i '' 's/^# .*/# ${DESCRIPTION}/' docs/README.md
+	@sed -i '' 's/@.*/@${GITHUB}/' .github/CODEOWNERS
+	@sed -i '' 's/^github: \[.*\]/github: \[${GITHUB}\]/' .github/FUNDING.yml
 	@sed -i '' 's/^patreon: .*/patreon: # Put your Patreon username here/' .github/FUNDING.yml
 
 poetry:  # Install Poetry
