@@ -199,6 +199,7 @@ make local
 │   ├── agent                       # Bedrock agent function handler
 │   ├── api                         # API request handler
 │   ├── eventbridge                 # EventBridge event handler
+│   ├── graphql                     # AppSync GraphQL resolver
 │   ├── s3                          # S3 event handler
 │   ├── stream                      # DynamoDB stream batch processor
 │   ├── sqs                         # SQS message handler
@@ -210,6 +211,7 @@ make local
 │       ├── agent.py                # Bedrock agent stack
 │       ├── api.py                  # ApiGateway stack
 │       ├── evetbridge.py           # EventBridge stack
+│       ├── graphql.py              # AppSync stack
 │       ├── s3.py                   # S3 stack
 │       ├── stream.py               # DynamoDB Stream stack
 │       └── sqs.py                  # SQS stack
@@ -219,6 +221,7 @@ make local
     ├── agent                       # Bedrock agent scenario tests
     ├── api                         # API scenario tests
     ├── eventbridge                 # EventBridge scenario tests
+    ├── graphql                     # GraphQL scenario tests
     ├── s3                          # S3 scenario tests
     ├── stream                      # DynamoDB Stream scenario tests
     └── sqs                         # SQS scenario tests

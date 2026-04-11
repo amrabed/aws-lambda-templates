@@ -1,5 +1,6 @@
-- [REST API](api.md): Handle REST API requests
 - [Bedrock Agent](agent.md): Handle Bedrock Agent function-based actions
+- [GraphQL API](graphql.md): Handle AppSync GraphQL requests
+- [REST API](api.md): Handle REST API requests
 - [DynamoDB Stream](stream.md): Batch process stream events
 - [EventBridge](eventbridge.md): Call external API on event
 - [S3 to SQS](s3.md): Send messages to queue on S3 object changes

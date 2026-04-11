@@ -23,6 +23,14 @@ class Repository:
         """
         return self._table.get_item(Key={"id": item_id}).get("Item")
 
+    def list_items(self) -> list[dict]:
+        """Retrieve all items from the table.
+
+        Returns:
+            A list of all items in the table.
+        """
+        return self._table.scan().get("Items", [])
+
     def put_item(self, item: dict) -> None:
         """Write an item to the table, replacing any existing item with the same key.
 
