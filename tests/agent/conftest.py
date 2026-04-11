@@ -4,25 +4,23 @@ from pytest import fixture
 
 from templates.repository import Repository
 
-_TABLE_NAME = "test-table"
-
 
 @fixture
 def table_name():
-    return _TABLE_NAME
+    return "test-table"
 
 
-@fixture
-def mock_table():
+@fixture(autouse=True)
+def mock_table(table_name):
     with mock_aws():
         yield resource("dynamodb").create_table(
-            TableName=_TABLE_NAME,
+            TableName=table_name,
             KeySchema=[{"AttributeName": "id", "KeyType": "HASH"}],
             AttributeDefinitions=[{"AttributeName": "id", "AttributeType": "S"}],
             BillingMode="PAY_PER_REQUEST",
         )
 
 
-@fixture
+@fixture(autouse=True)
 def repository(mock_table):
-    return Repository(_TABLE_NAME)
+    return Repository(mock_table.table_name)

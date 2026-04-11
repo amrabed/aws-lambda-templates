@@ -18,7 +18,8 @@ app = BedrockAgentFunctionResolver()
 
 
 @tracer.capture_method
-def get_item_logic(item_id: str) -> dict:
+@app.tool(name="getItem", description="Gets item details by ID")
+def get_item(item_id: str) -> dict:
     """Retrieve an item by its ID.
 
     Args:
@@ -35,7 +36,8 @@ def get_item_logic(item_id: str) -> dict:
 
 
 @tracer.capture_method
-def create_item_logic(item_id: str, name: str, description: str | None = None) -> dict:
+@app.tool(name="createItem", description="Creates a new item with name and optional description")
+def create_item(item_id: str, name: str, description: str | None = None) -> dict:
     """Create a new item.
 
     Args:
@@ -50,18 +52,6 @@ def create_item_logic(item_id: str, name: str, description: str | None = None) -
     item = Item(id=item_id, name=name, description=description)
     repository.put_item(item.model_dump())
     return item.model_dump(by_alias=True, exclude_none=True)
-
-
-@app.tool(name="getItem", description="Gets item details by ID")
-def get_item(item_id: str) -> dict:
-    """Tool to retrieve an item."""
-    return get_item_logic(item_id)
-
-
-@app.tool(name="createItem", description="Creates a new item with name and optional description")
-def create_item(item_id: str, name: str, description: str | None = None) -> dict:
-    """Tool to create an item."""
-    return create_item_logic(item_id, name, description)
 
 
 @logger.inject_lambda_context
