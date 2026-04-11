@@ -3,6 +3,7 @@ import sys
 
 from aws_cdk import App
 
+from infra.stacks.agent import BedrockAgentStack
 from infra.stacks.api import ApiGatewayDynamodbStack
 from infra.stacks.eventbridge import EventBridgeApiCallerStack
 from infra.stacks.s3 import S3SqsStack
@@ -10,8 +11,9 @@ from infra.stacks.sqs import SqsLambdaDynamodbStack
 from infra.stacks.stream import DynamodbStreamStack
 
 STACK_REGISTRY: dict[str, type] = {
+    "agent": BedrockAgentStack,
     "api": ApiGatewayDynamodbStack,
-    "eventbridge-api-caller": EventBridgeApiCallerStack,
+    "eventbridge": EventBridgeApiCallerStack,
     "stream": DynamodbStreamStack,
     "s3": S3SqsStack,
     "sqs": SqsLambdaDynamodbStack,

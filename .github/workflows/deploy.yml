@@ -18,8 +18,9 @@ on:
         type: choice
         options:
           - all
+          - agent
           - api
-          - eventbridge-api-caller
+          - eventbridge
           - s3
           - stream
           - sqs
