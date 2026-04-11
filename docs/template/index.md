@@ -2,3 +2,4 @@
 - [DynamoDB Stream](stream.md): Batch process stream events
 - [EventBridge](eventbridge.md): Call external API on event
 - [S3 to SQS](s3.md): Send messages to queue on S3 object changes
+- [SQS to DynamoDB](sqs.md): Batch Process SQS messages and store processed messages in DynamoDB table

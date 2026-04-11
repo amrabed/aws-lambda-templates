@@ -1,5 +1,3 @@
-import json
-
 from aws_lambda_powertools import Logger, Metrics, Tracer
 from aws_lambda_powertools.utilities.batch import BatchProcessor, EventType, process_partial_response
 from aws_lambda_powertools.utilities.data_classes.sqs_event import SQSRecord
@@ -42,14 +40,10 @@ class Handler:
             ValueError: If the message body cannot be parsed or processed.
         """
         try:
-            body = json.loads(record.body)
-            message = SqsMessage.model_validate(body)
-
-            processed_item = ProcessedItem(id=message.id, content=message.content, status="PROCESSED")
-
-            self._repository.put_item(processed_item.model_dump())
-            logger.info("Successfully processed and stored message", extra={"message_id": message.id})
-
+            message = SqsMessage.model_validate(record.json_body)
+            processed = ProcessedItem(id=message.id, content=message.content, status="PROCESSED")
+            self._repository.put_item(processed.model_dump())
+            logger.info("Successfully processed and stored message", extra={"messageId": message.id})
         except Exception as exc:
             logger.error("Failed to process SQS record", exc_info=exc)
             raise
