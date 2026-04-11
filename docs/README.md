@@ -155,8 +155,8 @@ The `STACK` environment variable selects which stack to synthesise.
 
 Stack | Class | Deploy command
 --- | --- | ---
+Bedrock Agent | `BedrockAgentStack` | `make deploy STACK=agent`
 API | `ApiGatewayDynamodbStack` | `make deploy STACK=api`
-Bedrock Agent | `BedrockAgentStack` | `make deploy STACK=bedrock-agent`
 EventBridge | `EventBridgeApiCallerStack` | `make deploy STACK=eventbridge`
 Stream | `DynamodbStreamStack` | `make deploy STACK=stream`
 S3 | `S3SqsStack` | `make deploy STACK=s3`
@@ -221,7 +221,7 @@ SQS | `SqsLambdaDynamodbStack` | `make deploy STACK=sqs`
 │   ├── app.py                      # CDK entry point
 │   └── stacks                      # CDK stack definitions
 │       ├── api.py                  # ApiGateway stack
-│       ├── bedrock_agent.py        # Bedrock agent stack
+│       ├── agent.py                # Bedrock agent stack
 │       ├── evetbridge.py           # EventBridge stack
         ├── s3.py                   # S3 stack
 │       ├── stream.py               # DynamoDB Stream stack

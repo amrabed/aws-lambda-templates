@@ -2,7 +2,7 @@ from pydantic import BaseModel, Field
 from pydantic.alias_generators import to_camel
 
 
-class AgentItem(BaseModel, populate_by_name=True, alias_generator=to_camel):
+class Item(BaseModel, populate_by_name=True, alias_generator=to_camel):
     """Model representing an item managed by the agent."""
 
     id: str = Field(description="Unique identifier for the item.")

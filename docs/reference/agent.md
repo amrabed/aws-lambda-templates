@@ -1,4 +1,4 @@
-# Bedrock Agent Reference
+# Agent Reference
 
 ::: templates.bedrock_agent.handler
 ::: templates.bedrock_agent.models

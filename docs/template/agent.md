@@ -34,5 +34,5 @@ def get_item(item_id: str) -> dict:
 Deploy the stack using:
 
 ```bash
-make deploy STACK=bedrock-agent
+make deploy STACK=agent
 ```
