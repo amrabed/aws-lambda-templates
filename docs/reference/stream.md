@@ -1,2 +1,2 @@
-# Stream
+# DynamoDB Stream
 ::: templates.stream.handler

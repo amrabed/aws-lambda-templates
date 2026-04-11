@@ -10,7 +10,7 @@ source = ["templates"]
 
 [tool.coverage.report]
 omit = ["tests/*"]
-# fail_under = 90
+fail_under = 90
 
 [tool.pyright]
 exclude = ["**/__pycache__", "**/.pytest_cache"]
@@ -26,7 +26,7 @@ license = "MIT"
 readme = "docs/README.md"
 
 [tool.poetry.dependencies]
-python = "^3.14"
+python = "^3.12"
 pydantic = "^2.12.5"
 pydantic-settings = "^2.13.1"
 aws-lambda-powertools = "^3.27.0"

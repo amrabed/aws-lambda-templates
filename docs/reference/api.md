@@ -1,2 +1,2 @@
-# API
+# REST API
 ::: templates.api.handler

@@ -2,6 +2,7 @@ import sys
 from unittest.mock import MagicMock
 
 from aws_lambda_powertools.utilities.typing import LambdaContext
+from moto import mock_aws
 from pytest import fixture
 
 # aws_xray_sdk is not installed in the test environment; stub it out before
@@ -28,3 +29,28 @@ def lambda_context():
     ctx.invoked_function_arn = "arn:aws:lambda:us-east-1:123456789012:function:test-function"
     ctx.aws_request_id = "test-request-id"
     return ctx
+
+
+@fixture
+def table_name():
+    return "test-table"
+
+
+@fixture(autouse=True)
+def mock_table(table_name):
+    from boto3 import resource
+
+    with mock_aws():
+        yield resource("dynamodb").create_table(
+            TableName=table_name,
+            KeySchema=[{"AttributeName": "id", "KeyType": "HASH"}],
+            AttributeDefinitions=[{"AttributeName": "id", "AttributeType": "S"}],
+            BillingMode="PAY_PER_REQUEST",
+        )
+
+
+@fixture(autouse=True)
+def repository(mock_table):
+    from templates.repository import Repository
+
+    return Repository(mock_table.table_name)

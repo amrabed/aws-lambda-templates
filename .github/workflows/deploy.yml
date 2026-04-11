@@ -21,6 +21,7 @@ on:
           - agent
           - api
           - eventbridge
+          - graphql
           - s3
           - stream
           - sqs
@@ -40,7 +41,7 @@ jobs:
     strategy:
       max-parallel: 1
       matrix:
-        stack: [api, stream, s3, eventbridge-api-caller, sqs]
+        stack: [agent, api, eventbridge, graphql, s3, sqs, stream]
     steps:
       - uses: actions/checkout@v6
       - name: Setup Python

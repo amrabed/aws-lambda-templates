@@ -1,2 +1,2 @@
-# Repository
+# DynamoDB Repository
 ::: templates.repository

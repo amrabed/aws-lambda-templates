@@ -26,22 +26,25 @@ theme:
 nav:
   - Overview:
     - Overview: README.md
+    - Contributing: CONTRIBUTING.md
     - License: LICENSE.md
   - Templates:
-    - Templates: template/index.md
-    - Rest API: template/api.md
     - Bedrock Agent: template/agent.md
+    - GraphQL API: template/graphql.md
+    - REST API: template/api.md
     - DynamoDB Stream: template/stream.md
+    - EventBridge: template/eventbridge.md
     - S3 to SQS: template/s3.md
     - SQS to DynamoDB: template/sqs.md
   - Reference:
-    - API: reference/api.md
     - Bedrock Agent: reference/agent.md
-    - Stream: reference/stream.md
+    - GraphQL API: reference/graphql.md
+    - REST API: reference/api.md
+    - DynamoDB Stream: reference/stream.md
+    - EventBridge: reference/eventbridge.md
     - S3: reference/s3.md
     - SQS: reference/sqs.md
     - Repository: reference/repository.md
-  - Contributing: CONTRIBUTING.md
 
 plugins:
   - search
