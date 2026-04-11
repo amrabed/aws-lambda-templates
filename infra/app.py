@@ -13,7 +13,7 @@ from infra.stacks.stream import DynamodbStreamStack
 STACK_REGISTRY: dict[str, type] = {
     "agent": BedrockAgentStack,
     "api": ApiGatewayDynamodbStack,
-    "eventbridge-api-caller": EventBridgeApiCallerStack,
+    "eventbridge": EventBridgeApiCallerStack,
     "stream": DynamodbStreamStack,
     "s3": S3SqsStack,
     "sqs": SqsLambdaDynamodbStack,
