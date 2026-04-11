@@ -1,0 +1,3 @@
+# EventBridge
+
+::: templates.eventbridge.handler

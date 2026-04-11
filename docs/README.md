@@ -3,9 +3,25 @@
 [![Code style: ruff](https://img.shields.io/badge/code%20style-ruff-D7FF64.svg?logo=ruff&style=flat-square)](https://docs.astral.sh/ruff)
 [![License](https://img.shields.io/badge/license-MIT-blue.svg?style=flat-square)](LICENSE.md)
 
-Production-ready Python AWS Lambda templates for different scenarios. 
-See available templates [here](template/index.md).
+Production-ready plug-and-play AWS Lambda Python templates for different real-life scenarios.
 
+The templates apply best practices by using [AWS Lambda Powertools](https://docs.aws.amazon.com/powertools/python) to  for:
+
+- CloudWatch Logs and Metrics
+- X-ray Tracing
+- Batch Processing
+- Event Handling
+- Parameter/Secret Loading
+
+## Templates
+
+- [Bedrock Agent](template/agent.md): Handle Bedrock Agent function-based actions
+- [GraphQL API](template/graphql.md): Handle AppSync GraphQL requests
+- [REST API](template/api.md): Handle REST API requests
+- [DynamoDB Stream](template/stream.md): Batch process stream events
+- [EventBridge](template/eventbridge.md): Call external API on event
+- [S3 to SQS](template/s3.md): Send messages to queue on S3 object changes
+- [SQS to DynamoDB](template/sqs.md): Batch Process SQS messages
 
 ## Features
 

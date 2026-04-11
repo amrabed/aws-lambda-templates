@@ -1,5 +1,6 @@
 from aws_lambda_powertools import Logger, Metrics, Tracer
 from aws_lambda_powertools.utilities.batch import BatchProcessor, EventType, process_partial_response
+from aws_lambda_powertools.utilities.batch.types import PartialItemFailureResponse
 from aws_lambda_powertools.utilities.data_classes.sqs_event import SQSRecord
 from aws_lambda_powertools.utilities.typing import LambdaContext
 
@@ -55,7 +56,7 @@ handler = Handler(repository)
 @logger.inject_lambda_context
 @tracer.capture_lambda_handler
 @metrics.log_metrics
-def main(event: dict, context: LambdaContext):
+def main(event: dict, context: LambdaContext) -> PartialItemFailureResponse:
     """Lambda entry point for the SQS-to-DynamoDB handler.
 
     Args:

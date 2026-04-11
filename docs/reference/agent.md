@@ -1,3 +1,3 @@
-# Agent Reference
+# Bedrock Agent
 
 ::: templates.agent.handler
