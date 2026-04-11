@@ -17,9 +17,11 @@ on:
         required: true
         type: choice
         options:
-          - api
-          - stream
           - all
+          - api
+          - eventbridge
+          - s3
+          - stream
 
 permissions:
   id-token: write

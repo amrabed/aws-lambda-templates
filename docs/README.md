@@ -3,7 +3,7 @@
 [![Code style: ruff](https://img.shields.io/badge/code%20style-ruff-D7FF64.svg?logo=ruff&style=flat-square)](https://docs.astral.sh/ruff)
 [![License](https://img.shields.io/badge/license-MIT-blue.svg?style=flat-square)](LICENSE.md)
 
-A production-ready Python AWS Lambda templates for different scenarios. 
+Production-ready Python AWS Lambda templates for different scenarios. 
 See available templates [here](template/index.md).
 
 
@@ -28,8 +28,9 @@ All templates come pre-wired with:
 
 
 ### GitHub files
-The repository also comes pre-loaded with these GitHub files:
+The repository also comes preloaded with these GitHub files:
 
+- AI Agent guidelines
 - Pull request template
 - Issue templates
     + Bug report
@@ -113,6 +114,8 @@ make test
 make deploy STACK=api
 # or
 make deploy STACK=stream
+# or
+make deploy STACK=s3
 ```
 
 Pass `AWS_PROFILE` to use a named AWS CLI profile:
@@ -125,6 +128,8 @@ make deploy STACK=api AWS_PROFILE=my-profile
 make destroy STACK=api
 # or
 make destroy STACK=stream AWS_PROFILE=my-profile
+# or
+make destroy STACK=s3 AWS_PROFILE=my-profile
 ```
 
 ## Generating documentation
@@ -151,7 +156,9 @@ The `STACK` environment variable selects which stack to synthesise.
 Stack | Class | Deploy command
 --- | --- | ---
 API | `ApiGatewayDynamodbStack` | `make deploy STACK=api`
+EventBridge | `EventBridgeApiCallerStack` | `make deploy STACK=eventbridge`
 Stream | `DynamodbStreamStack` | `make deploy STACK=stream`
+S3 | `S3SqsStack` | `make deploy STACK=s3`
 
 ## Project Structure
 
@@ -170,6 +177,7 @@ Stream | `DynamodbStreamStack` | `make deploy STACK=stream`
 │   │   └── question.md             # Question template
 │   └── workflows                   # GitHub Actions workflows
 │       ├── check.yml               # Workflow to validate code on push
+│       ├── deploy.yml              # Workflow to deploy infra and code
 │       └── docs.yml                # Workflow to publish documentation
 ├── .gitignore                      # Git-ignored file list
 ├── .pre-commit-config.yaml         # Pre-commit configuration file
@@ -185,33 +193,36 @@ Stream | `DynamodbStreamStack` | `make deploy STACK=stream`
 ├── docs                            # Documentation folder
 │   ├── README.md                   # Read-me file & documentation home page
 │   ├── CONTRIBUTING.md             # Contributing guidelines
+│   ├── template                    # Templates summary page
+│   │   ├── api.md                  # API documentation page
+│   │   ├── eventbridge.md          # EventBridge documentation page
+│   │   ├── stream.md               # Stream documentation page
+│   │   └── s3.md                   # S3 documentation page
 │   └── reference                   # Reference section
-│       ├── app.md                  # App reference page
 │       ├── repository.md           # Repository reference page
 │       ├── api.md                  # API scenario reference page
-│       └── stream.md               # Stream scenario reference page
+│       ├── eventbridge.md          # EventBridge scenario reference page
+│       ├── stream.md               # Stream scenario reference page
+│       └── s3.md                   # S3 scenario reference page
 ├── templates                       # Main package
-│   ├── app.py                      # CLI entry point
+│   ├── queue.py                    # SQS queue interaction
 │   ├── repository.py               # DynamoDB repository
-│   ├── api                         # API Gateway + DynamoDB scenario
-│   │   ├── handler.py              # Lambda handler
-│   │   ├── models.py               # Pydantic data models
-│   │   └── settings.py             # Environment variable settings
-│   └── stream                      # DynamoDB Streams scenario
-│       ├── handler.py              # Lambda handler
-│       ├── models.py               # Pydantic data models
-│       └── settings.py             # Environment variable settings
+│   ├── api                         # API request handler
+│   ├── eventbridge                 # EventBridge event handler
+│   ├── stream                      # DynamoDB stream batch processor
+│   └── s3                          # S3 event handler
 ├── infra                           # AWS CDK infrastructure
 │   ├── app.py                      # CDK entry point
 │   └── stacks                      # CDK stack definitions
-│       ├── api.py                  # ApiGatewayDynamodbStack
-│       └── stream.py               # DynamodbStreamStack
+│       ├── api.py                  # ApiGateway stack
+│       ├── evetbridge.py           # EventBridge stack
+│       ├── stream.py               # DynamoDB Stream stack
+│       └── s3.py                   # S3 stack
 └── tests                           # Test folder
     ├── conftest.py                 # Pytest configuration, fixtures, and hooks
-    ├── test_app.py                 # App tests
     ├── test_repository.py          # Repository tests
     ├── api                         # API scenario tests
-    │   └── test_handler.py         # API handler tests
-    └── stream                      # Stream scenario tests
-        └── test_handler.py         # Stream handler tests
+    ├── eventbridge                 # EventBridge scenario tests
+    ├── stream                      # DynamoDB Stream scenario tests
+    └── s3                          # S3 scenario tests
 ```
