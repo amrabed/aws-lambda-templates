@@ -30,11 +30,13 @@ nav:
   - Templates:
     - Templates: template/index.md
     - Rest API: template/api.md
+    - Bedrock Agent: template/bedrock_agent.md
     - DynamoDB Stream: template/stream.md
     - S3 to SQS: template/s3.md
     - SQS to DynamoDB: template/sqs.md
   - Reference:
     - API: reference/api.md
+    - Bedrock Agent: reference/bedrock_agent.md
     - Stream: reference/stream.md
     - S3: reference/s3.md
     - SQS: reference/sqs.md

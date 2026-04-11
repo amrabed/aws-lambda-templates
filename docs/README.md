@@ -156,6 +156,7 @@ The `STACK` environment variable selects which stack to synthesise.
 Stack | Class | Deploy command
 --- | --- | ---
 API | `ApiGatewayDynamodbStack` | `make deploy STACK=api`
+Bedrock Agent | `BedrockAgentStack` | `make deploy STACK=bedrock-agent`
 EventBridge | `EventBridgeApiCallerStack` | `make deploy STACK=eventbridge`
 Stream | `DynamodbStreamStack` | `make deploy STACK=stream`
 S3 | `S3SqsStack` | `make deploy STACK=s3`
@@ -214,11 +215,13 @@ SQS | `SqsLambdaDynamodbStack` | `make deploy STACK=sqs`
 │   ├── eventbridge                 # EventBridge event handler
     ├── s3                          # S3 event handler
 │   ├── stream                      # DynamoDB stream batch processor
+    ├── bedrock_agent               # Bedrock agent function handler
     └── sqs                         # SQS message handler
 ├── infra                           # AWS CDK infrastructure
 │   ├── app.py                      # CDK entry point
 │   └── stacks                      # CDK stack definitions
 │       ├── api.py                  # ApiGateway stack
+│       ├── bedrock_agent.py        # Bedrock agent stack
 │       ├── evetbridge.py           # EventBridge stack
         ├── s3.py                   # S3 stack
 │       ├── stream.py               # DynamoDB Stream stack
@@ -227,6 +230,7 @@ SQS | `SqsLambdaDynamodbStack` | `make deploy STACK=sqs`
     ├── conftest.py                 # Pytest configuration, fixtures, and hooks
     ├── test_repository.py          # Repository tests
     ├── api                         # API scenario tests
+    ├── bedrock_agent               # Bedrock agent scenario tests
     ├── eventbridge                 # EventBridge scenario tests
     ├── s3                          # S3 scenario tests
     ├── stream                      # DynamoDB Stream scenario tests
