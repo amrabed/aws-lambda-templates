@@ -5,6 +5,8 @@ Partial batch failure reporting is enabled so that individual record failures do
 - **Trigger**: SQS Queue
 - **Destination**: DynamoDB Table
 
+![](diagrams/sqs.png)
+
 ### Code
 - **Function code**: [`templates/sqs`](/templates/sqs)
 - **Unit tests**: [`tests/sqs`](/tests/sqs)
