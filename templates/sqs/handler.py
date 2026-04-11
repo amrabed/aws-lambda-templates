@@ -1,6 +1,4 @@
 import json
-import sys
-from unittest.mock import MagicMock
 
 from aws_lambda_powertools import Logger, Metrics, Tracer
 from aws_lambda_powertools.utilities.batch import BatchProcessor, EventType, process_partial_response
@@ -11,21 +9,15 @@ from templates.repository import Repository
 from templates.sqs.models import ProcessedItem, SqsMessage
 from templates.sqs.settings import Settings
 
-
-def get_settings() -> Settings:
-    return Settings()  # type: ignore
+settings = Settings()  # type: ignore
 
 
-logger = Logger()
-tracer = Tracer()
-metrics = Metrics()
+logger = Logger(service=settings.service_name)
+tracer = Tracer(service=settings.service_name)
+metrics = Metrics(service=settings.service_name, namespace=settings.metrics_namespace)
 
-
-def initialize_powertools(settings: Settings) -> None:
-    logger.service = settings.service_name
-    tracer.service = settings.service_name
-    metrics.service = settings.service_name
-    metrics.namespace = settings.metrics_namespace
+repository = Repository(settings.table_name)
+processor = BatchProcessor(event_type=EventType.SQS)
 
 
 class Handler:
@@ -63,10 +55,13 @@ class Handler:
             raise
 
 
+handler = Handler(repository)
+
+
 @logger.inject_lambda_context
 @tracer.capture_lambda_handler
 @metrics.log_metrics
-def main(event: dict, context: LambdaContext) -> dict:
+def main(event: dict, context: LambdaContext):
     """Lambda entry point for the SQS-to-DynamoDB handler.
 
     Args:
@@ -76,20 +71,10 @@ def main(event: dict, context: LambdaContext) -> dict:
     Returns:
         A partial batch response indicating which records failed processing.
     """
-    settings = get_settings()
-    initialize_powertools(settings)
-    repository = Repository(settings.table_name)
-    processor = BatchProcessor(event_type=EventType.SQS)
 
     return process_partial_response(
         event=event,
-        record_handler=Handler(repository).handle_record,
+        record_handler=handler.handle_record,
         processor=processor,
         context=context,
     )
-
-
-if __name__ == "__main__":
-    from aws_lambda_powertools.logging import utils
-
-    utils.copy_config_to_registered_loggers(source_logger=logger)

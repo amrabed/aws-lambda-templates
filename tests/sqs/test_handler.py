@@ -4,11 +4,10 @@ from unittest.mock import MagicMock
 from aws_lambda_powertools.utilities.typing import LambdaContext
 from pytest import main
 
-from templates.sqs.handler import Handler
-from templates.sqs.handler import main as lambda_handler
 
+def test_handler_handle_record(repository):
+    from templates.sqs.handler import Handler
 
-def test_handler_handle_record(repository, table_name):
     handler = Handler(repository)
     record = MagicMock()
     record.body = dumps({"id": "123", "content": "test content"})
@@ -23,6 +22,8 @@ def test_handler_handle_record(repository, table_name):
 
 
 def test_lambda_handler(mocker, monkeypatch, repository, table_name):
+    from templates.sqs.handler import main
+
     monkeypatch.setenv("TABLE_NAME", table_name)
     mocker.patch("templates.sqs.handler.Repository", return_value=repository)
 
@@ -43,7 +44,7 @@ def test_lambda_handler(mocker, monkeypatch, repository, table_name):
 
     context = MagicMock(spec=LambdaContext)
 
-    response = lambda_handler(event, context)
+    response = main(event, context)
 
     assert response["batchItemFailures"] == []
 
