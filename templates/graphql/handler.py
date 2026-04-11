@@ -8,7 +8,7 @@ from templates.graphql.models import Item
 from templates.graphql.settings import Settings
 from templates.repository import Repository
 
-settings = Settings()
+settings = Settings()  # type: ignore
 
 logger = Logger(service=settings.service_name)
 tracer = Tracer(service=settings.service_name)
@@ -16,10 +16,6 @@ metrics = Metrics(namespace=settings.metrics_namespace)
 
 repository = Repository(settings.table_name)
 app = AppSyncResolver()
-
-
-def get_repository() -> Repository:
-    return repository
 
 
 @app.resolver(type_name="Query", field_name="getItem")
@@ -34,10 +30,9 @@ def get_item(id: str) -> dict | None:
         The item if found, or None.
     """
     try:
-        return get_repository().get_item(id)
-    except Exception as exc:
-        logger.error("DynamoDB get_item failed", exc_info=exc)
-        raise
+        return repository.get_item(id)
+    except Exception as error:
+        raise RuntimeError(f"Failed to get item with ID '{id}'. Cause: {error}") from error
 
 
 @app.resolver(type_name="Query", field_name="listItems")
@@ -49,10 +44,9 @@ def list_items() -> list[dict]:
         A list of items.
     """
     try:
-        return get_repository().list_items()
-    except Exception as exc:
-        logger.error("DynamoDB list_items failed", exc_info=exc)
-        raise
+        return repository.list_items()
+    except Exception as error:
+        raise RuntimeError(f"Failed to list items. Cause: {error}") from error
 
 
 @app.resolver(type_name="Mutation", field_name="createItem")
@@ -67,12 +61,11 @@ def create_item(name: str) -> dict:
         The created item.
     """
     try:
-        item = Item(name=name)
-        get_repository().put_item(item.model_dump())
-        return item.dump()
-    except (ValidationError, Exception) as exc:
-        logger.error("Failed to create item", exc_info=exc)
-        raise
+        item = Item(name=name).dump()
+        repository.put_item(item)
+        return item
+    except (ValidationError, Exception) as error:
+        raise RuntimeError(f"Failed to create item with name '{name}'. Cause: {error}") from error
 
 
 @logger.inject_lambda_context(correlation_id_path=correlation_paths.APPSYNC_RESOLVER)

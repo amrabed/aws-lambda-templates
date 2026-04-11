@@ -2,7 +2,12 @@ from json import dumps
 from unittest.mock import MagicMock
 
 from aws_lambda_powertools.utilities.typing import LambdaContext
-from pytest import main
+from pytest import fixture, main
+
+
+@fixture(autouse=True)
+def env(monkeypatch, table_name):
+    monkeypatch.setenv("TABLE_NAME", table_name)
 
 
 def test_handler_handle_record(repository):
