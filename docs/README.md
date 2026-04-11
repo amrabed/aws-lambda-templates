@@ -5,7 +5,7 @@
 
 Production-ready plug-and-play AWS Lambda Python templates for different real-life scenarios.
 
-The templates apply best practices by using [AWS Lambda Powertools](https://docs.aws.amazon.com/powertools/python) to  for:
+The templates apply best practices by using [AWS Lambda Powertools](https://docs.aws.amazon.com/powertools/python) for:
 
 - CloudWatch Logs and Metrics
 - X-ray Tracing
@@ -25,23 +25,19 @@ The templates apply best practices by using [AWS Lambda Powertools](https://docs
 
 ## Features
 
-All templates come pre-wired with:
+Templates come pre-wired with:
 
-- Clean AWS Lambda code following best practices using [AWS Lambda Powertools](https://docs.aws.amazon.com/powertools/python)
-- Infrastructure as code using [AWS CDK](https://aws.amazon.com/cdk/)
-- Testing using [pytest](https://pytest.org) and [Hypothesis](https://hypothesis.readthedocs.io) for property-based testing
-- Workflow automation using [GitHub Actions](https://github.com/features/actions)
-- Automatic documentation from code using [MkDocs](https://www.mkdocs.org) and [mkdocstrings](https://mkdocstrings.github.io)
-- Packaging and dependency management using [Poetry](https://python-poetry.org)
-- Code coverage using [coverage](https://coverage.readthedocs.io)
-- Formatting, import sorting, and linting using [ruff](https://docs.astral.sh/ruff)
-- Type checking using [pyright](https://microsoft.github.io/pyright)
-- Pre-commit validations using [pre-commit](https://pre-commit.com)
-- Automated dependency updates using [Dependabot](https://docs.github.com/en/code-security/dependabot)
-- Dockerized development environment using [Dev Containers](https://code.visualstudio.com/docs/devcontainers/containers)
-- Documentation auto-deployment to [GitHub Pages](https://pages.github.com)
-- App container using [Docker](https://docker.com)
-
+- **Clean Architecture**: Separation of concerns using the Repository pattern for data access
+- **AWS Lambda Best Practices**: Integrated [AWS Lambda Powertools](https://docs.aws.amazon.com/powertools/python)
+- **Data Modeling**: Strong typing and validation using [Pydantic](https://docs.pydantic.dev)
+- **Infrastructure as Code**: [AWS CDK](https://aws.amazon.com/cdk) stacks
+- **Testing**: Comprehensive [pytest](https://pytest.org) suite with [moto](http://docs.getmoto.org) for AWS mocking and [hypothesis](https://hypothesis.readthedocs.io) for property-based testing
+- **Code Quality**: [ruff](https://docs.astral.sh/ruff) for linting and formatting, [pyright](https://microsoft.github.io/pyright) for type checking, and test coverage using [coverage](https://coverage.readthedocs.io)
+- **Dependency Control**: [Poetry](https://python-poetry.org) for dependency management and [Dependabot](https://docs.github.com/en/code-security/dependabot) for automated dependency updates 
+- **Documentation**: Automatic documentation using [MkDocs](https://www.mkdocs.org) and [mkdocstrings](https://mkdocstrings.github.io)
+- **Development environment**: [Dev Containers](https://code.visualstudio.com/docs/devcontainers/containers) for dockerized development environment
+- **Pre-commit Validations**: [pre-commit](https://pre-commit.com) hooks
+- **Workflow Automation**: [GitHub Actions](https://github.com/features/actions) for CI/CD and documentation auto-deployment to [GitHub Pages](https://pages.github.com)
 
 ### GitHub files
 The repository also comes preloaded with these GitHub files:
@@ -152,7 +148,7 @@ make destroy STACK=stream AWS_PROFILE=my-profile
 make destroy STACK=s3 AWS_PROFILE=my-profile
 ```
 
-## Generating documentation
+### Generating documentation
 
 To build and publish the project documentation to GitHub Pages, run:
 ```bash
@@ -166,6 +162,14 @@ To serve the documentation on a local server, run:
 ```bash
 make local
 ```
+
+## Coding Conventions
+
+- **camelCase for JSON**: All models use `alias_generator=to_camel` so that JSON payloads use camelCase while Python attributes use snake_case.
+- **Environment Variables**: Managed via `BaseSettings` in `settings.py` files.
+- **Documentation**: Every field in a Pydantic model must include a `Field(description="...")`.
+- **Repository Pattern**: All database calls are encapsulated in a `Repository` class for better testability.
+
 
 ## Project Structure
 
