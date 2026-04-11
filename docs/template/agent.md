@@ -10,6 +10,8 @@ This template demonstrates how to handle Amazon Bedrock Agent events using funct
 4.  The Lambda function processes the request using `BedrockAgentFunctionResolver`.
 5.  Results are stored in and retrieved from a **DynamoDB table**.
 
+![](diagrams/agent.png)
+
 ## Features
 
 - **Function-based Actions**: Uses the `@app.tool()` decorator to expose functions to Bedrock Agents.
@@ -36,3 +38,26 @@ Deploy the stack using:
 ```bash
 make deploy STACK=agent
 ```
+
+## Code
+
+- **Function code**: [`templates/api`](/templates/api)
+- **Unit tests**: [`tests/api`](/tests/api)
+- **Infra stack**: [`infra/stacks/api.py`](/infra/stacks/api.py)
+
+### Item model
+
+Field | Type | Description
+--- | --- | ---
+`id` | UUID string | Unique item identifier (auto-generated)
+`name` | string | Human-readable item name
+`description` | string | Human-readable item description
+
+
+### Environment variables
+
+Variable | Description
+--- | ---
+`TABLE_NAME` | DynamoDB table name
+`SERVICE_NAME` | Powertools service name
+`METRICS_NAMESPACE` | Powertools metrics namespace
