@@ -10,6 +10,8 @@ The template sets up:
 2.  **AWS Lambda function**: Processes GraphQL resolvers for `getItem`, `listItems`, and `createItem`.
 3.  **Amazon DynamoDB table**: Stores the items.
 
+![](diagrams/graphql.png)
+
 ## Implementation
 
 The Lambda function uses [AWS Lambda Powertools AppSyncResolver](https://docs.aws.amazon.com/powertools/python/latest/core/event_handler/appsync/) to route GraphQL requests to Python functions.
