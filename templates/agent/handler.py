@@ -3,8 +3,8 @@ from aws_lambda_powertools.event_handler import BedrockAgentFunctionResolver
 from aws_lambda_powertools.utilities.data_classes import BedrockAgentEvent
 from aws_lambda_powertools.utilities.typing import LambdaContext
 
-from templates.bedrock_agent.models import Item
-from templates.bedrock_agent.settings import Settings
+from templates.agent.models import Item
+from templates.agent.settings import Settings
 from templates.repository import Repository
 
 settings = Settings()  # type: ignore

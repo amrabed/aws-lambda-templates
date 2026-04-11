@@ -39,7 +39,7 @@ def bedrock_event():
 
 
 def test_handler_get_item(repository):
-    from templates.bedrock_agent.handler import get_item_logic
+    from templates.agent.handler import get_item_logic
 
     repository.put_item({"id": "1", "name": "test item", "description": "test description"})
 
@@ -51,7 +51,7 @@ def test_handler_get_item(repository):
 
 
 def test_handler_get_item_not_found(repository):
-    from templates.bedrock_agent.handler import get_item_logic
+    from templates.agent.handler import get_item_logic
 
     result = get_item_logic("2")
 
@@ -60,7 +60,7 @@ def test_handler_get_item_not_found(repository):
 
 
 def test_handler_create_item(repository):
-    from templates.bedrock_agent.handler import create_item_logic
+    from templates.agent.handler import create_item_logic
 
     result = create_item_logic("2", "new item", "new description")
 
@@ -74,7 +74,7 @@ def test_handler_create_item(repository):
 
 
 def test_lambda_handler_get_item(mocker, repository, lambda_context, bedrock_event):
-    from templates.bedrock_agent.handler import main
+    from templates.agent.handler import main
 
     mocker.patch("templates.bedrock_agent.handler.repository", repository)
     repository.put_item({"id": "1", "name": "test item"})
@@ -89,7 +89,7 @@ def test_lambda_handler_get_item(mocker, repository, lambda_context, bedrock_eve
 
 
 def test_lambda_handler_create_item(mocker, repository, lambda_context, bedrock_event):
-    from templates.bedrock_agent.handler import main
+    from templates.agent.handler import main
 
     mocker.patch("templates.bedrock_agent.handler.repository", repository)
 
