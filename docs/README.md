@@ -3,7 +3,7 @@
 [![Code style: ruff](https://img.shields.io/badge/code%20style-ruff-D7FF64.svg?logo=ruff&style=flat-square)](https://docs.astral.sh/ruff)
 [![License](https://img.shields.io/badge/license-MIT-blue.svg?style=flat-square)](LICENSE.md)
 
-Production-ready plug-and-play AWS Lambda Python templates for different real-life scenarios.
+Production-ready plug-and-play **AWS Lambda templates in Python** for different real-life scenarios.
 
 The templates apply best practices by using [AWS Lambda Powertools](https://docs.aws.amazon.com/powertools/python) for:
 
@@ -27,8 +27,8 @@ The templates apply best practices by using [AWS Lambda Powertools](https://docs
 
 Templates come pre-wired with:
 
-- **Clean Architecture**: Separation of concerns using the Repository pattern for data access
 - **AWS Lambda Best Practices**: Integrated [AWS Lambda Powertools](https://docs.aws.amazon.com/powertools/python)
+- **Clean Architecture**: Separation of concerns using the Repository pattern for data access
 - **Data Modeling**: Strong typing and validation using [Pydantic](https://docs.pydantic.dev)
 - **Infrastructure as Code**: [AWS CDK](https://aws.amazon.com/cdk) stacks
 - **Testing**: Comprehensive [pytest](https://pytest.org) suite with [moto](http://docs.getmoto.org) for AWS mocking and [hypothesis](https://hypothesis.readthedocs.io) for property-based testing
@@ -127,25 +127,17 @@ The CDK entry point is [`infra/app.py`](/infra/app.py).
 The `STACK` environment variable selects which stack to synthesise.
 
 ```bash
-make deploy STACK=api
-# or
-make deploy STACK=stream
-# or
-make deploy STACK=s3
+make deploy STACK=<stack-key>
 ```
 
 Pass `AWS_PROFILE` to use a named AWS CLI profile:
 ```bash
-make deploy STACK=api AWS_PROFILE=my-profile
+make deploy STACK=<stack-key> AWS_PROFILE=<my-profile>
 ```
 
 ### Destroy a stack
 ```bash
-make destroy STACK=api
-# or
-make destroy STACK=stream AWS_PROFILE=my-profile
-# or
-make destroy STACK=s3 AWS_PROFILE=my-profile
+make destroy STACK=<stack-key>
 ```
 
 ### Generating documentation
@@ -204,6 +196,7 @@ make local
 │   │   ├── agent.md                # Bedrock agent documentation page
 │   │   ├── api.md                  # API documentation page
 │   │   ├── eventbridge.md          # EventBridge documentation page
+│   │   ├── graphql.md              # AppSync GRAPHQL documentation page
 │   │   ├── s3.md                   # S3 documentation page
 │   │   ├── stream.md               # Stream documentation page
 │   │   └── sqs.md                  # S3 documentation page
@@ -212,6 +205,7 @@ make local
 │       ├── agent.md                # Bedrock agent reference page
 │       ├── api.md                  # API scenario reference page
 │       ├── eventbridge.md          # EventBridge scenario reference page
+│       ├── graphql.md              # AppSync GraphQL scenario reference page
 │       ├── s3.md                   # S3 scenario reference page
 │       ├── stream.md               # Stream scenario reference page
 │       └── sqs.md                  # SQS scenario reference page
@@ -231,7 +225,7 @@ make local
 │       ├── agent.py                # Bedrock agent stack
 │       ├── api.py                  # ApiGateway stack
 │       ├── evetbridge.py           # EventBridge stack
-│       ├── graphql.py              # AppSync stack
+│       ├── graphql.py              # AppSync GraphQL stack
 │       ├── s3.py                   # S3 stack
 │       ├── stream.py               # DynamoDB Stream stack
 │       └── sqs.py                  # SQS stack
