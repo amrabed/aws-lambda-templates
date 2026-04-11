@@ -159,6 +159,7 @@ API | `ApiGatewayDynamodbStack` | `make deploy STACK=api`
 EventBridge | `EventBridgeApiCallerStack` | `make deploy STACK=eventbridge`
 Stream | `DynamodbStreamStack` | `make deploy STACK=stream`
 S3 | `S3SqsStack` | `make deploy STACK=s3`
+SQS | `SqsLambdaDynamodbStack` | `make deploy STACK=sqs`
 
 ## Project Structure
 
@@ -196,33 +197,38 @@ S3 | `S3SqsStack` | `make deploy STACK=s3`
 │   ├── template                    # Templates summary page
 │   │   ├── api.md                  # API documentation page
 │   │   ├── eventbridge.md          # EventBridge documentation page
+│   │   ├── s3.md                   # S3 documentation page
 │   │   ├── stream.md               # Stream documentation page
-│   │   └── s3.md                   # S3 documentation page
+│   │   └── sqs.md                  # S3 documentation page
 │   └── reference                   # Reference section
 │       ├── repository.md           # Repository reference page
 │       ├── api.md                  # API scenario reference page
 │       ├── eventbridge.md          # EventBridge scenario reference page
+│       ├── s3.md                   # S3 scenario reference page
 │       ├── stream.md               # Stream scenario reference page
-│       └── s3.md                   # S3 scenario reference page
+│       └── sqs.md                  # SQS scenario reference page
 ├── templates                       # Main package
 │   ├── queue.py                    # SQS queue interaction
 │   ├── repository.py               # DynamoDB repository
 │   ├── api                         # API request handler
 │   ├── eventbridge                 # EventBridge event handler
+    ├── s3                          # S3 event handler
 │   ├── stream                      # DynamoDB stream batch processor
-│   └── s3                          # S3 event handler
+    └── sqs                         # SQS message handler
 ├── infra                           # AWS CDK infrastructure
 │   ├── app.py                      # CDK entry point
 │   └── stacks                      # CDK stack definitions
 │       ├── api.py                  # ApiGateway stack
 │       ├── evetbridge.py           # EventBridge stack
+        ├── s3.py                   # S3 stack
 │       ├── stream.py               # DynamoDB Stream stack
-│       └── s3.py                   # S3 stack
+        └── sqs.py                  # SQS stack
 └── tests                           # Test folder
     ├── conftest.py                 # Pytest configuration, fixtures, and hooks
     ├── test_repository.py          # Repository tests
     ├── api                         # API scenario tests
     ├── eventbridge                 # EventBridge scenario tests
+    ├── s3                          # S3 scenario tests
     ├── stream                      # DynamoDB Stream scenario tests
-    └── s3                          # S3 scenario tests
+    └── sqs                         # SQS scenario tests
 ```

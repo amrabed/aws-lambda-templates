@@ -1,5 +1,0 @@
-services:
-  app:
-    container_name: app
-    image: app
-    build: .

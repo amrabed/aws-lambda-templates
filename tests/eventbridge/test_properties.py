@@ -1,12 +1,23 @@
 """Property-based tests for the EventBridge API caller."""
 
 import sys
+from unittest.mock import MagicMock, patch
 
 from hypothesis import HealthCheck, given
 from hypothesis import settings as h_settings
 from hypothesis import strategies as st
 from pytest import fixture, main, raises
 from requests import HTTPError
+
+# Patch SecretsProvider globally so that handler.py can be imported without
+# real AWS credentials. Individual tests override the instance via patch.object.
+patch("aws_lambda_powertools.utilities.parameters.SecretsProvider", MagicMock()).start()
+
+# Clear any previously cached (broken) handler modules so they re-import cleanly.
+# This runs at conftest import time, before any test collection or execution.
+for _mod in list(sys.modules):
+    if _mod.startswith("templates.eventbridge") or _mod == "templates.repository":
+        sys.modules.pop(_mod, None)
 
 
 @fixture(autouse=True)
