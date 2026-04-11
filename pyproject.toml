@@ -26,7 +26,7 @@ license = "MIT"
 readme = "docs/README.md"
 
 [tool.poetry.dependencies]
-python = "^3.14"
+python = "^3.12"
 pydantic = "^2.12.5"
 pydantic-settings = "^2.13.1"
 aws-lambda-powertools = "^3.27.0"

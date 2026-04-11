@@ -159,6 +159,7 @@ API | `ApiGatewayDynamodbStack` | `make deploy STACK=api`
 EventBridge | `EventBridgeApiCallerStack` | `make deploy STACK=eventbridge`
 Stream | `DynamodbStreamStack` | `make deploy STACK=stream`
 S3 | `S3SqsStack` | `make deploy STACK=s3`
+SQS | `SqsLambdaDynamodbStack` | `make deploy STACK=sqs`
 
 ## Project Structure
 
@@ -210,19 +211,22 @@ S3 | `S3SqsStack` | `make deploy STACK=s3`
 │   ├── api                         # API request handler
 │   ├── eventbridge                 # EventBridge event handler
 │   ├── stream                      # DynamoDB stream batch processor
-│   └── s3                          # S3 event handler
+    ├── s3                          # S3 event handler
+    └── sqs                         # SQS message handler
 ├── infra                           # AWS CDK infrastructure
 │   ├── app.py                      # CDK entry point
 │   └── stacks                      # CDK stack definitions
 │       ├── api.py                  # ApiGateway stack
 │       ├── evetbridge.py           # EventBridge stack
 │       ├── stream.py               # DynamoDB Stream stack
-│       └── s3.py                   # S3 stack
+        ├── s3.py                   # S3 stack
+        └── sqs.py                  # SQS stack
 └── tests                           # Test folder
     ├── conftest.py                 # Pytest configuration, fixtures, and hooks
     ├── test_repository.py          # Repository tests
     ├── api                         # API scenario tests
     ├── eventbridge                 # EventBridge scenario tests
     ├── stream                      # DynamoDB Stream scenario tests
-    └── s3                          # S3 scenario tests
+    ├── s3                          # S3 scenario tests
+    └── sqs                         # SQS scenario tests
 ```

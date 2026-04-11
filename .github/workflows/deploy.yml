@@ -19,9 +19,10 @@ on:
         options:
           - all
           - api
-          - eventbridge
+          - eventbridge-api-caller
           - s3
           - stream
+          - sqs
 
 permissions:
   id-token: write
@@ -38,7 +39,7 @@ jobs:
     strategy:
       max-parallel: 1
       matrix:
-        stack: [api, stream]
+        stack: [api, stream, s3, eventbridge-api-caller, sqs]
     steps:
       - uses: actions/checkout@v6
       - name: Setup Python
