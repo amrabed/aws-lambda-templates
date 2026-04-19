@@ -12,6 +12,12 @@ This template demonstrates how to handle Amazon Bedrock Agent events using funct
 
 ![](diagrams/agent.png)
 
+## Code
+
+- **Function code**: [`templates/agent`](/templates/agent)
+- **Unit tests**: [`tests/agent`](/tests/agent)
+- **Infra stack**: [`infra/stacks/agent.py`](/infra/stacks/agent.py)
+
 ## Features
 
 - **Function-based Actions**: Uses the `@app.tool()` decorator to expose functions to Bedrock Agents.
@@ -39,11 +45,6 @@ Deploy the stack using:
 make deploy STACK=agent
 ```
 
-## Code
-
-- **Function code**: [`templates/api`](/templates/api)
-- **Unit tests**: [`tests/api`](/tests/api)
-- **Infra stack**: [`infra/stacks/api.py`](/infra/stacks/api.py)
 
 ### Item model
 
