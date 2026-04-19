@@ -12,9 +12,23 @@ The template sets up:
 
 ![](diagrams/graphql.png)
 
+## Code
+
+- **Function code**: [`templates/graphql`](/templates/graphql)
+- **Unit tests**: [`tests/graphql`](/tests/graphql)
+- **Infra stack**: [`infra/stacks/graphql.py`](/infra/stacks/graphql.py)
+
+## Deployment
+
+Deploy the stack using:
+
+```bash
+make deploy STACK=graphql
+```
+
 ## Implementation
 
-The Lambda function uses [AWS Lambda Powertools AppSyncResolver](https://docs.aws.amazon.com/powertools/python/latest/core/event_handler/appsync/) to route GraphQL requests to Python functions.
+The Lambda function uses [AppSyncResolver](https://docs.aws.amazon.com/powertools/python/latest/core/event_handler/appsync/) to route GraphQL requests to Python functions.
 
 ### Schema
 
@@ -59,12 +73,4 @@ def create_item(name: str) -> dict:
     item = Item(name=name)
     repository.put_item(item.model_dump())
     return item.dump()
-```
-
-## Deployment
-
-To deploy this template, run:
-
-```bash
-make deploy STACK=graphql
 ```

@@ -4,13 +4,27 @@ This template demonstrates how to handle Amazon Bedrock Agent events using funct
 
 ## Architecture
 
-1.  **Amazon Bedrock Agent** receives user input.
-2.  The Agent determines that a function call is needed based on the user's intent.
-3.  The Agent invokes the **AWS Lambda function** with function details and parameters.
-4.  The Lambda function processes the request using `BedrockAgentFunctionResolver`.
-5.  Results are stored in and retrieved from a **DynamoDB table**.
+The template sets up:
+
+1.  **Amazon Bedrock Agent**: Orchestrates user requests and identifies tool usage.
+2.  **AWS Lambda function**: Resolves function calls using `BedrockAgentFunctionResolver`.
+3.  **Amazon DynamoDB table**: Stores and retrieves items used by the agent.
 
 ![](diagrams/agent.png)
+
+## Code
+
+- **Function code**: [`templates/agent`](/templates/agent)
+- **Unit tests**: [`tests/agent`](/tests/agent)
+- **Infra stack**: [`infra/stacks/agent.py`](/infra/stacks/agent.py)
+
+## Deployment
+
+Deploy the stack using:
+
+```bash
+make deploy STACK=agent
+```
 
 ## Features
 
@@ -31,19 +45,6 @@ def get_item(item_id: str) -> dict:
     return handler.get_item(item_id)
 ```
 
-### Infrastructure
-
-Deploy the stack using:
-
-```bash
-make deploy STACK=agent
-```
-
-## Code
-
-- **Function code**: [`templates/api`](/templates/api)
-- **Unit tests**: [`tests/api`](/tests/api)
-- **Infra stack**: [`infra/stacks/api.py`](/infra/stacks/api.py)
 
 ### Item model
 
