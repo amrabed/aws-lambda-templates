@@ -1,8 +1,13 @@
 # REST API
 A Lambda function that handles GET/POST requests from a REST API and loads/stores records into a DynamoDB table.
 
-- **Trigger**: API Gateway - REST API
-- **Destination**: DynamoDB Table
+## Architecture
+
+The template sets up:
+
+1.  **API Gateway - REST API**: Recieves requests from the user.
+2.  **AWS Lambda function**: Handles user requests.
+3.  **Amazon DynamoDB table**: Stores and retrieves items as per the user request.
 
 ![](diagrams/api.png)
 

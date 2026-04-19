@@ -2,8 +2,13 @@
 A Lambda function that handles SQS messages by batch processing them and storing the processed results into a DynamoDB table.
 Partial batch failure reporting is enabled so that individual record failures do not cause the entire batch to be retried.
 
-- **Trigger**: SQS Queue
-- **Destination**: DynamoDB Table
+## Architecture
+
+The template sets up:
+
+1.  **Amazon SQS queue**: Holds the incoming messages to be processed.
+2.  **AWS Lambda function**: Processes messages in batches with partial failure reporting.
+3.  **Amazon DynamoDB table**: Stores the processed items.
 
 ![](diagrams/sqs.png)
 
