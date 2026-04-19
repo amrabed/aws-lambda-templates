@@ -9,6 +9,11 @@ EMAIL ?= amrabed
 GITHUB ?= amrabed
 SOURCE ?= $(shell echo ${NAME} | tr '-' '_' | tr '[:upper:]' '[:lower:]')
 
+.PHONY: template
+template: # Create a new template (usage: make template NAME=<name>)
+	@[ -n "$(NAME)" ] || { echo "Usage: make template NAME=<name>"; exit 1; }
+	python scripts/new_template.py $(NAME)
+
 .PHONY: project
 project: # Rename project (run once)
 	@if [ -d project ]; then mv project ${SOURCE}; fi
