@@ -6,11 +6,19 @@ A Lambda function that handles GET/POST requests from a REST API and loads/store
 
 ![](diagrams/api.png)
 
-### Code
+## Code
 
 - **Function code**: [`templates/api`](/templates/api)
 - **Unit tests**: [`tests/api`](/tests/api)
 - **Infra stack**: [`infra/stacks/api.py`](/infra/stacks/api.py)
+
+## Deployment
+
+Deploy the stack using:
+
+```bash
+make deploy STACK=api
+```
 
 ### Endpoints
 

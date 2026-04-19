@@ -18,6 +18,14 @@ This template demonstrates how to handle Amazon Bedrock Agent events using funct
 - **Unit tests**: [`tests/agent`](/tests/agent)
 - **Infra stack**: [`infra/stacks/agent.py`](/infra/stacks/agent.py)
 
+## Deployment
+
+Deploy the stack using:
+
+```bash
+make deploy STACK=agent
+```
+
 ## Features
 
 - **Function-based Actions**: Uses the `@app.tool()` decorator to expose functions to Bedrock Agents.
@@ -35,14 +43,6 @@ Use the `@app.tool()` decorator to define tools that the agent can call:
 @app.tool(name="getItem", description="Gets item details by ID")
 def get_item(item_id: str) -> dict:
     return handler.get_item(item_id)
-```
-
-### Infrastructure
-
-Deploy the stack using:
-
-```bash
-make deploy STACK=agent
 ```
 
 

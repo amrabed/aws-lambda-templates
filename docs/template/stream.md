@@ -8,10 +8,20 @@ Partial batch failure reporting is enabled so that individual record failures do
 ![](diagrams/stream.png)
 
 
-### Code
+## Code
+
 - **Function code**: [`templates/stream`](/templates/stream)
 - **Unit tests**: [`tests/stream`](/tests/stream)
 - **Infra stack**: [`infra/stacks/stream.py`](/infra/stacks/stream.py)
+
+## Deployment
+
+Deploy the stack using:
+
+```bash
+make deploy STACK=stream
+```
+
 
 ### Data models
 

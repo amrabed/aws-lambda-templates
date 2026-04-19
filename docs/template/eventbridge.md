@@ -7,10 +7,18 @@ A Lambda function triggered by an Amazon EventBridge rule that loads an authenti
 ![](diagrams/eventbridge.png)
 
 
-### Code
+## Code
 - **Function code**: [`templates/eventbridge`](/templates/eventbridge)
 - **Unit tests**: [`tests/eventbridge`](/tests/eventbridge)
 - **Infra stack**: [`infra/stacks/eventbridge.py`](/infra/stacks/eventbridge.py)
+
+## Deployment
+
+Deploy the stack using:
+
+```bash
+make deploy STACK=eventbridge
+```
 
 ### Data models
 

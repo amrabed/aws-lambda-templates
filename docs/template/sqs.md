@@ -7,10 +7,19 @@ Partial batch failure reporting is enabled so that individual record failures do
 
 ![](diagrams/sqs.png)
 
-### Code
+## Code
+
 - **Function code**: [`templates/sqs`](/templates/sqs)
 - **Unit tests**: [`tests/sqs`](/tests/sqs)
 - **Infra stack**: [`infra/stacks/sqs.py`](/infra/stacks/sqs.py)
+
+## Deployment
+
+Deploy the stack using:
+
+```bash
+make deploy STACK=sqs
+```
 
 ### Data models
 
