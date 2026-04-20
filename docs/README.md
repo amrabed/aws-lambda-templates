@@ -121,6 +121,23 @@ make test
 
 `make test` runs both standard pytest tests and Hypothesis property-based tests in a single command.
 
+### Build a new template
+
+To build a new Lambda template skeleton, use:
+
+```bash
+make new template=<name>
+```
+
+Or, equivantly:
+
+```bash
+poetry run new --name <name>
+```
+
+This runs the [`new`](new.py) Poetry script under the hood, which builds a skeleton for the new template from [`.template`](template).
+
+
 ### Deploy a stack
 Infrastructure is defined as AWS CDK stacks under [`infra/stacks/`](/infra/stacks). 
 The CDK entry point is [`infra/app.py`](/infra/app.py). 

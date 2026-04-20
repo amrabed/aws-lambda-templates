@@ -9,6 +9,11 @@ EMAIL ?= amrabed
 GITHUB ?= amrabed
 SOURCE ?= $(shell echo ${NAME} | tr '-' '_' | tr '[:upper:]' '[:lower:]')
 
+.PHONY: new
+new: # Create new Lambda function template (usage: make new template=<name>)
+	@[ -n "$(template)" ] || { echo "Usage: make new template=<name>"; exit 1; }
+	poetry run new -n $(template)
+
 .PHONY: project
 project: # Rename project (run once)
 	@if [ -d project ]; then mv project ${SOURCE}; fi
@@ -66,24 +71,26 @@ docs: # Build and deploy documentation to GitHub pages
 local: # Serve documentation on a local server
 	poetry run mkdocs serve
 
+# CDK stacks mapping
+CDK_STACK                        = \$(STACK_MAP_\$(STACK))
+STACK_MAP_agent				  	 = BedrockAgentStack
 STACK_MAP_api                    = ApiGatewayDynamodbStack
 STACK_MAP_stream                 = DynamodbStreamStack
 STACK_MAP_eventbridge 			 = EventBridgeApiCallerStack
 STACK_MAP_graphql                = AppSyncDynamodbStack
 STACK_MAP_s3                     = S3SqsStack
 STACK_MAP_sqs                    = SqsStack
-CDK_STACK                        = \$(STACK_MAP_\$(STACK))
 
 .PHONY: deploy
 deploy: # Deploy an CDK stack
-	@[ -n "$(STACK)" ] || { echo "Usage: make deploy STACK=<api|stream|eventbridge|s3|sqs|graphql>"; exit 1; }
+	@[ -n "$(STACK)" ] || { echo "Usage: make deploy STACK=<agent|api|eventbridge|graphql|s3|sqs|stream>"; exit 1; }
 	@[ -n "\$(CDK_STACK)" ] || { echo "Error: unknown stack '\$(STACK)'"; exit 1; }
 	STACK=\$(STACK) cdk deploy --app "python infra/app.py" --require-approval never \$(CDK_STACK) \
 		\$(if \$(AWS_PROFILE),--profile \$(AWS_PROFILE),)
 
 .PHONY: destroy
 destroy: # Destroy a deployed CDK stack
-	@[ -n "$(STACK)" ] || { echo "Usage: make destroy STACK=<api|stream|eventbridge|s3|sqs|graphql>"; exit 1; }
+	@[ -n "$(STACK)" ] || { echo "Usage: make destroy STACK=<agent|api|eventbridge|graphql|s3|sqs|stream>"; exit 1; }
 	@[ -n "\$(CDK_STACK)" ] || { echo "Error: unknown stack '\$(STACK)'"; exit 1; }
 	STACK=\$(STACK) cdk destroy --force --app "python infra/app.py" \$(CDK_STACK) \
 		\$(if \$(AWS_PROFILE),--profile \$(AWS_PROFILE),)
