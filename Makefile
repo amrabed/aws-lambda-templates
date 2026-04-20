@@ -9,10 +9,10 @@ EMAIL ?= amrabed
 GITHUB ?= amrabed
 SOURCE ?= $(shell echo ${NAME} | tr '-' '_' | tr '[:upper:]' '[:lower:]')
 
-.PHONY: template
-template: # Create a new template (usage: make template NAME=<name>)
-	@[ -n "$(NAME)" ] || { echo "Usage: make template NAME=<name>"; exit 1; }
-	python scripts/new_template.py $(NAME)
+.PHONY: new
+new: # Create new Lambda function template (usage: make new template=<name>)
+	@[ -n "$(template)" ] || { echo "Usage: make new template=<name>"; exit 1; }
+	poetry run new -n $(template)
 
 .PHONY: project
 project: # Rename project (run once)
@@ -71,6 +71,7 @@ docs: # Build and deploy documentation to GitHub pages
 local: # Serve documentation on a local server
 	poetry run mkdocs serve
 
+# CDK stacks mapping
 STACK_MAP_api                    = ApiGatewayDynamodbStack
 STACK_MAP_stream                 = DynamodbStreamStack
 STACK_MAP_eventbridge 			 = EventBridgeApiCallerStack
