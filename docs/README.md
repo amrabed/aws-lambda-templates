@@ -123,19 +123,19 @@ make test
 
 ### Build a new template
 
-To build a new Lambda template skeleton, use:
+To start building a new Lambda template, use:
 
 ```bash
 make new template=<name>
 ```
 
-Or, equivantly:
+Or, equivalently:
 
 ```bash
 poetry run new --name <name>
 ```
 
-This runs the [`new`](new.py) Poetry script under the hood, which builds a skeleton for the new template from [`.template`](template).
+This runs the `new` Poetry script, which builds a skeleton for the new template from `.template`.
 
 
 ### Deploy a stack
