@@ -1,5 +1,5 @@
 # AWS Lambda Templates - Python
-[![Python](https://img.shields.io/badge/python-3.14+-3776AB.svg?logo=python&style=flat-square)](https://python.org)
+[![Python](https://img.shields.io/badge/python-3.12+-3776AB.svg?logo=python&style=flat-square)](https://python.org)
 [![Code style: ruff](https://img.shields.io/badge/code%20style-ruff-D7FF64.svg?logo=ruff&style=flat-square)](https://docs.astral.sh/ruff)
 [![License](https://img.shields.io/badge/license-MIT-blue.svg?style=flat-square)](LICENSE.md)
 
@@ -33,7 +33,7 @@ Templates come pre-wired with:
 - **Infrastructure as Code**: [AWS CDK](https://aws.amazon.com/cdk) stacks
 - **Testing**: Comprehensive [pytest](https://pytest.org) suite with [moto](http://docs.getmoto.org) for AWS mocking and [hypothesis](https://hypothesis.readthedocs.io) for property-based testing
 - **Code Quality**: [ruff](https://docs.astral.sh/ruff) for linting and formatting, [pyright](https://microsoft.github.io/pyright) for type checking, and test coverage using [coverage](https://coverage.readthedocs.io)
-- **Dependency Control**: [Poetry](https://python-poetry.org) for dependency management and [Dependabot](https://docs.github.com/en/code-security/dependabot) for automated dependency updates 
+- **Dependency Control**: [uv](https://docs.astral.sh/uv/) for dependency management and [Dependabot](https://docs.github.com/en/code-security/dependabot) for automated dependency updates
 - **Documentation**: Automatic documentation using [MkDocs](https://www.mkdocs.org) and [mkdocstrings](https://mkdocstrings.github.io)
 - **Development environment**: [Dev Containers](https://code.visualstudio.com/docs/devcontainers/containers) for dockerized development environment
 - **Pre-commit Validations**: [pre-commit](https://pre-commit.com) hooks
@@ -82,8 +82,8 @@ Parameter | Description
 - Docker
 
 ### Local environment
-- Python 3.14+
-- Poetry
+- Python 3.12+
+- uv
 - Docker (for Dev Containers)
 - AWS CDK CLI (for deployment)
 
@@ -132,10 +132,10 @@ make new template=<name>
 Or, equivalently:
 
 ```bash
-poetry run new --name <name>
+uv run new --name <name>
 ```
 
-This runs the `new` Poetry script, which builds a skeleton for the new template from `.template`.
+This runs the `new` uv script, which builds a skeleton for the new template from `.template`.
 
 
 ### Deploy a stack

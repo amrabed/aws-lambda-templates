@@ -1,3 +1,47 @@
+[project]
+name = "templates"
+version = "0.1.0"
+description = "AWS Lambda Templates"
+authors = [{name = "Amr Abed", email = "amrabed@gmail.com"}]
+license = {text = "MIT"}
+readme = "docs/README.md"
+requires-python = ">=3.12"
+dependencies = [
+    "pydantic>=2.12.5",
+    "pydantic-settings>=2.13.1",
+    "aws-lambda-powertools>=3.27.0",
+    "boto3>=1.42.87",
+    "requests>=2.33.1",
+]
+
+[project.scripts]
+new = "new:main"
+
+[dependency-groups]
+infra = [
+    "aws-cdk-lib>=2.248.0",
+    "constructs>=10.6.0",
+]
+dev = [
+    "pytest>=9.0.1",
+    "ruff>=0.15.10",
+    "coverage>=7.6.9",
+    "pre-commit>=4.0.1",
+    "pyright>=1.1.391",
+    "pytest-mock>=3.15.1",
+    "moto>=5.1.22",
+    "hypothesis>=6.151.11",
+    "click>=8.3.2",
+]
+docs = [
+    "mkdocs>=1.6.1",
+    "mkdocstrings[python]>=1.0.0",
+    "mkdocs-material>=9.6.20",
+]
+
+[tool.uv]
+default-groups = ["infra", "dev", "docs"]
+
 [tool.ruff]
 line-length = 120
 
@@ -16,46 +60,6 @@ fail_under = 90
 exclude = ["**/__pycache__", "**/.pytest_cache"]
 reportMissingImports = "error"
 
-[tool.poetry]
-name = "templates"
-packages = [{include = "templates"}]
-version = "0.1.0"
-description = "AWS Lambda Templates"
-authors = ["Amr Abed <amrabed>"]
-license = "MIT"
-readme = "docs/README.md"
-
-[tool.poetry.dependencies]
-python = "^3.12"
-pydantic = "^2.12.5"
-pydantic-settings = "^2.13.1"
-aws-lambda-powertools = "^3.27.0"
-boto3 = "^1.42.87"
-requests = "^2.33.1"
-
-[tool.poetry.group.infra.dependencies]
-aws-cdk-lib = "^2.248.0"
-constructs = "^10.6.0"
-
-[tool.poetry.group.dev.dependencies]
-pytest = "^9.0.1"
-ruff = "^0.15.10"
-coverage = "^7.6.9"
-pre-commit = "^4.0.1"
-pyright = "^1.1.391"
-pytest-mock = "^3.15.1"
-moto = "^5.1.22"
-hypothesis = "^6.151.11"
-click = "^8.3.2"
-
-[tool.poetry.group.docs.dependencies]
-mkdocs = "^1.6.1"
-mkdocstrings = { version = "^1.0.0", extras=["python"] }
-mkdocs-material = "^9.6.20"
-
-[tool.poetry.scripts]
-new = "new:main"
-
 [build-system]
-requires = ["poetry-core"]
-build-backend = "poetry.core.masonry.api"
+requires = ["hatchling"]
+build-backend = "hatchling.build"
