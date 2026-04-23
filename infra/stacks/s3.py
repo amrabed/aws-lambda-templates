@@ -25,7 +25,7 @@ class S3SqsStack(Stack):
         function = Function(
             self,
             "S3SqsFunction",
-            runtime=Runtime.PYTHON_3_14,
+            runtime=Runtime.PYTHON_3_13,
             handler="templates.s3.handler.main",
             code=Code.from_asset("."),
             environment={

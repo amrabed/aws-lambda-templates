@@ -19,7 +19,7 @@ class ApiGatewayDynamodbStack(Stack):
         function = Function(
             self,
             "ApiGatewayDynamodbFunction",
-            runtime=Runtime.PYTHON_3_14,
+            runtime=Runtime.PYTHON_3_13,
             handler="templates.api.handler.main",
             code=Code.from_asset("."),
             environment={
