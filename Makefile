@@ -5,7 +5,7 @@ help: # Show available targets
 NAME ?= templates
 DESCRIPTION ?= AWS Lambda Templates
 AUTHOR ?= Amr Abed
-EMAIL ?= amrabed
+EMAIL ?=
 GITHUB ?= amrabed
 SOURCE ?= $(shell echo ${NAME} | tr '-' '_' | tr '[:upper:]' '[:lower:]')
 

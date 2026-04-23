@@ -2,7 +2,7 @@
 name = "templates"
 version = "0.1.0"
 description = "AWS Lambda Templates"
-authors = [{name = "Amr Abed", email = "amrabed@gmail.com"}]
+authors = [{name = "Amr Abed", email = ""}]
 license = {text = "MIT"}
 readme = "docs/README.md"
 requires-python = ">=3.14"
