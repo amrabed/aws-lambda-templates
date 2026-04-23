@@ -89,6 +89,12 @@ Parameter | Description
 
 ## Setup
 
+### Set up dev environment
+To set up the local dev environment, run:
+```bash
+make dev
+```
+
 ### Install dependencies
 To install the project dependencies defined in `pyproject.toml`, run:
 ```bash
