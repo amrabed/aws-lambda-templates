@@ -28,10 +28,15 @@ project: # Rename project (run once)
 	@sed -i '' 's/@.*/@${GITHUB}/' .github/CODEOWNERS
 	@sed -i '' 's/^github: \[.*\]/github: \[${GITHUB}\]/' .github/FUNDING.yml
 
-venv: # Activate virtual environment
-	uv sync
+uv:
+	pipx install uv
 
-install: venv # Install dependencies and project
+venv: # Activate virtual environment
+	uv venv --clear
+	. .venv/bin/activate
+
+install: # Install dependencies and project
+	uv sync
 
 update: # Update dependencies
 	uv lock --upgrade
@@ -40,7 +45,7 @@ precommit: # Install pre-commit hooks
 	uv run pre-commit autoupdate
 	uv run pre-commit install
 
-pre-commit: precommit
+dev: uv venv precommit install
 
 lint:
 	uv run ruff format
@@ -89,4 +94,4 @@ destroy: # Destroy a deployed CDK stack
 	STACK=\$(STACK) uv run cdk destroy --force --app "python infra/app.py" \$(CDK_STACK) \
 		\$(if \$(AWS_PROFILE),--profile \$(AWS_PROFILE),)
 
-all: install precommit lint test venv
+all: install lint test
