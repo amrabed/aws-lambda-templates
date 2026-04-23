@@ -26,10 +26,10 @@ def bedrock_event():
     }
 
 
-def test_handler_get_item(repository):
+def test_handler_get_item(provider):
     from templates.agent.handler import get_item
 
-    repository.put_item({"id": "1", "name": "test item", "description": "test description"})
+    provider.table.put_item(Item={"id": "1", "name": "test item", "description": "test description"})
 
     result = get_item("1")
 
@@ -47,7 +47,7 @@ def test_handler_get_item_not_found():
     assert "not found" in result["error"]
 
 
-def test_handler_create_item(repository):
+def test_handler_create_item(provider):
     from templates.agent.handler import create_item
 
     result = create_item("2", "new item", "new description")
@@ -56,16 +56,16 @@ def test_handler_create_item(repository):
     assert result["name"] == "new item"
     assert result["description"] == "new description"
 
-    item = repository.get_item("2")
+    item = provider.table.get_item(Key={"id": "2"}).get("Item")
     assert item is not None
     assert item["name"] == "new item"
 
 
-def test_lambda_handler_get_item(mocker, repository, lambda_context, bedrock_event):
+def test_lambda_handler_get_item(mocker, provider, lambda_context, bedrock_event):
     from templates.agent.handler import main
 
-    mocker.patch("templates.agent.handler.repository", repository)
-    repository.put_item({"id": "1", "name": "test item"})
+    mocker.patch("templates.agent.handler.provider", provider)
+    provider.table.put_item(Item={"id": "1", "name": "test item"})
 
     bedrock_event["function"] = "getItem"
     bedrock_event["parameters"] = [{"name": "item_id", "type": "string", "value": "1"}]
@@ -76,10 +76,10 @@ def test_lambda_handler_get_item(mocker, repository, lambda_context, bedrock_eve
     assert body == {"id": "1", "name": "test item"}
 
 
-def test_lambda_handler_create_item(mocker, repository, lambda_context, bedrock_event):
+def test_lambda_handler_create_item(mocker, provider, lambda_context, bedrock_event):
     from templates.agent.handler import main
 
-    mocker.patch("templates.agent.handler.repository", repository)
+    mocker.patch("templates.agent.handler.provider", provider)
 
     bedrock_event["function"] = "createItem"
     bedrock_event["parameters"] = [

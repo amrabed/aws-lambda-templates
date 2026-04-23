@@ -13,20 +13,19 @@ def item():
     return {"id": "123", "name": "Test Item"}
 
 
-@fixture
-def test_get_item_resolver(repository, item, lambda_context):
+def test_get_item_resolver(provider, item, lambda_context):
     from templates.graphql.handler import main
 
     event = {"info": {"parentTypeName": "Query", "fieldName": "getItem"}, "arguments": {"id": "123"}}
-    repository.put_item(item)
+    provider.table.put_item(Item=item)
     assert main(event, lambda_context) == item
 
 
-def test_list_items_resolver(repository, item, lambda_context):
+def test_list_items_resolver(provider, item, lambda_context):
     from templates.graphql.handler import main
 
     event = {"info": {"parentTypeName": "Query", "fieldName": "listItems"}, "arguments": {}}
-    repository.put_item(item)
+    provider.table.put_item(Item=item)
     assert main(event, lambda_context) == [item]
 
 

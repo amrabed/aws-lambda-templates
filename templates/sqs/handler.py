@@ -2,9 +2,9 @@ from aws_lambda_powertools import Logger, Metrics, Tracer
 from aws_lambda_powertools.utilities.batch import BatchProcessor, EventType, process_partial_response
 from aws_lambda_powertools.utilities.batch.types import PartialItemFailureResponse
 from aws_lambda_powertools.utilities.data_classes.sqs_event import SQSRecord
+from aws_lambda_powertools.utilities.parameters import DynamoDBProvider
 from aws_lambda_powertools.utilities.typing import LambdaContext
 
-from templates.repository import Repository
 from templates.sqs.models import ProcessedItem, SqsMessage
 from templates.sqs.settings import Settings
 
@@ -15,20 +15,20 @@ logger = Logger(service=settings.service_name)
 tracer = Tracer(service=settings.service_name)
 metrics = Metrics(service=settings.service_name, namespace=settings.metrics_namespace)
 
-repository = Repository(settings.table_name)
+provider = DynamoDBProvider(settings.table_name)
 processor = BatchProcessor(event_type=EventType.SQS)
 
 
 class Handler:
     """Processes SQS messages and stores results in a DynamoDB table."""
 
-    def __init__(self, repository: Repository) -> None:
-        """Initialize the handler with a repository.
+    def __init__(self, provider: DynamoDBProvider) -> None:
+        """Initialize the handler with a DynamoDB provider.
 
         Args:
-            repository: The repository used to store processed items.
+            provider: The provider used to store processed items.
         """
-        self._repository = repository
+        self._provider = provider
 
     @tracer.capture_method
     def handle_record(self, record: SQSRecord) -> None:
@@ -43,14 +43,14 @@ class Handler:
         try:
             message = SqsMessage.model_validate(record.json_body)
             processed = ProcessedItem(id=message.id, content=message.content, status="PROCESSED")
-            self._repository.put_item(processed.model_dump())
+            self._provider.table.put_item(Item=processed.model_dump())
             logger.info("Successfully processed and stored message", extra={"messageId": message.id})
         except Exception as exc:
             logger.error("Failed to process SQS record", exc_info=exc)
             raise
 
 
-handler = Handler(repository)
+handler = Handler(provider)
 
 
 @logger.inject_lambda_context

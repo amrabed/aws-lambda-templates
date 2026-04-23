@@ -1,12 +1,12 @@
 from aws_lambda_powertools import Logger, Metrics, Tracer
 from aws_lambda_powertools.event_handler import AppSyncResolver
 from aws_lambda_powertools.logging import correlation_paths
+from aws_lambda_powertools.utilities.parameters import DynamoDBProvider
 from aws_lambda_powertools.utilities.typing import LambdaContext
 from pydantic import ValidationError
 
 from templates.graphql.models import Item
 from templates.graphql.settings import Settings
-from templates.repository import Repository
 
 settings = Settings()  # type: ignore
 
@@ -14,7 +14,7 @@ logger = Logger(service=settings.service_name)
 tracer = Tracer(service=settings.service_name)
 metrics = Metrics(namespace=settings.metrics_namespace)
 
-repository = Repository(settings.table_name)
+provider = DynamoDBProvider(settings.table_name)
 app = AppSyncResolver()
 
 
@@ -30,7 +30,7 @@ def get_item(id: str) -> dict | None:
         The item if found, or None.
     """
     try:
-        return repository.get_item(id)
+        return provider.table.get_item(Key={"id": id}).get("Item")
     except Exception as error:
         raise RuntimeError(f"Failed to get item with ID '{id}'. Cause: {error}") from error
 
@@ -44,7 +44,7 @@ def list_items() -> list[dict]:
         A list of items.
     """
     try:
-        return repository.list_items()
+        return provider.table.scan().get("Items", [])
     except Exception as error:
         raise RuntimeError(f"Failed to list items. Cause: {error}") from error
 
@@ -62,7 +62,7 @@ def create_item(name: str) -> dict:
     """
     try:
         item = Item(name=name).dump()
-        repository.put_item(item)
+        provider.table.put_item(Item=item)
         return item
     except (ValidationError, Exception) as error:
         raise RuntimeError(f"Failed to create item with name '{name}'. Cause: {error}") from error

@@ -16,7 +16,7 @@ patch("aws_lambda_powertools.utilities.parameters.SecretsProvider", MagicMock())
 # Clear any previously cached (broken) handler modules so they re-import cleanly.
 # This runs at conftest import time, before any test collection or execution.
 for _mod in list(sys.modules):
-    if _mod.startswith("templates.eventbridge") or _mod == "templates.repository":
+    if _mod.startswith("templates.eventbridge"):
         sys.modules.pop(_mod, None)
 
 
@@ -37,7 +37,6 @@ def env(monkeypatch) -> None:
 @fixture(autouse=True)
 def stub_module_clients(mocker) -> None:
     """Stub AWS clients instantiated at module level so the handler can be imported."""
-    mocker.patch("templates.repository.resource")
 
 
 # Feature: eventbridge-api-caller, Property 1: Handler accepts any valid EventBridge event shape
@@ -52,10 +51,10 @@ def test_valid_event_shapes(mocker, source, detail_type, detail) -> None:
 
     mock_secrets = mocker.patch.object(handler_module, "secrets_provider")
     mock_get = mocker.patch.object(handler_module, "get")
-    mock_repo = mocker.patch.object(handler_module, "repository")
+    mock_provider = mocker.patch.object(handler_module, "provider")
 
     handler_module.handler._secrets_provider = mock_secrets
-    handler_module.handler._repository = mock_repo
+    handler_module.handler._provider = mock_provider
 
     mock_secrets.get.return_value = "test-token"
     mock_resp = mocker.MagicMock()
@@ -89,7 +88,7 @@ def test_valid_event_shapes(mocker, source, detail_type, detail) -> None:
     mock_get.assert_called_once()
     mock_get.reset_mock()
     mock_secrets.get.reset_mock()
-    mock_repo.put_item.reset_mock()
+    mock_provider.table.put_item.reset_mock()
 
 
 # Feature: eventbridge-api-caller, Property 2: Invalid event prevents ApiClient call
@@ -102,10 +101,10 @@ def test_invalid_event_prevents_api_call(mocker, missing_key) -> None:
 
     mock_secrets = mocker.patch.object(handler_module, "secrets_provider")
     mock_get = mocker.patch.object(handler_module, "get")
-    mock_repo = mocker.patch.object(handler_module, "repository")
+    mock_provider = mocker.patch.object(handler_module, "provider")
 
     handler_module.handler._secrets_provider = mock_secrets
-    handler_module.handler._repository = mock_repo
+    handler_module.handler._provider = mock_provider
 
     valid_event = {
         "version": "0",
@@ -140,10 +139,10 @@ def test_secret_exception_propagates(mocker, exc) -> None:
 
     mock_secrets = mocker.patch.object(handler_module, "secrets_provider")
     mock_get = mocker.patch.object(handler_module, "get")
-    mock_repo = mocker.patch.object(handler_module, "repository")
+    mock_provider = mocker.patch.object(handler_module, "provider")
 
     handler_module.handler._secrets_provider = mock_secrets
-    handler_module.handler._repository = mock_repo
+    handler_module.handler._provider = mock_provider
 
     mock_secrets.get.side_effect = exc
 
@@ -180,10 +179,10 @@ def test_bearer_token_header(mocker, token) -> None:
 
     mock_secrets = mocker.patch.object(handler_module, "secrets_provider")
     mock_get = mocker.patch.object(handler_module, "get")
-    mock_repo = mocker.patch.object(handler_module, "repository")
+    mock_provider = mocker.patch.object(handler_module, "provider")
 
     handler_module.handler._secrets_provider = mock_secrets
-    handler_module.handler._repository = mock_repo
+    handler_module.handler._provider = mock_provider
 
     mock_secrets.get.return_value = token
     mock_resp = mocker.MagicMock()
@@ -236,10 +235,10 @@ def test_api_failure_propagates(mocker, status_code) -> None:
 
     mock_secrets = mocker.patch.object(handler_module, "secrets_provider")
     mock_get = mocker.patch.object(handler_module, "get")
-    mock_repo = mocker.patch.object(handler_module, "repository")
+    mock_provider = mocker.patch.object(handler_module, "provider")
 
     handler_module.handler._secrets_provider = mock_secrets
-    handler_module.handler._repository = mock_repo
+    handler_module.handler._provider = mock_provider
 
     mock_secrets.get.return_value = "test-token"
     mock_resp = mocker.MagicMock()
@@ -346,10 +345,10 @@ def test_successful_response_persisted(mocker, status) -> None:
 
     mock_secrets = mocker.patch.object(handler_module, "secrets_provider")
     mock_get = mocker.patch.object(handler_module, "get")
-    mock_repo = mocker.patch.object(handler_module, "repository")
+    mock_provider = mocker.patch.object(handler_module, "provider")
 
     handler_module.handler._secrets_provider = mock_secrets
-    handler_module.handler._repository = mock_repo
+    handler_module.handler._provider = mock_provider
 
     mock_secrets.get.return_value = "test-token"
     mock_resp = mocker.MagicMock()
@@ -376,8 +375,8 @@ def test_successful_response_persisted(mocker, status) -> None:
     }
     handler_module.main(valid_event, mock_context)
 
-    mock_repo.put_item.assert_called_once_with({"id": "test-id", "message": status})
-    mock_repo.put_item.reset_mock()
+    mock_provider.table.put_item.assert_called_once_with(Item={"id": "test-id", "message": status})
+    mock_provider.table.put_item.reset_mock()
     mock_get.reset_mock()
     mock_secrets.get.reset_mock()
 
@@ -390,17 +389,17 @@ def test_dynamodb_write_failure_propagates(mocker, exc) -> None:
 
     mock_secrets = mocker.patch.object(handler_module, "secrets_provider")
     mock_get = mocker.patch.object(handler_module, "get")
-    mock_repo = mocker.patch.object(handler_module, "repository")
+    mock_provider = mocker.patch.object(handler_module, "provider")
 
     handler_module.handler._secrets_provider = mock_secrets
-    handler_module.handler._repository = mock_repo
+    handler_module.handler._provider = mock_provider
 
     mock_secrets.get.return_value = "test-token"
     mock_resp = mocker.MagicMock()
     mock_resp.json.return_value = {"id": "test-id", "message": "ok"}
     mock_resp.raise_for_status.return_value = None
     mock_get.return_value = mock_resp
-    mock_repo.put_item.side_effect = exc
+    mock_provider.table.put_item.side_effect = exc
 
     mock_context = mocker.MagicMock()
     mock_context.function_name = "test-function"
@@ -423,10 +422,10 @@ def test_dynamodb_write_failure_propagates(mocker, exc) -> None:
     with raises(Exception):
         handler_module.main(valid_event, mock_context)
 
-    mock_repo.put_item.side_effect = None
+    mock_provider.table.put_item.side_effect = None
     mock_get.reset_mock()
     mock_secrets.get.reset_mock()
-    mock_repo.put_item.reset_mock()
+    mock_provider.table.put_item.reset_mock()
 
 
 if __name__ == "__main__":

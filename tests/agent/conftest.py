@@ -2,8 +2,6 @@ from boto3 import resource
 from moto import mock_aws
 from pytest import fixture
 
-from templates.repository import Repository
-
 
 @fixture
 def table_name():
@@ -22,5 +20,7 @@ def mock_table(table_name):
 
 
 @fixture(autouse=True)
-def repository(mock_table):
-    return Repository(mock_table.table_name)
+def provider(mock_table):
+    from aws_lambda_powertools.utilities.parameters import DynamoDBProvider
+
+    return DynamoDBProvider(mock_table.table_name)

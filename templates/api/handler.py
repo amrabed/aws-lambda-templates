@@ -3,12 +3,12 @@ from json import dumps, loads
 from aws_lambda_powertools import Logger, Metrics, Tracer
 from aws_lambda_powertools.event_handler import APIGatewayRestResolver
 from aws_lambda_powertools.event_handler.api_gateway import Response
+from aws_lambda_powertools.utilities.parameters import DynamoDBProvider
 from aws_lambda_powertools.utilities.typing import LambdaContext
 from pydantic import ValidationError
 
 from templates.api.models import Item
 from templates.api.settings import Settings
-from templates.repository import Repository
 
 settings = Settings()
 
@@ -16,7 +16,7 @@ logger = Logger(service=settings.service_name)
 tracer = Tracer(service=settings.service_name)
 metrics = Metrics(namespace=settings.metrics_namespace)
 
-repository = Repository(settings.table_name)
+provider = DynamoDBProvider(settings.table_name)
 app = APIGatewayRestResolver()
 
 
@@ -31,7 +31,7 @@ def get_item(id: str) -> Response:
         200 with the item, 404 if not found, or 500 on error.
     """
     try:
-        item = repository.get_item(id)
+        item = provider.table.get_item(Key={"id": id}).get("Item")
     except Exception as exc:
         logger.error("DynamoDB get_item failed", exc_info=exc)
         return Response(
@@ -59,7 +59,7 @@ def create_item() -> Response:
         return Response(status_code=422, content_type="application/json", body=dumps({"errors": loads(exc.json())}))
 
     try:
-        repository.put_item(item.model_dump())
+        provider.table.put_item(Item=item.model_dump())
     except Exception as exc:
         logger.error("DynamoDB put_item failed", exc_info=exc)
         return Response(

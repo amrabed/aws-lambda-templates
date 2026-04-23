@@ -19,12 +19,11 @@ def env(monkeypatch):
 
 
 @fixture()
-def mock_repo(mocker):
-    """Patch the handler's internal repository with a MagicMock."""
-    mocker.patch("templates.repository.resource")
+def mock_provider(mocker):
+    """Patch the handler's internal provider with a MagicMock."""
     import templates.stream.handler as handler_module
 
-    return mocker.patch.object(handler_module.handler, "_repository")
+    return mocker.patch.object(handler_module.handler, "_provider")
 
 
 @fixture
@@ -73,43 +72,43 @@ def _remove_record(item_id: str = "abc") -> dict:
     }
 
 
-def test_insert_record_calls_put_item(mock_repo, lambda_context):
+def test_insert_record_calls_put_item(mock_provider, lambda_context):
     """INSERT record: put_item is called with the deserialised NewImage."""
     import templates.stream.handler as handler_module
 
     event = _stream_event(_insert_record("abc", "Widget"))
     result = handler_module.main(event, lambda_context)
 
-    mock_repo.put_item.assert_called_once_with({"id": "abc", "name": "Widget"})
-    mock_repo.delete_item.assert_not_called()
+    mock_provider.table.put_item.assert_called_once_with(Item={"id": "abc", "name": "Widget"})
+    mock_provider.table.delete_item.assert_not_called()
     assert result == {"batchItemFailures": []}
 
 
-def test_modify_record_calls_put_item(mock_repo, lambda_context):
+def test_modify_record_calls_put_item(mock_provider, lambda_context):
     """MODIFY record: put_item is called with the deserialised NewImage."""
     import templates.stream.handler as handler_module
 
     event = _stream_event(_modify_record("abc", "Updated"))
     result = handler_module.main(event, lambda_context)
 
-    mock_repo.put_item.assert_called_once_with({"id": "abc", "name": "Updated"})
-    mock_repo.delete_item.assert_not_called()
+    mock_provider.table.put_item.assert_called_once_with(Item={"id": "abc", "name": "Updated"})
+    mock_provider.table.delete_item.assert_not_called()
     assert result == {"batchItemFailures": []}
 
 
-def test_remove_record_calls_delete_item(mock_repo, lambda_context):
+def test_remove_record_calls_delete_item(mock_provider, lambda_context):
     """REMOVE record: delete_item is called with the deserialised key."""
     import templates.stream.handler as handler_module
 
     event = _stream_event(_remove_record("abc"))
     result = handler_module.main(event, lambda_context)
 
-    mock_repo.delete_item.assert_called_once_with({"id": "abc"})
-    mock_repo.put_item.assert_not_called()
+    mock_provider.table.delete_item.assert_called_once_with(Key={"id": "abc"})
+    mock_provider.table.put_item.assert_not_called()
     assert result == {"batchItemFailures": []}
 
 
-def test_deserialisation_failure_reports_batch_item_failure(mock_repo, lambda_context):
+def test_deserialisation_failure_reports_batch_item_failure(mock_provider, lambda_context):
     """A record with an invalid NewImage is reported as a batch item failure; processing continues."""
     import templates.stream.handler as handler_module
 
@@ -126,20 +125,20 @@ def test_deserialisation_failure_reports_batch_item_failure(mock_repo, lambda_co
     event = _stream_event(bad_record, good_record)
     result = handler_module.main(event, lambda_context)
 
-    mock_repo.put_item.assert_called_once_with({"id": "ok", "name": "Good"})
+    mock_provider.table.put_item.assert_called_once_with(Item={"id": "ok", "name": "Good"})
     assert len(result["batchItemFailures"]) == 1
 
 
-def test_dynamodb_write_failure_reports_batch_item_failure(mock_repo, lambda_context):
-    """A repository put_item failure is reported; subsequent records are still processed."""
+def test_dynamodb_write_failure_reports_batch_item_failure(mock_provider, lambda_context):
+    """A provider put_item failure is reported; subsequent records are still processed."""
     import templates.stream.handler as handler_module
 
-    mock_repo.put_item.side_effect = [Exception("DynamoDB unavailable"), None]
+    mock_provider.table.put_item.side_effect = [Exception("DynamoDB unavailable"), None]
 
     event = _stream_event(_insert_record("fail", "Broken"), _insert_record("ok", "Fine"))
     result = handler_module.main(event, lambda_context)
 
-    assert mock_repo.put_item.call_count == 2
+    assert mock_provider.table.put_item.call_count == 2
     assert len(result["batchItemFailures"]) == 1
 
 

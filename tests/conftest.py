@@ -50,7 +50,7 @@ def mock_table(table_name):
 
 
 @fixture(autouse=True)
-def repository(mock_table):
-    from templates.repository import Repository
+def provider(mock_table):
+    from aws_lambda_powertools.utilities.parameters import DynamoDBProvider
 
-    return Repository(mock_table.table_name)
+    return DynamoDBProvider(mock_table.table_name)

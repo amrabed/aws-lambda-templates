@@ -130,22 +130,20 @@ class Item(BaseModel):
     model_config = ConfigDict(extra="allow")
 ```
 
-### Repository pattern for DynamoDB access
+### DynamoDB access via Powertools DynamoDBProvider
 
-Each scenario defines a `Repository` class in `repository.py` that owns all `boto3` DynamoDB calls. The `Handler` class calls repository methods rather than calling `boto3` directly. Tests mock the `Repository` instance rather than patching `boto3.resource`.
+Each scenario uses the AWS Lambda Powertools `DynamoDBProvider` to manage DynamoDB interactions. The `Handler` class uses the provider's `table` attribute (a `boto3.Table` object) for CRUD operations. Tests mock the `DynamoDBProvider` instance and its `table` attribute.
 
 ```python
-from boto3 import resource
+from aws_lambda_powertools.utilities.parameters import DynamoDBProvider
 
-class Repository:
-    def __init__(self, table_name: str) -> None:
-        self._table = resource("dynamodb").Table(table_name)
+provider = DynamoDBProvider(settings.table_name)
 
-    def get_item(self, item_id: str) -> dict | None:
-        return self._table.get_item(Key={"id": item_id}).get("Item")
+def get_item(id: str) -> dict | None:
+    return provider.table.get_item(Key={"id": id}).get("Item")
 
-    def put_item(self, item: dict) -> None:
-        self._table.put_item(Item=item)
+def put_item(item: dict) -> None:
+    provider.table.put_item(Item=item)
 ```
 
 ### Import style

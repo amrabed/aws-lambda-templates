@@ -44,7 +44,6 @@ nav:
     - EventBridge: reference/eventbridge.md
     - S3: reference/s3.md
     - SQS: reference/sqs.md
-    - Repository: reference/repository.md
 
 plugins:
   - search

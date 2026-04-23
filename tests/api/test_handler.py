@@ -19,12 +19,11 @@ def env(monkeypatch) -> None:
 
 
 @fixture()
-def mock_repo(mocker) -> Any:
-    """Patch the module-level repository with a MagicMock."""
-    mocker.patch("templates.repository.resource")
+def mock_provider(mocker) -> Any:
+    """Patch the module-level provider with a MagicMock."""
     import templates.api.handler as handler_module
 
-    return mocker.patch.object(handler_module, "repository")
+    return mocker.patch.object(handler_module, "provider")
 
 
 def _apigw_event(method: str, path: str, path_params: dict[str, str] | None = None, body: Any = None) -> dict:
@@ -63,11 +62,11 @@ def lambda_context(mocker):
     return ctx
 
 
-def test_get_item_found(mock_repo: Any, lambda_context) -> None:
+def test_get_item_found(mock_provider: Any, lambda_context) -> None:
     """GET /items/{id} returns 200 with item data when the item exists."""
     import templates.api.handler as handler_module
 
-    mock_repo.get_item.return_value = {"id": "abc", "name": "Widget"}
+    mock_provider.table.get_item.return_value = {"Item": {"id": "abc", "name": "Widget"}}
 
     event = _apigw_event("GET", "/items/abc", path_params={"id": "abc"})
     response = handler_module.main(event, lambda_context)
@@ -76,14 +75,14 @@ def test_get_item_found(mock_repo: Any, lambda_context) -> None:
     body = loads(response["body"])
     assert body["id"] == "abc"
     assert body["name"] == "Widget"
-    mock_repo.get_item.assert_called_once_with("abc")
+    mock_provider.table.get_item.assert_called_once_with(Key={"id": "abc"})
 
 
-def test_post_item_created(mock_repo, lambda_context):
+def test_post_item_created(mock_provider, lambda_context):
     """POST /items returns 201 with the created item when the body is valid."""
     import templates.api.handler as handler_module
 
-    mock_repo.put_item.return_value = None
+    mock_provider.table.put_item.return_value = None
 
     event = _apigw_event("POST", "/items", body={"id": "xyz", "name": "Gadget"})
     response = handler_module.main(event, lambda_context)
@@ -92,14 +91,14 @@ def test_post_item_created(mock_repo, lambda_context):
     body = loads(response["body"])
     assert body["id"] == "xyz"
     assert body["name"] == "Gadget"
-    mock_repo.put_item.assert_called_once_with({"id": "xyz", "name": "Gadget"})
+    mock_provider.table.put_item.assert_called_once_with(Item={"id": "xyz", "name": "Gadget"})
 
 
-def test_get_item_not_found(mock_repo, lambda_context):
+def test_get_item_not_found(mock_provider, lambda_context):
     """GET /items/{id} returns 404 when the item does not exist."""
     import templates.api.handler as handler_module
 
-    mock_repo.get_item.return_value = None
+    mock_provider.table.get_item.return_value = {}
 
     event = _apigw_event("GET", "/items/missing", path_params={"id": "missing"})
     response = handler_module.main(event, lambda_context)
@@ -107,7 +106,7 @@ def test_get_item_not_found(mock_repo, lambda_context):
     assert response["statusCode"] == 404
 
 
-def test_post_item_invalid_body(mock_repo, lambda_context):
+def test_post_item_invalid_body(mock_provider, lambda_context):
     """POST /items returns 422 when the request body fails Pydantic validation."""
     import templates.api.handler as handler_module
 
@@ -119,11 +118,11 @@ def test_post_item_invalid_body(mock_repo, lambda_context):
     assert "errors" in body
 
 
-def test_get_item_dynamodb_error(mock_repo, lambda_context):
+def test_get_item_dynamodb_error(mock_provider, lambda_context):
     """GET /items/{id} returns 500 when the repository raises an exception."""
     import templates.api.handler as handler_module
 
-    mock_repo.get_item.side_effect = Exception("DynamoDB unavailable")
+    mock_provider.table.get_item.side_effect = Exception("DynamoDB unavailable")
 
     event = _apigw_event("GET", "/items/boom", path_params={"id": "boom"})
     response = handler_module.main(event, lambda_context)
@@ -131,11 +130,11 @@ def test_get_item_dynamodb_error(mock_repo, lambda_context):
     assert response["statusCode"] == 500
 
 
-def test_post_item_dynamodb_error(mock_repo, lambda_context):
+def test_post_item_dynamodb_error(mock_provider, lambda_context):
     """POST /items returns 500 when the repository raises during put_item."""
     import templates.api.handler as handler_module
 
-    mock_repo.put_item.side_effect = Exception("DynamoDB unavailable")
+    mock_provider.table.put_item.side_effect = Exception("DynamoDB unavailable")
 
     event = _apigw_event("POST", "/items", body={"id": "err", "name": "Broken"})
     response = handler_module.main(event, lambda_context)

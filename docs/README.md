@@ -28,7 +28,7 @@ The templates apply best practices by using [AWS Lambda Powertools](https://docs
 Templates come pre-wired with:
 
 - **AWS Lambda Best Practices**: Integrated [AWS Lambda Powertools](https://docs.aws.amazon.com/powertools/python)
-- **Clean Architecture**: Separation of concerns using the Repository pattern for data access
+- **Clean Architecture**: Separation of concerns using AWS Lambda Powertools providers for data access
 - **Data Modeling**: Strong typing and validation using [Pydantic](https://docs.pydantic.dev)
 - **Infrastructure as Code**: [AWS CDK](https://aws.amazon.com/cdk) stacks
 - **Testing**: Comprehensive [pytest](https://pytest.org) suite with [moto](http://docs.getmoto.org) for AWS mocking and [hypothesis](https://hypothesis.readthedocs.io) for property-based testing
@@ -177,7 +177,6 @@ make local
 - **camelCase for JSON**: All models use `alias_generator=to_camel` so that JSON payloads use camelCase while Python attributes use snake_case.
 - **Environment Variables**: Managed via `BaseSettings` in `settings.py` files.
 - **Documentation**: Every field in a Pydantic model must include a `Field(description="...")`.
-- **Repository Pattern**: All database calls are encapsulated in a `Repository` class for better testability.
 
 
 ## Project Structure
@@ -218,7 +217,6 @@ make local
 │   │   ├── stream.md               # Stream documentation page
 │   │   └── sqs.md                  # SQS documentation page
 │   └── reference                   # Reference section
-│       ├── repository.md           # Repository reference page
 │       ├── agent.md                # Bedrock agent reference page
 │       ├── api.md                  # API scenario reference page
 │       ├── eventbridge.md          # EventBridge scenario reference page
@@ -235,7 +233,6 @@ make local
 │   ├── stream                      # DynamoDB stream batch processor
 │   ├── sqs                         # SQS message handler
 │   ├── queue.py                    # SQS queue interaction
-│   └── repository.py               # DynamoDB repository
 ├── infra                           # AWS CDK infrastructure
 │   ├── app.py                      # CDK entry point
 │   └── stacks                      # CDK stack definitions
@@ -248,7 +245,6 @@ make local
 │       └── sqs.py                  # SQS stack
 └── tests                           # Test folder
     ├── conftest.py                 # Pytest configuration, fixtures, and hooks
-    ├── test_repository.py          # Repository tests
     ├── agent                       # Bedrock agent scenario tests
     ├── api                         # API scenario tests
     ├── eventbridge                 # EventBridge scenario tests

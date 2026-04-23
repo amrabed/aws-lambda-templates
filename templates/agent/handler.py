@@ -1,11 +1,11 @@
 from aws_lambda_powertools import Logger, Metrics, Tracer
 from aws_lambda_powertools.event_handler import BedrockAgentFunctionResolver
 from aws_lambda_powertools.utilities.data_classes import BedrockAgentEvent
+from aws_lambda_powertools.utilities.parameters import DynamoDBProvider
 from aws_lambda_powertools.utilities.typing import LambdaContext
 
 from templates.agent.models import Item
 from templates.agent.settings import Settings
-from templates.repository import Repository
 
 settings = Settings()  # type: ignore
 
@@ -13,7 +13,7 @@ logger = Logger(service=settings.service_name)
 tracer = Tracer(service=settings.service_name)
 metrics = Metrics(service=settings.service_name, namespace=settings.metrics_namespace)
 
-repository = Repository(settings.table_name)
+provider = DynamoDBProvider(settings.table_name)
 app = BedrockAgentFunctionResolver()
 
 
@@ -29,7 +29,7 @@ def get_item(item_id: str) -> dict:
         The item details or an error message.
     """
     logger.info(f"Retrieving item {item_id}")
-    item = repository.get_item(item_id)
+    item = provider.table.get_item(Key={"id": item_id}).get("Item")
     if not item:
         return {"error": f"Item {item_id} not found"}
     return item
@@ -50,7 +50,7 @@ def create_item(item_id: str, name: str, description: str | None = None) -> dict
     """
     logger.info(f"Creating item {item_id}")
     item = Item(id=item_id, name=name, description=description)
-    repository.put_item(item.model_dump())
+    provider.table.put_item(Item=item.model_dump())
     return item.model_dump(by_alias=True, exclude_none=True)
 
 
