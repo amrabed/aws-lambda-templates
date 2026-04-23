@@ -8,7 +8,7 @@ from constructs import Construct
 
 
 class EventBridgeApiCallerStack(Stack):
-    def __init__(self, scope: Construct, construct_id: str, **kwargs: object) -> None:
+    def __init__(self, scope: Construct, construct_id: str, **kwargs) -> None:
         super().__init__(scope, construct_id, **kwargs)
 
         table = Table(
@@ -24,7 +24,7 @@ class EventBridgeApiCallerStack(Stack):
         function = Function(
             self,
             "EventBridgeApiCallerFunction",
-            runtime=Runtime.PYTHON_3_13,
+            runtime=Runtime.PYTHON_3_12,
             handler="templates.eventbridge.handler.main",
             code=Code.from_asset("."),
             environment={

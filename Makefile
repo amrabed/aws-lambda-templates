@@ -29,14 +29,10 @@ project: # Rename project (run once)
 	@sed -i 's/^github: \[.*\]/github: \[${GITHUB}\]/' .github/FUNDING.yml
 	@sed -i 's/^patreon: .*/patreon: # Put your Patreon username here/' .github/FUNDING.yml
 
-uv:  # Install uv
-	pipx install uv
-
-venv:
-	uv venv
-
-install: # Install dependencies and project
+venv: # Activate virtual environment
 	uv sync
+
+install: venv # Install dependencies and project
 
 update: # Update dependencies
 	uv lock --upgrade
@@ -51,7 +47,7 @@ lint:
 	uv run ruff format
 	uv run ruff check --fix
 	uv run ruff format
-# 	uv run pyright .
+	# uv run pyright .
 
 coverage:
 	uv run coverage run -m pytest .
@@ -94,4 +90,4 @@ destroy: # Destroy a deployed CDK stack
 	STACK=\$(STACK) uv run cdk destroy --force --app "python infra/app.py" \$(CDK_STACK) \
 		\$(if \$(AWS_PROFILE),--profile \$(AWS_PROFILE),)
 
-all: uv install precommit lint test venv
+all: install precommit lint test venv

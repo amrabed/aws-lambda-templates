@@ -7,7 +7,7 @@ from constructs import Construct
 
 
 class SqsLambdaDynamodbStack(Stack):
-    def __init__(self, scope: Construct, construct_id: str, **kwargs: object) -> None:
+    def __init__(self, scope: Construct, construct_id: str, **kwargs) -> None:
         super().__init__(scope, construct_id, **kwargs)
 
         queue = Queue(
@@ -25,7 +25,7 @@ class SqsLambdaDynamodbStack(Stack):
         function = Function(
             self,
             "SqsLambdaDynamodbFunction",
-            runtime=Runtime.PYTHON_3_13,
+            runtime=Runtime.PYTHON_3_12,
             handler="templates.sqs.handler.main",
             code=Code.from_asset("."),
             environment={

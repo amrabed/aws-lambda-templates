@@ -82,7 +82,7 @@ Use `make` targets for all common workflows: lint, test, run locally, and deploy
 
 ## Notes
 
-- Python 3.12+ required
+- Python 3.14+ required
 - Dependencies are managed via `pyproject.toml` and locked in `uv.lock`
 - Do not edit `uv.lock` directly; use `make update` to update dependencies
 
