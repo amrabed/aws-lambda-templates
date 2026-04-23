@@ -44,12 +44,13 @@ jobs:
         stack: [agent, api, eventbridge, graphql, s3, sqs, stream]
     steps:
       - uses: actions/checkout@v6
-      - name: Setup Python
-        uses: actions/setup-python@v6
+      - name: Install uv and setup Python
+        uses: astral-sh/setup-uv@v7
         with:
+          enable-cache: true
           python-version: 3.14
       - name: Install dependencies
-        run: make poetry install
+        run: make install
       - name: Install AWS CDK CLI
         run: npm install -g aws-cdk
       - name: Configure AWS credentials

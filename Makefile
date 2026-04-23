@@ -5,71 +5,71 @@ help: # Show available targets
 NAME ?= templates
 DESCRIPTION ?= AWS Lambda Templates
 AUTHOR ?= Amr Abed
-EMAIL ?= amrabed
+EMAIL ?=
 GITHUB ?= amrabed
 SOURCE ?= $(shell echo ${NAME} | tr '-' '_' | tr '[:upper:]' '[:lower:]')
 
 .PHONY: new
 new: # Create new Lambda function template (usage: make new template=<name>)
 	@[ -n "$(template)" ] || { echo "Usage: make new template=<name>"; exit 1; }
-	poetry run new -n $(template)
+	uv run new -n $(template)
 
 .PHONY: project
 project: # Rename project (run once)
-	@if [ -d project ]; then mv project ${SOURCE}; fi
-	@sed -i '' 's/^::: project\.app/::: ${SOURCE}\.app/' docs/reference/app.md
+	@if [ -d templates ]; then mv templates ${SOURCE}; fi
+	@sed -i '' 's/^::: templates\.app/::: ${SOURCE}\.app/' docs/reference/app.md
 	@sed -i '' 's/^repo_name: .*/repo_name: ${GITHUB}\/${NAME}/' mkdocs.yml
 	@sed -i '' 's/^repo_url: .*/repo_url: https:\/\/github.com\/${GITHUB}\/${NAME}/' mkdocs.yml
 	@sed -i '' 's/^source = \[.*\]/source = \["${SOURCE}"\]/' pyproject.toml
-	@sed -i '' 's/^app = "project\.app:main"/app = "${SOURCE}\.app:main"/' pyproject.toml
 	@sed -i '' 's/^name = ".*"/name = "${SOURCE}"/' pyproject.toml
 	@sed -i '' 's/^description = ".*"/description = "${DESCRIPTION}"/' pyproject.toml
-	@sed -i '' 's/^authors = \[.*\]/authors = \["${AUTHOR} <${EMAIL}>"\]/' pyproject.toml
+	@sed -i '' 's/^authors = \[.*\]/authors = \[{name = "${AUTHOR}", email = "${EMAIL}"}\]/' pyproject.toml
 	@sed -i '' 's/^# .*/# ${DESCRIPTION}/' docs/README.md
 	@sed -i '' 's/@.*/@${GITHUB}/' .github/CODEOWNERS
 	@sed -i '' 's/^github: \[.*\]/github: \[${GITHUB}\]/' .github/FUNDING.yml
-	@sed -i '' 's/^patreon: .*/patreon: # Put your Patreon username here/' .github/FUNDING.yml
 
-poetry:  # Install Poetry
-	pipx install -f poetry
+.PHONY: uv
+uv: # Install uv if not already installed
+	pipx install uv
 
-venv:
-	poetry env activate
+venv: # Activate virtual environment
+	uv venv --clear
+	. .venv/bin/activate
 
 install: # Install dependencies and project
-	poetry install
+	uv sync
 
 update: # Update dependencies
-	poetry update
+	uv lock --upgrade
 
 precommit: # Install pre-commit hooks
-	poetry run pre-commit autoupdate
-	poetry run pre-commit install
+	uv run pre-commit autoupdate
+	uv run pre-commit install
 
-pre-commit: precommit
+dev: uv venv precommit install
 
 lint:
-	poetry run ruff format
-	poetry run ruff check --fix
-	poetry run ruff format
-# 	poetry run pyright .
+	uv run ruff format
+	uv run ruff check --fix
+	uv run ruff format
+# 	uv run pyright
 
 coverage:
-	poetry run coverage run -m pytest .
-	poetry run coverage report -m
-	poetry run coverage xml
+	uv run coverage run -m pytest .
+	uv run coverage report -m
+	uv run coverage xml
 
 test: coverage
 
 install-docs:
-	poetry install --only docs
+	uv sync --group docs
 
 .PHONY: docs
 docs: # Build and deploy documentation to GitHub pages
-	poetry run mkdocs gh-deploy --force
+	uv run mkdocs gh-deploy --force
 
 local: # Serve documentation on a local server
-	poetry run mkdocs serve
+	uv run mkdocs serve
 
 # CDK stacks mapping
 CDK_STACK                        = \$(STACK_MAP_\$(STACK))
@@ -85,14 +85,14 @@ STACK_MAP_sqs                    = SqsStack
 deploy: # Deploy an CDK stack
 	@[ -n "$(STACK)" ] || { echo "Usage: make deploy STACK=<agent|api|eventbridge|graphql|s3|sqs|stream>"; exit 1; }
 	@[ -n "\$(CDK_STACK)" ] || { echo "Error: unknown stack '\$(STACK)'"; exit 1; }
-	STACK=\$(STACK) cdk deploy --app "python infra/app.py" --require-approval never \$(CDK_STACK) \
+	STACK=\$(STACK) uv run cdk deploy --app "python infra/app.py" --require-approval never \$(CDK_STACK) \
 		\$(if \$(AWS_PROFILE),--profile \$(AWS_PROFILE),)
 
 .PHONY: destroy
 destroy: # Destroy a deployed CDK stack
 	@[ -n "$(STACK)" ] || { echo "Usage: make destroy STACK=<agent|api|eventbridge|graphql|s3|sqs|stream>"; exit 1; }
 	@[ -n "\$(CDK_STACK)" ] || { echo "Error: unknown stack '\$(STACK)'"; exit 1; }
-	STACK=\$(STACK) cdk destroy --force --app "python infra/app.py" \$(CDK_STACK) \
+	STACK=\$(STACK) uv run cdk destroy --force --app "python infra/app.py" \$(CDK_STACK) \
 		\$(if \$(AWS_PROFILE),--profile \$(AWS_PROFILE),)
 
-all: poetry install precommit lint test venv
+all: install lint test

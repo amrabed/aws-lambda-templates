@@ -1,12 +1,12 @@
-from aws_cdk import Stack, aws_lambda_event_sources
-from aws_cdk.aws_dynamodb import Attribute, AttributeType, BillingMode, StartingPosition, StreamViewType, Table
-from aws_cdk.aws_lambda import Code, Function, Runtime
-from aws_lambda_event_sources import DynamoDBEventSource
+from aws_cdk import Stack
+from aws_cdk.aws_dynamodb import Attribute, AttributeType, BillingMode, StreamViewType, Table
+from aws_cdk.aws_lambda import Code, Function, Runtime, StartingPosition
+from aws_cdk.aws_lambda_event_sources import DynamoDBEventSource
 from constructs import Construct
 
 
 class DynamodbStreamStack(Stack):
-    def __init__(self, scope: Construct, construct_id: str, **kwargs: object) -> None:
+    def __init__(self, scope: Construct, construct_id: str, **kwargs) -> None:
         super().__init__(scope, construct_id, **kwargs)
 
         source_table = Table(
@@ -27,7 +27,7 @@ class DynamodbStreamStack(Stack):
         function = Function(
             self,
             "DynamodbStreamFunction",
-            runtime=Runtime.PYTHON_3_13,
+            runtime=Runtime.PYTHON_3_14,
             handler="templates.stream.handler.main",
             code=Code.from_asset("."),
             environment={

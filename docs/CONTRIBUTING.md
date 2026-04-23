@@ -29,7 +29,7 @@ To make contributing as easy and fast as possible, you'll want to run tests and 
 
 You'll need the following prerequisites:
 
-- **Python 3.12+**
+- **Python 3.14+**
 - **Poetry**
 - **git**
 - **make**

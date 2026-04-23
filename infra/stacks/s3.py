@@ -7,7 +7,7 @@ from constructs import Construct
 
 
 class S3SqsStack(Stack):
-    def __init__(self, scope: Construct, construct_id: str, **kwargs: object) -> None:
+    def __init__(self, scope: Construct, construct_id: str, **kwargs) -> None:
         super().__init__(scope, construct_id, **kwargs)
 
         queue = Queue(
@@ -25,7 +25,7 @@ class S3SqsStack(Stack):
         function = Function(
             self,
             "S3SqsFunction",
-            runtime=Runtime.PYTHON_3_13,
+            runtime=Runtime.PYTHON_3_14,
             handler="templates.s3.handler.main",
             code=Code.from_asset("."),
             environment={

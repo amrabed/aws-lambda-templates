@@ -4,7 +4,7 @@ This file provides guidance for AI agents working in this repository.
 
 ## Project Overview
 
-Python AWS Lambda project template using [Poetry](https://python-poetry.org/) for dependency management, Click for CLI, and pytest for testing.
+Python AWS Lambda project template using [uv](https://docs.astral.sh/uv/) for dependency management, Click for CLI, and pytest for testing.
 
 ## Setup
 
@@ -52,7 +52,7 @@ infra/                 # AWS CDK infrastructure stacks
 
 ## Renaming the Template
 
-To rename the project from the default `project` name, run:
+To rename the project from the default `templates` name, run:
 
 ```bash
 make project NAME=my-project DESCRIPTION="My description" AUTHOR="Name" EMAIL=handle GITHUB=username
@@ -60,7 +60,7 @@ make project NAME=my-project DESCRIPTION="My description" AUTHOR="Name" EMAIL=ha
 
 ## Dependencies
 
-- Always use Poetry for dependency management (`poetry add <package>`)
+- Always use uv for dependency management (`uv add <package>`)
 - Use Pydantic for data models
 - Use Pydantic-settings for environment variable configuration in a `settings.py` file
 - Use [AWS Lambda Powertools](https://docs.aws.amazon.com/powertools/python) wherever applicable: logger, tracer, metrics, parameters, event types, event handlers, etc.
@@ -83,8 +83,8 @@ Use `make` targets for all common workflows: lint, test, run locally, and deploy
 ## Notes
 
 - Python 3.14+ required
-- Dependencies are managed via `pyproject.toml` and locked in `poetry.lock`
-- Do not edit `poetry.lock` directly; use `make update` to update dependencies
+- Dependencies are managed via `pyproject.toml` and locked in `uv.lock`
+- Do not edit `uv.lock` directly; use `make update` to update dependencies
 
 ## Coding Conventions
 

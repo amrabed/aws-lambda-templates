@@ -11,9 +11,10 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v6
-      - name: Setup Python
-        uses: actions/setup-python@v6
+      - name: Install uv and setup Python
+        uses: astral-sh/setup-uv@v7
         with:
+          enable-cache: true
           python-version: 3.14
       - name: Configure Git Credentials
         run: |
@@ -27,6 +28,6 @@ jobs:
           restore-keys: |
             mkdocs-material-
       - name: Install dependencies
-        run: make poetry install-docs
+        run: make install-docs
       - name: Publish to GitHub Pages
         run: make docs
