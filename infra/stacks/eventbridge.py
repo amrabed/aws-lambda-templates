@@ -24,7 +24,7 @@ class EventBridgeApiCallerStack(Stack):
         function = Function(
             self,
             "EventBridgeApiCallerFunction",
-            runtime=Runtime.PYTHON_3_12,
+            runtime=Runtime.PYTHON_3_14,
             handler="templates.eventbridge.handler.main",
             code=Code.from_asset("."),
             environment={

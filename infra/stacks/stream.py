@@ -27,7 +27,7 @@ class DynamodbStreamStack(Stack):
         function = Function(
             self,
             "DynamodbStreamFunction",
-            runtime=Runtime.PYTHON_3_12,
+            runtime=Runtime.PYTHON_3_14,
             handler="templates.stream.handler.main",
             code=Code.from_asset("."),
             environment={
