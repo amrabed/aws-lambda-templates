@@ -25,7 +25,7 @@ class SqsLambdaDynamodbStack(Stack):
         function = Function(
             self,
             "SqsLambdaDynamodbFunction",
-            runtime=Runtime.PYTHON_3_13,
+            runtime=Runtime.PYTHON_3_14,
             handler="templates.sqs.handler.main",
             code=Code.from_asset("."),
             environment={

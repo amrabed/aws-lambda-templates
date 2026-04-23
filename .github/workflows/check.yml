@@ -7,19 +7,13 @@ on:
 jobs:
   check:
     runs-on: ubuntu-latest
-    strategy:
-      matrix:
-        python-version:
-          - "3.14"
-          - "3.13"
-          - "3.12"
     steps:
       - uses: actions/checkout@v6
       - name: Install uv and setup Python
         uses: astral-sh/setup-uv@v7
         with:
           enable-cache: true
-          python-version: ${{ matrix.python-version }}
+          python-version: "3.14"
       - name: Install dependencies
         run: make install
       - name: Format and lint

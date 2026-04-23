@@ -18,7 +18,7 @@ class BedrockAgentStack(Stack):
         function = Function(
             self,
             "BedrockAgentFunction",
-            runtime=Runtime.PYTHON_3_13,
+            runtime=Runtime.PYTHON_3_14,
             handler="templates.bedrock_agent.handler.main",
             code=Code.from_asset("."),
             environment={

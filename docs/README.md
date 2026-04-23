@@ -1,5 +1,5 @@
 # AWS Lambda Templates - Python
-[![Python](https://img.shields.io/badge/python-3.12+-3776AB.svg?logo=python&style=flat-square)](https://python.org)
+[![Python](https://img.shields.io/badge/python-3.14+-3776AB.svg?logo=python&style=flat-square)](https://python.org)
 [![Code style: ruff](https://img.shields.io/badge/code%20style-ruff-D7FF64.svg?logo=ruff&style=flat-square)](https://docs.astral.sh/ruff)
 [![License](https://img.shields.io/badge/license-MIT-blue.svg?style=flat-square)](LICENSE.md)
 
@@ -82,7 +82,7 @@ Parameter | Description
 - Docker
 
 ### Local environment
-- Python 3.12+
+- Python 3.14+
 - uv
 - Docker (for Dev Containers)
 - AWS CDK CLI (for deployment)
@@ -135,7 +135,7 @@ Or, equivalently:
 uv run new --name <name>
 ```
 
-This runs the `new` uv script, which builds a skeleton for the new template from `.template`.
+This runs the `new` script, which builds a skeleton for the new template from `.template`.
 
 
 ### Deploy a stack
@@ -216,7 +216,7 @@ make local
 │   │   ├── graphql.md              # AppSync GRAPHQL documentation page
 │   │   ├── s3.md                   # S3 documentation page
 │   │   ├── stream.md               # Stream documentation page
-│   │   └── sqs.md                  # SQS documentation page
+│   │   └── sqs.md                  # S3 documentation page
 │   └── reference                   # Reference section
 │       ├── repository.md           # Repository reference page
 │       ├── agent.md                # Bedrock agent reference page
@@ -241,7 +241,7 @@ make local
 │   └── stacks                      # CDK stack definitions
 │       ├── agent.py                # Bedrock agent stack
 │       ├── api.py                  # ApiGateway stack
-│       ├── eventbridge.py          # EventBridge stack
+│       ├── evetbridge.py           # EventBridge stack
 │       ├── graphql.py              # AppSync GraphQL stack
 │       ├── s3.py                   # S3 stack
 │       ├── stream.py               # DynamoDB Stream stack
