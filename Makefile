@@ -28,7 +28,8 @@ project: # Rename project (run once)
 	@sed -i '' 's/@.*/@${GITHUB}/' .github/CODEOWNERS
 	@sed -i '' 's/^github: \[.*\]/github: \[${GITHUB}\]/' .github/FUNDING.yml
 
-uv:
+.PHONY: uv
+uv: # Install uv if not already installed
 	pipx install uv
 
 venv: # Activate virtual environment
