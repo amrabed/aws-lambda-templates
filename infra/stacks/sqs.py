@@ -10,9 +10,15 @@ class SqsLambdaDynamodbStack(Stack):
     def __init__(self, scope: Construct, construct_id: str, **kwargs) -> None:
         super().__init__(scope, construct_id, **kwargs)
 
+        dlq = Queue(
+            self,
+            "DeadLetterQueue",
+        )
+
         queue = Queue(
             self,
             "SourceQueue",
+            dead_letter_queue={"queue": dlq, "max_receive_count": 3},
         )
 
         table = Table(

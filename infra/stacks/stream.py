@@ -1,7 +1,8 @@
 from aws_cdk import Stack
-from aws_cdk.aws_dynamodb import Attribute, AttributeType, BillingMode, StreamViewType, Table
-from aws_cdk.aws_lambda import Code, Function, Runtime, StartingPosition
-from aws_cdk.aws_lambda_event_sources import DynamoDBEventSource
+from aws_cdk.aws_dynamodb import Attribute, AttributeType, BillingMode, StartingPosition, StreamViewType, Table
+from aws_cdk.aws_lambda import Code, Function, Runtime
+from aws_cdk.aws_lambda_event_sources import DynamoDBEventSource, SqsDlq
+from aws_cdk.aws_sqs import Queue
 from constructs import Construct
 
 
@@ -41,10 +42,17 @@ class DynamodbStreamStack(Stack):
         source_table.grant_read_data(function)
         destination_table.grant_read_write_data(function)
 
+        dlq = Queue(
+            self,
+            "DeadLetterQueue",
+        )
+
         function.add_event_source(
             DynamoDBEventSource(
                 source_table,
                 starting_position=StartingPosition.TRIM_HORIZON,
                 report_batch_item_failures=True,
+                on_failure=SqsDlq(dlq),
+                retry_attempts=3,
             )
         )
