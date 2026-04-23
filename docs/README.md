@@ -216,7 +216,7 @@ make local
 │   │   ├── graphql.md              # AppSync GRAPHQL documentation page
 │   │   ├── s3.md                   # S3 documentation page
 │   │   ├── stream.md               # Stream documentation page
-│   │   └── sqs.md                  # S3 documentation page
+│   │   └── sqs.md                  # SQS documentation page
 │   └── reference                   # Reference section
 │       ├── repository.md           # Repository reference page
 │       ├── agent.md                # Bedrock agent reference page
@@ -241,7 +241,7 @@ make local
 │   └── stacks                      # CDK stack definitions
 │       ├── agent.py                # Bedrock agent stack
 │       ├── api.py                  # ApiGateway stack
-│       ├── evetbridge.py           # EventBridge stack
+│       ├── eventbridge.py          # EventBridge stack
 │       ├── graphql.py              # AppSync GraphQL stack
 │       ├── s3.py                   # S3 stack
 │       ├── stream.py               # DynamoDB Stream stack
