@@ -10,7 +10,7 @@ class ${camel_name}Stack(Stack):
         Function(
             self,
             "${camel_name}Function",
-            runtime=Runtime.PYTHON_3_13,
+            runtime=Runtime.PYTHON_3_14,
             handler="templates.${name}.handler.main",
             code=Code.from_asset("."),
             environment={
