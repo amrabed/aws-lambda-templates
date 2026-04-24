@@ -31,17 +31,25 @@ def get_item(id: str) -> Response:
         200 with the item, 404 if not found, or 500 on error.
     """
     try:
-        item = repository.get_item(id)
+        item_dict = repository.get_item(id)
     except Exception as exc:
         logger.error("DynamoDB get_item failed", exc_info=exc)
         return Response(
             status_code=500, content_type="application/json", body=dumps({"message": "Internal server error"})
         )
 
-    if item is None:
+    if item_dict is None:
         return Response(status_code=404, content_type="application/json", body=dumps({"message": "Not found"}))
 
-    return Response(status_code=200, content_type="application/json", body=dumps(item))
+    try:
+        item = Item.model_validate(item_dict)
+    except ValidationError as exc:
+        logger.error("Item validation failed", exc_info=exc)
+        return Response(
+            status_code=500, content_type="application/json", body=dumps({"message": "Internal server error"})
+        )
+
+    return Response(status_code=200, content_type="application/json", body=dumps(item.model_dump(by_alias=True, exclude_none=True)))
 
 
 @app.post("/items")
