@@ -53,16 +53,6 @@ def _apigw_event(method: str, path: str, path_params: dict[str, str] | None = No
     }
 
 
-@fixture
-def lambda_context(mocker):
-    ctx = mocker.MagicMock()
-    ctx.function_name = "test-function"
-    ctx.memory_limit_in_mb = 128
-    ctx.invoked_function_arn = "arn:aws:lambda:us-east-1:123456789012:function:test-function"
-    ctx.aws_request_id = "test-request-id"
-    return ctx
-
-
 def test_get_item_found(mock_repo: Any, lambda_context) -> None:
     """GET /items/{id} returns 200 with item data when the item exists."""
     import templates.api.handler as handler_module
@@ -143,6 +133,49 @@ def test_post_item_dynamodb_error(mock_repo, lambda_context):
     assert response["statusCode"] == 500
     body = loads(response["body"])
     assert "message" in body
+
+
+def test_get_item_strips_internal_fields(mock_repo, lambda_context):
+    """GET /items/{id} should only return fields defined in the Item model."""
+    from templates.api.handler import main
+
+    # Mock database record with an internal/sensitive field
+    mock_repo.get_item.return_value = {
+        "id": "abc",
+        "name": "Widget",
+        "internal_secret": "TOP_SECRET",
+        "admin_note": "Do not show to user",
+    }
+
+    event = _apigw_event("GET", "/items/abc", path_params={"id": "abc"})
+    response = main(event, lambda_context)
+
+    assert response["statusCode"] == 200
+    body = loads(response["body"])
+
+    # Public fields should be present
+    assert body["id"] == "abc"
+    assert body["name"] == "Widget"
+
+    # Sensitive/Internal fields should NOT be present
+    assert "internal_secret" not in body
+    assert "admin_note" not in body
+    assert "internalSecret" not in body
+    assert "adminNote" not in body
+
+
+def test_get_item_validation_error_returns_500(mock_repo, lambda_context):
+    """GET /items/{id} returns 500 if the database record is invalid for the model."""
+    from templates.api.handler import main
+
+    # Mock database record missing required 'name' field
+    mock_repo.get_item.return_value = {"id": "abc"}
+
+    event = _apigw_event("GET", "/items/abc", path_params={"id": "abc"})
+    response = main(event, lambda_context)
+    assert response["statusCode"] == 500
+    body = loads(response["body"])
+    assert body["message"] == "Internal server error"
 
 
 if __name__ == "__main__":

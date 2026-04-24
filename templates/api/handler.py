@@ -49,7 +49,9 @@ def get_item(id: str) -> Response:
             status_code=500, content_type="application/json", body=dumps({"message": "Internal server error"})
         )
 
-    return Response(status_code=200, content_type="application/json", body=dumps(item.model_dump(by_alias=True, exclude_none=True)))
+    return Response(
+        status_code=200, content_type="application/json", body=dumps(item.model_dump(by_alias=True, exclude_none=True))
+    )
 
 
 @app.post("/items")
