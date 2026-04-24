@@ -15,7 +15,7 @@ def test_handler_handle_record(repository):
 
     handler = Handler(repository)
     record = MagicMock()
-    record.json_body = {"id": "123", "content": "test content"}
+    record.body = dumps({"id": "123", "content": "test content"})
 
     handler.handle_record(record)
 

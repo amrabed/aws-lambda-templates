@@ -41,7 +41,7 @@ class Handler:
             ValueError: If the message body cannot be parsed or processed.
         """
         try:
-            message = SqsMessage.model_validate(record.json_body)
+            message = SqsMessage.model_validate_json(record.body)
             processed = ProcessedItem(id=message.id, content=message.content, status="PROCESSED")
             self._repository.put_item(processed.model_dump())
             logger.info("Successfully processed and stored message", extra={"messageId": message.id})

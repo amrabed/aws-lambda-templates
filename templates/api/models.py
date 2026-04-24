@@ -13,3 +13,8 @@ class Item(BaseModel, populate_by_name=True, alias_generator=to_camel):
         kwargs.setdefault("by_alias", True)
         kwargs.setdefault("exclude_none", True)
         return self.model_dump(**kwargs)
+
+    def dump_json(self, **kwargs: Any) -> str:
+        kwargs.setdefault("by_alias", True)
+        kwargs.setdefault("exclude_none", True)
+        return self.model_dump_json(**kwargs)
