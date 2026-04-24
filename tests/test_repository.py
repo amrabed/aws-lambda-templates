@@ -1,28 +1,6 @@
 """Unit tests for the DynamoDB repository"""
 
-from boto3 import resource
-from moto import mock_aws
-from pytest import fixture, main
-
-from templates.repository import Repository
-
-_TABLE_NAME: str = "test-table"
-
-
-@fixture
-def mock_table():
-    with mock_aws():
-        yield resource("dynamodb").create_table(
-            TableName=_TABLE_NAME,
-            KeySchema=[{"AttributeName": "id", "KeyType": "HASH"}],
-            AttributeDefinitions=[{"AttributeName": "id", "AttributeType": "S"}],
-            BillingMode="PAY_PER_REQUEST",
-        )
-
-
-@fixture()
-def repository(mock_table):
-    return Repository(_TABLE_NAME)
+from pytest import main
 
 
 def test_get_item_returns_item(repository, mock_table):
@@ -36,11 +14,17 @@ def test_get_item_returns_none_when_missing(repository):
     assert repository.get_item("missing") is None
 
 
-def test_put_item_calls_table(repository, mock_table):
+def test_put_item_given_valid_item_then_writes_item_to_table(repository, mock_table):
     """put_item calls the DynamoDB table with the correct Item"""
     repository.put_item({"id": "xyz", "name": "Gadget"})
-
     assert mock_table.get_item(Key={"id": "xyz"}).get("Item") == {"id": "xyz", "name": "Gadget"}
+
+
+def test_delete_item_given_existing_item_then_deletes_item_from_table(repository, mock_table):
+    """delete_item calls the DynamoDB table with the correct Key"""
+    mock_table.put_item(Item={"id": "xyz", "name": "Gadget"})
+    repository.delete_item("xyz")
+    assert mock_table.get_item(Key={"id": "xyz"}).get("Item") is None
 
 
 if __name__ == "__main__":

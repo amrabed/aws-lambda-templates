@@ -4,6 +4,8 @@ from boto3 import resource
 class Repository:
     """Manages all DynamoDB interactions for a single table."""
 
+    _PRIMARY_KEY = "id"
+
     def __init__(self, table_name: str) -> None:
         """Initialize the repository with a DynamoDB table.
 
@@ -21,7 +23,7 @@ class Repository:
         Returns:
             The item as a dictionary, or `None` if not found.
         """
-        return self._table.get_item(Key={"id": item_id}).get("Item")
+        return self._table.get_item(Key={self._PRIMARY_KEY: item_id}).get("Item")
 
     def list_items(self) -> list[dict]:
         """Retrieve all items from the table.
@@ -39,10 +41,10 @@ class Repository:
         """
         self._table.put_item(Item=item)
 
-    def delete_item(self, keys: object) -> None:
+    def delete_item(self, item_id: str) -> None:
         """Delete an item from the table by its primary key.
 
         Args:
-            keys: A mapping of key attribute names to their values.
+            item_id: The unique identifier of the item to delete.
         """
-        self._table.delete_item(Key=keys)
+        self._table.delete_item(Key={self._PRIMARY_KEY: item_id})
