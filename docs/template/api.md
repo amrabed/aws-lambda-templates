@@ -9,7 +9,7 @@ The template sets up:
 2.  **AWS Lambda function**: Handles user requests.
 3.  **Amazon DynamoDB table**: Stores and retrieves items as per the user request.
 
-![](diagrams/api.png)
+![Architecture diagram showing API Gateway, AWS Lambda, and DynamoDB.](diagrams/api.png)
 
 ## Code
 

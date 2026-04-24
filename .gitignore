@@ -164,5 +164,5 @@ cython_debug/
 # PyPI configuration file
 .pypirc
 
-# Jules agent files
-.jules/
+# AI Agent logs
+.[jJ]ules/

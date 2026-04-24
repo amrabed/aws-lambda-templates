@@ -10,7 +10,7 @@ The template sets up:
 3.  **AWS Secrets Manager**: Securely stores the API authentication token.
 4.  **Amazon DynamoDB table**: Persists the API responses.
 
-![](diagrams/eventbridge.png)
+![Architecture diagram showing Amazon EventBridge triggering AWS Lambda to call an external API.](diagrams/eventbridge.png)
 
 
 ## Code
