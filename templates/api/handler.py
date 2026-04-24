@@ -31,17 +31,18 @@ def get_item(id: str) -> Response:
         200 with the item, 404 if not found, or 500 on error.
     """
     try:
-        item = repository.get_item(id)
+        if (item := repository.get_item(id)) is None:
+            return Response(status_code=404, content_type="application/json", body=dumps({"message": "Not found"}))
+        item = Item.model_validate(item)  # Validate model after retrieval to ensure data integrity
     except Exception as exc:
-        logger.error("DynamoDB get_item failed", exc_info=exc)
+        message = (
+            "Item validation failed" if isinstance(exc, ValidationError) else f"Error retrieving item with id {id}"
+        )
+        logger.error(message, exc_info=exc)
         return Response(
             status_code=500, content_type="application/json", body=dumps({"message": "Internal server error"})
         )
-
-    if item is None:
-        return Response(status_code=404, content_type="application/json", body=dumps({"message": "Not found"}))
-
-    return Response(status_code=200, content_type="application/json", body=dumps(item))
+    return Response(status_code=200, content_type="application/json", body=item.dump())
 
 
 @app.post("/items")
@@ -51,10 +52,8 @@ def create_item() -> Response:
     Returns:
         201 with the created item, 422 on validation error, or 500 on error.
     """
-    body = app.current_event.json_body
-
     try:
-        item = Item.model_validate(body)
+        item = Item.model_validate_json(app.current_event.body)
     except ValidationError as exc:
         return Response(status_code=422, content_type="application/json", body=dumps({"errors": loads(exc.json())}))
 
@@ -66,7 +65,7 @@ def create_item() -> Response:
             status_code=500, content_type="application/json", body=dumps({"message": "Internal server error"})
         )
 
-    return Response(status_code=201, content_type="application/json", body=dumps(item.dump()))
+    return Response(status_code=201, content_type="application/json", body=item.dump())
 
 
 @logger.inject_lambda_context
