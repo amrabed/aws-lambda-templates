@@ -10,7 +10,7 @@ from templates.eventbridge.models import ApiResponse
 from templates.eventbridge.settings import Settings
 from templates.repository import Repository
 
-settings = Settings()
+settings = Settings()  # type: ignore
 logger = Logger(service=settings.service_name)
 tracer = Tracer(service=settings.service_name)
 metrics = Metrics(namespace=settings.metrics_namespace, service=settings.service_name)
@@ -27,7 +27,11 @@ class Handler:
     def handle(self, event: EventBridgeModel) -> ApiResponse:
         try:
             token = self._secrets_provider.get(settings.secret_name)
-            response = get(settings.api_url, headers={"Authorization": f"Bearer {token}"})
+            response = get(
+                settings.api_url,
+                headers={"Authorization": f"Bearer {token}"},
+                timeout=settings.api_timeout_seconds,
+            )
             response.raise_for_status()
             api_response = ApiResponse.model_validate(response.json())
             self._repository.put_item(api_response.model_dump(by_alias=True, exclude_none=True))

@@ -210,7 +210,7 @@ def test_bearer_token_header(mocker, token) -> None:
     }
     handler_module.main(valid_event, mock_context)
 
-    mock_get.assert_called_once_with(mocker.ANY, headers={"Authorization": f"Bearer {token}"})
+    mock_get.assert_called_once_with(mocker.ANY, headers={"Authorization": f"Bearer {token}"}, timeout=10)
     mock_get.reset_mock()
     mock_secrets.get.reset_mock()
 
