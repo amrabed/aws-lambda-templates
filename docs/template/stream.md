@@ -10,7 +10,7 @@ The template sets up:
 2.  **AWS Lambda function**: Batch processes stream records with partial failure reporting.
 3.  **Destination Amazon DynamoDB table**: Stores the processed output.
 
-![Architecture diagram showing DynamoDB Streams triggering AWS Lambda to update another DynamoDB table.](diagrams/stream.png)
+![Architecture diagram showing a DynamoDB Stream capturing changes from a source table and triggering an AWS Lambda function to batch-process and upsert records into a destination DynamoDB table.](diagrams/stream.png)
 
 
 ## Code

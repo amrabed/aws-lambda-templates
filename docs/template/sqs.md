@@ -10,7 +10,7 @@ The template sets up:
 2.  **AWS Lambda function**: Processes messages in batches with partial failure reporting.
 3.  **Amazon DynamoDB table**: Stores the processed items.
 
-![Architecture diagram showing Amazon SQS, AWS Lambda, and DynamoDB.](diagrams/sqs.png)
+![Architecture diagram showing an SQS queue holding messages that are batch-processed by an AWS Lambda function and stored in a DynamoDB table.](diagrams/sqs.png)
 
 ## Code
 
