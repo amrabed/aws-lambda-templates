@@ -55,7 +55,6 @@ def create_item() -> Response:
     try:
         item = Item.model_validate_json(app.current_event.body)
     except ValidationError as exc:
-        # Optimization: use exc.errors() directly instead of loads(exc.json()) to avoid redundant serialization
         return Response(status_code=422, content_type="application/json", body=dumps({"errors": exc.errors()}))
 
     try:
