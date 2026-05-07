@@ -10,7 +10,7 @@ The template sets up:
 2.  **AWS Lambda function**: Processes GraphQL resolvers for `getItem`, `listItems`, and `createItem`.
 3.  **Amazon DynamoDB table**: Stores the items.
 
-![Architecture diagram showing AWS AppSync, AWS Lambda, and DynamoDB.](diagrams/graphql.png)
+![Architecture diagram showing AWS AppSync receiving GraphQL requests and triggering an AWS Lambda function to query or update a DynamoDB table.](diagrams/graphql.png)
 
 ## Code
 

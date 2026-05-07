@@ -10,7 +10,7 @@ The template sets up:
 2.  **AWS Lambda function**: Resolves function calls using `BedrockAgentFunctionResolver`.
 3.  **Amazon DynamoDB table**: Stores and retrieves items used by the agent.
 
-![Architecture diagram showing Amazon Bedrock Agent interacting with AWS Lambda and DynamoDB.](diagrams/agent.png)
+![Architecture diagram showing Amazon Bedrock Agent orchestrating user requests and triggering AWS Lambda functions to interact with a DynamoDB table.](diagrams/agent.png)
 
 ## Code
 
