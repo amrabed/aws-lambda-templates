@@ -1,4 +1,4 @@
-from json import dumps, loads
+from json import dumps
 
 from aws_lambda_powertools import Logger, Metrics, Tracer
 from aws_lambda_powertools.event_handler import APIGatewayRestResolver
@@ -55,7 +55,7 @@ def create_item() -> Response:
     try:
         item = Item.model_validate_json(app.current_event.body)
     except ValidationError as exc:
-        return Response(status_code=422, content_type="application/json", body=dumps({"errors": loads(exc.json())}))
+        return Response(status_code=422, content_type="application/json", body=dumps({"errors": exc.errors()}))
 
     try:
         repository.put_item(item.model_dump())
