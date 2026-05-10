@@ -1,6 +1,7 @@
 """Property-based tests for the EventBridge API caller."""
 
 import sys
+from json import dumps
 from unittest.mock import MagicMock, patch
 
 from hypothesis import HealthCheck, given
@@ -59,7 +60,7 @@ def test_valid_event_shapes(mocker, source, detail_type, detail) -> None:
 
     mock_secrets.get.return_value = "test-token"
     mock_resp = mocker.MagicMock()
-    mock_resp.json.return_value = {"id": "test-id", "message": "ok"}
+    mock_resp.content = dumps({"id": "test-id", "message": "ok"}).encode()
     mock_resp.raise_for_status.return_value = None
     mock_get.return_value = mock_resp
 
@@ -187,7 +188,7 @@ def test_bearer_token_header(mocker, token) -> None:
 
     mock_secrets.get.return_value = token
     mock_resp = mocker.MagicMock()
-    mock_resp.json.return_value = {"id": "test-id", "message": "ok"}
+    mock_resp.content = dumps({"id": "test-id", "message": "ok"}).encode()
     mock_resp.raise_for_status.return_value = None
     mock_get.return_value = mock_resp
 
@@ -353,7 +354,7 @@ def test_successful_response_persisted(mocker, status) -> None:
 
     mock_secrets.get.return_value = "test-token"
     mock_resp = mocker.MagicMock()
-    mock_resp.json.return_value = {"id": "test-id", "message": status}
+    mock_resp.content = dumps({"id": "test-id", "message": status}).encode()
     mock_resp.raise_for_status.return_value = None
     mock_get.return_value = mock_resp
 
@@ -397,7 +398,7 @@ def test_dynamodb_write_failure_propagates(mocker, exc) -> None:
 
     mock_secrets.get.return_value = "test-token"
     mock_resp = mocker.MagicMock()
-    mock_resp.json.return_value = {"id": "test-id", "message": "ok"}
+    mock_resp.content = dumps({"id": "test-id", "message": "ok"}).encode()
     mock_resp.raise_for_status.return_value = None
     mock_get.return_value = mock_resp
     mock_repo.put_item.side_effect = exc

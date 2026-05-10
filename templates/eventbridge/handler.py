@@ -33,7 +33,9 @@ class Handler:
                 timeout=settings.api_timeout_seconds,
             )
             response.raise_for_status()
-            api_response = ApiResponse.model_validate(response.json())
+            # Optimize by using Pydantic's Rust-based JSON parser directly on the raw bytes.
+            # This avoids redundant dictionary creation and improves performance.
+            api_response = ApiResponse.model_validate_json(response.content)
             self._repository.put_item(api_response.model_dump(by_alias=True, exclude_none=True))
             metrics.add_metric(name="ApiCallSuccess", unit=MetricUnit.Count, value=1)
             logger.info("API call succeeded", extra={"api_message": api_response.message})
