@@ -40,5 +40,39 @@ def test_create_item_resolver(lambda_context):
     assert "id" in result
 
 
+def test_sensitive_data_exposure(repository, lambda_context):
+    """Verify that internal fields in DynamoDB are NOT leaked to the client."""
+    from templates.graphql.handler import main
+
+    item_with_secret = {"id": "123", "name": "Test Item", "internal_secret": "TOP_SECRET"}
+    repository.put_item(item_with_secret)
+
+    # Test getItem
+    event_get = {"info": {"parentTypeName": "Query", "fieldName": "getItem"}, "arguments": {"id": "123"}}
+    result_get = main(event_get, lambda_context)
+    assert "internal_secret" not in result_get
+
+    # Test listItems
+    event_list = {"info": {"parentTypeName": "Query", "fieldName": "listItems"}, "arguments": {}}
+    result_list = main(event_list, lambda_context)
+    assert "internal_secret" not in result_list[0]
+
+
+def test_error_message_information_leakage(lambda_context, mocker):
+    """Verify that internal error details are NOT leaked to the client."""
+    from templates.graphql import handler
+    from templates.graphql.handler import get_item
+
+    mocker.patch.object(handler.repository, "get_item", side_effect=Exception("Database connection failed"))
+
+    import pytest
+
+    with pytest.raises(RuntimeError) as excinfo:
+        get_item("123")
+
+    assert "Database connection failed" not in str(excinfo.value)
+    assert "Cause:" not in str(excinfo.value)
+
+
 if __name__ == "__main__":
     main()

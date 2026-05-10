@@ -94,5 +94,17 @@ def test_lambda_handler_create_item(mocker, repository, lambda_context, bedrock_
     assert body["name"] == "new item"
 
 
+def test_sensitive_data_exposure(repository):
+    """Verify that internal fields in DynamoDB are NOT leaked to the agent."""
+    from templates.agent.handler import get_item
+
+    item_with_secret = {"id": "1", "name": "test item", "internal_secret": "TOP_SECRET"}
+    repository.put_item(item_with_secret)
+
+    result = get_item("1")
+
+    assert "internal_secret" not in result
+
+
 if __name__ == "__main__":
     main()

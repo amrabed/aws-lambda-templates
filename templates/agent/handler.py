@@ -32,7 +32,7 @@ def get_item(item_id: str) -> dict:
     item = repository.get_item(item_id)
     if not item:
         return {"error": f"Item {item_id} not found"}
-    return item
+    return Item.model_validate(item).dump()
 
 
 @tracer.capture_method
