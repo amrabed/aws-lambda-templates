@@ -1,6 +1,6 @@
 """Unit tests for the EventBridge API caller handler"""
 
-import json
+from json import dumps
 
 from pydantic import ValidationError
 from pytest import fixture, main, raises
@@ -53,8 +53,7 @@ def _valid_event() -> dict:
 
 def _mock_response(mocker, json_data: dict, status_code: int = 200):
     mock_resp = mocker.MagicMock()
-    mock_resp.json.return_value = json_data
-    mock_resp.content = json.dumps(json_data).encode()
+    mock_resp.content = dumps(json_data).encode()
     mock_resp.status_code = status_code
     mock_resp.raise_for_status.return_value = None
     return mock_resp
