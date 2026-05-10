@@ -23,6 +23,7 @@ theme:
         name: Switch to light mode
   features:
   - announce.dismiss
+  - navigation.tracking
   - content.action.edit
   - content.action.view
   - content.code.annotate
