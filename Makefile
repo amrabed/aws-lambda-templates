@@ -15,22 +15,17 @@ new: # Create new Lambda function template (usage: make new template=<name>)
 	uv run new -n $(template)
 
 .PHONY: project
-project: # Rename project (run once)
-	@if [ -d templates ]; then mv templates ${SOURCE}; fi
-	@sed -i '' 's/^::: templates\.app/::: ${SOURCE}\.app/' docs/reference/app.md
-	@sed -i '' 's/^repo_name: .*/repo_name: ${GITHUB}\/${NAME}/' mkdocs.yml
-	@sed -i '' 's/^repo_url: .*/repo_url: https:\/\/github.com\/${GITHUB}\/${NAME}/' mkdocs.yml
-	@sed -i '' 's/^source = \[.*\]/source = \["${SOURCE}"\]/' pyproject.toml
-	@sed -i '' 's/^name = ".*"/name = "${SOURCE}"/' pyproject.toml
-	@sed -i '' 's/^description = ".*"/description = "${DESCRIPTION}"/' pyproject.toml
-	@sed -i '' 's/^authors = \[.*\]/authors = \[{name = "${AUTHOR}", email = "${EMAIL}"}\]/' pyproject.toml
-	@sed -i '' 's/^# .*/# ${DESCRIPTION}/' docs/README.md
-	@sed -i '' 's/@.*/@${GITHUB}/' .github/CODEOWNERS
-	@sed -i '' 's/^github: \[.*\]/github: \[${GITHUB}\]/' .github/FUNDING.yml
+project: uv # Rename project (run once)
+	@uv run rename \
+		--name '$(subst ','\'',$(NAME))' \
+		--description '$(subst ','\'',$(DESCRIPTION))' \
+		--author '$(subst ','\'',$(AUTHOR))' \
+		--email '$(subst ','\'',$(EMAIL))' \
+		--github '$(subst ','\'',$(GITHUB))'
 
 .PHONY: uv
 uv: # Install uv if not already installed
-	pipx install uv
+	@command -v uv >/dev/null 2>&1 || pipx install uv
 
 venv: # Activate virtual environment
 	uv venv --clear
