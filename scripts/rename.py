@@ -33,10 +33,11 @@ def main(name: str, description: str, author: str, email: str, github: str):
     replacements = [
         ("mkdocs.yml", r"^repo_name: .*", f"repo_name: {github}/{name}"),
         ("mkdocs.yml", r"^repo_url: .*", f"repo_url: https://github.com/{github}/{name}"),
-        ("pyproject.toml", r'^name = ".*"', f'name = "{name}"'),
-        ("pyproject.toml", r'^description = ".*"', f'description = "{description}"'),
-        ("pyproject.toml", r"^authors = \[.*\]", f'authors = [{{name = "{author}", email = "{email}"}}]'),
-        ("pyproject.toml", r'^source = \["templates"\]', f'source = ["{source}"]'),
+        ("mise.toml", r"default='templates'", f"default='{name}'"),
+        ("mise.toml", r"default='AWS Lambda Templates'", f"default='{description}'"),
+        ("mise.toml", r"default='Amr Abed'", f"default='{author}'"),
+        ("mise.toml", r"default='amrabed'", f"default='{github}'"),
+        (".coveragerc", r"^source = .*", f"source = {source}"),
         ("docs/README.md", r"^# .*", f"# {description}"),
         (".github/CODEOWNERS", r"@.*", f"@{github}"),
         (".github/FUNDING.yml", r"^github: .*", f"github: {github}"),
@@ -60,7 +61,7 @@ def main(name: str, description: str, author: str, email: str, github: str):
         dirs[:] = [d for d in dirs if not d.startswith(".") and d != "venv"]
 
         for file in files:
-            if file.endswith((".py", ".md", ".yml", ".pyt", "Makefile")):
+            if file.endswith((".py", ".md", ".yml", ".pyt", ".toml", ".txt", ".coveragerc", "mise.toml")):
                 path = Path(root) / file
                 if path.name == "rename.py":
                     continue

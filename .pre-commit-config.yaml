@@ -3,5 +3,5 @@ repos:
     hooks:
       - id: lint
         name: Linting
-        entry: make lint
+        entry: mise run lint
         language: system

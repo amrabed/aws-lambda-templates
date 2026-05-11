@@ -9,16 +9,13 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v6
-      - name: Install uv and setup Python
-        uses: astral-sh/setup-uv@v7
-        with:
-          enable-cache: true
-          python-version: 3.14
+      - name: Install mise
+        uses: jdx/mise-action@v2
       - name: Install dependencies
-        run: make install
+        run: mise run install
       - name: Format and lint
-        run: make lint
+        run: mise run lint
       - name: Run tests
-        run: make test
+        run: mise run test
         env:
           AWS_DEFAULT_REGION: us-east-1

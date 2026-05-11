@@ -100,34 +100,31 @@ def update_mkdocs_file(name: str, title_name: str):
             f.write(content)
 
 
-def update_makefile(name: str, camel_name: str):
-    """Update Makefile to include new template in build and test targets."""
-    with open("Makefile", "r") as f:
+def update_mise_toml(name: str):
+    """Update mise.toml to include new template in deploy and destroy targets."""
+    with open("mise.toml", "r") as f:
         content = f.read()
 
-    stack_map_line = f"STACK_MAP_{name} " + " " * (25 - len(name)) + f"= {camel_name}Stack"
-    if stack_map_line not in content:
-        # Find the last STACK_MAP entry
+    if f"|{name}" not in content:
+        # Update usage messages using regex
+        content = re.sub(
+            r"(Usage: mise run (?:deploy|destroy) stack=<[a-z0-9|]+)>",
+            r"\1|" + name + ">",
+            content
+        )
+
+        # Update case statements
         lines = content.splitlines()
-        last_map_idx = -1
-        for i, line in enumerate(lines):
-            if "STACK_MAP_" in line:
-                last_map_idx = i
+        new_lines = []
+        for line in lines:
+            if '*) echo "Error: unknown stack' in line:
+                components = name.split("_")
+                camel_name = "".join(x.title() for x in components)
+                new_lines.append(f"    {name}) CDK_STACK={camel_name}Stack ;;")
+            new_lines.append(line)
 
-        if last_map_idx != -1:
-            lines.insert(last_map_idx + 1, stack_map_line)
-
-            # Update deploy/destroy messages
-            for i, line in enumerate(lines):
-                if "Usage: make deploy STACK=" in line:
-                    if f"|{name}" not in line:
-                        lines[i] = line.replace(">", f"|{name}>")
-                if "Usage: make destroy STACK=" in line:
-                    if f"|{name}" not in line:
-                        lines[i] = line.replace(">", f"|{name}>")
-
-            with open("Makefile", "w") as f:
-                f.write("\n".join(lines) + "\n")
+        with open("mise.toml", "w") as f:
+            f.write("\n".join(new_lines) + "\n")
 
 
 @command(context_settings={"help_option_names": ["-h", "--help"]}, help="Generate new template")
@@ -161,7 +158,7 @@ def main(name: str):
     update_infra_app_file(name, camel_name)
     update_deploy_workflow(name)
     update_mkdocs_file(name, title_name)
-    update_makefile(name, camel_name)
+    update_mise_toml(name)
 
     print(f"Successfully created template '{name}'")
 

@@ -1,0 +1,108 @@
+[tools]
+python = "3.14"
+uv = "latest"
+
+[env]
+_.python.venv = { path = ".venv", create = true }
+
+[tasks.new]
+description = "Create new Lambda function template"
+run = "uv run python scripts/new.py -n {{ arg(n='template') }}"
+
+[tasks.project]
+description = "Rename project (run once)"
+run = """
+uv run python scripts/rename.py \
+    --name '{{ arg(n='name', default='templates') }}' \
+    --description '{{ arg(n='description', default='AWS Lambda Templates') }}' \
+    --author '{{ arg(n='author', default='Amr Abed') }}' \
+    --email '{{ arg(n='email', default='') }}' \
+    --github '{{ arg(n='github', default='amrabed') }}'
+"""
+
+[tasks.install]
+description = "Install dependencies and project"
+run = "uv pip install -r requirements-dev.txt"
+
+[tasks.update]
+description = "Update dependencies"
+run = "uv pip install --upgrade -r requirements-dev.txt -r requirements-docs.txt"
+
+[tasks.precommit]
+description = "Install pre-commit hooks"
+run = "uv run pre-commit autoupdate && uv run pre-commit install"
+
+[tasks.dev]
+description = "Set up dev environment"
+depends = ["precommit", "install"]
+
+[tasks.lint]
+description = "Format and lint code"
+run = """
+uv run ruff format
+uv run ruff check --fix
+uv run ruff format
+# uv run pyright
+"""
+
+[tasks.coverage]
+description = "Run tests with coverage"
+run = """
+uv run coverage run -m pytest .
+uv run coverage report -m
+uv run coverage xml
+"""
+
+[tasks.test]
+description = "Run all tests"
+depends = ["coverage"]
+
+[tasks.install-docs]
+description = "Install documentation dependencies"
+run = "uv pip install -r requirements-docs.txt"
+
+[tasks.docs]
+description = "Build and deploy documentation to GitHub pages"
+run = "uv run mkdocs gh-deploy --force"
+
+[tasks.local]
+description = "Serve documentation on a local server"
+run = "uv run mkdocs serve"
+
+[tasks.deploy]
+description = "Deploy a CDK stack"
+run = """
+#!/usr/bin/env bash
+[ -n "$stack" ] || { echo "Usage: mise run deploy stack=<agent|api|eventbridge|graphql|s3|sqs|stream>"; exit 1; }
+case "$stack" in
+    agent) CDK_STACK=BedrockAgentStack ;;
+    api) CDK_STACK=ApiGatewayDynamodbStack ;;
+    stream) CDK_STACK=DynamodbStreamStack ;;
+    eventbridge) CDK_STACK=EventBridgeApiCallerStack ;;
+    graphql) CDK_STACK=AppSyncDynamodbStack ;;
+    s3) CDK_STACK=S3SqsStack ;;
+    sqs) CDK_STACK=SqsStack ;;
+    *) echo "Error: unknown stack '$stack'"; exit 1 ;;
+esac
+STACK=$stack uv run cdk deploy --app "python infra/app.py" --require-approval never $CDK_STACK \
+    ${AWS_PROFILE:+--profile $AWS_PROFILE}
+"""
+
+[tasks.destroy]
+description = "Destroy a deployed CDK stack"
+run = """
+#!/usr/bin/env bash
+[ -n "$stack" ] || { echo "Usage: mise run destroy stack=<agent|api|eventbridge|graphql|s3|sqs|stream>"; exit 1; }
+case "$stack" in
+    agent) CDK_STACK=BedrockAgentStack ;;
+    api) CDK_STACK=ApiGatewayDynamodbStack ;;
+    stream) CDK_STACK=DynamodbStreamStack ;;
+    eventbridge) CDK_STACK=EventBridgeApiCallerStack ;;
+    graphql) CDK_STACK=AppSyncDynamodbStack ;;
+    s3) CDK_STACK=S3SqsStack ;;
+    sqs) CDK_STACK=SqsStack ;;
+    *) echo "Error: unknown stack '$stack'"; exit 1 ;;
+esac
+STACK=$stack uv run cdk destroy --force --app "python infra/app.py" $CDK_STACK \
+    ${AWS_PROFILE:+--profile $AWS_PROFILE}
+"""

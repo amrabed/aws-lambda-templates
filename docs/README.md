@@ -38,6 +38,7 @@ Templates come pre-wired with:
 - **Development environment**: [Dev Containers](https://code.visualstudio.com/docs/devcontainers/containers) for dockerized development environment
 - **Pre-commit Validations**: [pre-commit](https://pre-commit.com) hooks
 - **Workflow Automation**: [GitHub Actions](https://github.com/features/actions) for CI/CD and documentation auto-deployment to [GitHub Pages](https://pages.github.com)
+- **Tool Management & Tasks**: [mise](https://mise.jdx.dev/) for managing project tools and automating common development tasks
 
 ### GitHub files
 The repository also comes preloaded with these GitHub files:
@@ -59,10 +60,10 @@ Click this button to create a new repository for your project, then clone the ne
 [![Use this template](https://img.shields.io/badge/Use%20this%20template-238636?style=for-the-badge)](https://github.com/amrabed/aws-lambda-templates/generate)
 
 ### Rename the project
-Run `make project` once after cloning, before any other setup steps:
+Run `mise run project` once after cloning, before any other setup steps:
 
 ```bash
-make project NAME="my-project" DESCRIPTION="My project description" AUTHOR="Jane Doe" EMAIL="jane" GITHUB="janedoe"
+mise run project name="my-project" description="My project description" author="Jane Doe" email="jane" github="janedoe"
 ```
 
 Pass the following parameters:
@@ -82,8 +83,7 @@ Parameter | Description
 - Docker
 
 ### Local environment
-- Python 3.14+
-- uv
+- [mise](https://mise.jdx.dev/)
 - Docker (for Dev Containers)
 - AWS CDK CLI (for deployment)
 
@@ -92,53 +92,41 @@ Parameter | Description
 ### Set up dev environment
 To set up the local dev environment, run:
 ```bash
-make dev
+mise run dev
 ```
 
 ### Install dependencies
-To install the project dependencies defined in `pyproject.toml`, run:
+To install the project dependencies, run:
 ```bash
-make install
+mise run install
 ```
 
 ### Install pre-commit hooks
 To install the pre-commit hooks for the project to format and lint your code automatically before committing, run:
 ```bash
-make precommit
-```
-
-### Activate virtual environment
-To activate the virtual environment, run:
-```bash
-make venv
+mise run precommit
 ```
 
 ### Format and lint code
 To format and lint project code, run:
 ```bash
-make lint
+mise run lint
 ```
 
 ### Run tests with coverage
 To run all tests (including Hypothesis property-based tests) and show the coverage report, run:
 ```bash
-make test
+mise run test
 ```
 
-`make test` runs both standard pytest tests and Hypothesis property-based tests in a single command.
+`mise run test` runs both standard pytest tests and Hypothesis property-based tests in a single command.
 
 ### Build a new template
 
 To start building a new Lambda template, use:
 
 ```bash
-make new template=<name>
-```
-
-Or, equivalently:
-
-```bash
-uv run new --name <name>
+mise run new template=<name>
 ```
 
 This runs the `new` script, which builds a skeleton for the new template from `.template`.
@@ -147,27 +135,26 @@ This runs the `new` script, which builds a skeleton for the new template from `.
 ### Deploy a stack
 Infrastructure is defined as AWS CDK stacks under [`infra/stacks/`](/infra/stacks). 
 The CDK entry point is [`infra/app.py`](/infra/app.py). 
-The `STACK` environment variable selects which stack to synthesise.
 
 ```bash
-make deploy STACK=<stack-key>
+mise run deploy stack=<stack-key>
 ```
 
 Pass `AWS_PROFILE` to use a named AWS CLI profile:
 ```bash
-make deploy STACK=<stack-key> AWS_PROFILE=<my-profile>
+AWS_PROFILE=<my-profile> mise run deploy stack=<stack-key>
 ```
 
 ### Destroy a stack
 ```bash
-make destroy STACK=<stack-key>
+mise run destroy stack=<stack-key>
 ```
 
 ### Generating documentation
 
 To build and publish the project documentation to GitHub Pages, run:
 ```bash
-make docs
+mise run docs
 ```
 
 That pushes the new documentation to the `gh-pages` branch. Make sure GitHub Pages is enabled in your repository settings and using the `gh-pages` branch for the documentation to be publicly available.
@@ -175,7 +162,7 @@ That pushes the new documentation to the `gh-pages` branch. Make sure GitHub Pag
 ### Local preview
 To serve the documentation on a local server, run:
 ```bash
-make local
+mise run local
 ```
 
 ## Coding Conventions

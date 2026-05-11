@@ -44,13 +44,10 @@ jobs:
         stack: [agent, api, eventbridge, graphql, s3, sqs, stream]
     steps:
       - uses: actions/checkout@v6
-      - name: Install uv and setup Python
-        uses: astral-sh/setup-uv@v7
-        with:
-          enable-cache: true
-          python-version: 3.14
+      - name: Install mise
+        uses: jdx/mise-action@v2
       - name: Install dependencies
-        run: make install
+        run: mise run install
       - name: Install AWS CDK CLI
         run: npm install -g aws-cdk
       - name: Configure AWS credentials
@@ -60,4 +57,4 @@ jobs:
           aws-region: ${{ vars.AWS_REGION }}
       - name: Deploy stack
         if: github.event_name != 'workflow_dispatch' || inputs.stack == 'all' || contains(inputs.stack, matrix.stack)
-        run: make deploy STACK=${{ matrix.stack }}
+        run: mise run deploy stack=${{ matrix.stack }}
