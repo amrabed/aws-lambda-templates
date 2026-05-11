@@ -7,17 +7,27 @@ _.python.venv = { path = ".venv", create = true }
 
 [tasks.new]
 description = "Create new Lambda function template"
-run = "uv run new -n {{ arg(n='template') }}"
+usage = """
+arg "<template>" help="Template name"
+"""
+run = "uv run new -n $usage_template"
 
 [tasks.project]
 description = "Rename project (run once)"
+usage = """
+arg "<name>" help="Project new name" default="templates"
+arg "<description>" help="Project short description" default="AWS Lambda Templates"
+arg "<author>" help="Author name" default="Amr Abed"
+arg "<email>" help="Author email" default=""
+arg "<github>" help="GitHub username" default="amrabed"
+"""
 run = """
 uv run rename \
-    --name '{{ arg(n='name', default='templates') }}' \
-    --description '{{ arg(n='description', default='AWS Lambda Templates') }}' \
-    --author '{{ arg(n='author', default='Amr Abed') }}' \
-    --email '{{ arg(n='email', default='') }}' \
-    --github '{{ arg(n='github', default='amrabed') }}'
+    --name "$usage_name" \
+    --description "$usage_description" \
+    --author "$usage_author" \
+    --email "$usage_email" \
+    --github "$usage_github"
 """
 
 [tasks.install]
@@ -71,10 +81,12 @@ run = "uv run mkdocs serve"
 
 [tasks.deploy]
 description = "Deploy a CDK stack"
+usage = """
+arg "<stack>" help="CDK stack to deploy <agent|api|eventbridge|graphql|s3|sqs|stream>"
+"""
 run = """
 #!/usr/bin/env bash
-[ -n "$stack" ] || { echo "Usage: mise run deploy stack=<agent|api|eventbridge|graphql|s3|sqs|stream>"; exit 1; }
-case "$stack" in
+case "$usage_stack" in
     agent) CDK_STACK=BedrockAgentStack ;;
     api) CDK_STACK=ApiGatewayDynamodbStack ;;
     stream) CDK_STACK=DynamodbStreamStack ;;
@@ -82,18 +94,20 @@ case "$stack" in
     graphql) CDK_STACK=AppSyncDynamodbStack ;;
     s3) CDK_STACK=S3SqsStack ;;
     sqs) CDK_STACK=SqsStack ;;
-    *) echo "Error: unknown stack '$stack'"; exit 1 ;;
+    *) echo "Error: unknown stack '$usage_stack'"; exit 1 ;;
 esac
-STACK=$stack uv run cdk deploy --app "python infra/app.py" --require-approval never $CDK_STACK \
+STACK=$usage_stack uv run cdk deploy --app "python infra/app.py" --require-approval never $CDK_STACK \
     ${AWS_PROFILE:+--profile $AWS_PROFILE}
 """
 
 [tasks.destroy]
 description = "Destroy a deployed CDK stack"
+usage = """
+arg "<stack>" help="CDK stack to destroy <agent|api|eventbridge|graphql|s3|sqs|stream>"
+"""
 run = """
 #!/usr/bin/env bash
-[ -n "$stack" ] || { echo "Usage: mise run destroy stack=<agent|api|eventbridge|graphql|s3|sqs|stream>"; exit 1; }
-case "$stack" in
+case "$usage_stack" in
     agent) CDK_STACK=BedrockAgentStack ;;
     api) CDK_STACK=ApiGatewayDynamodbStack ;;
     stream) CDK_STACK=DynamodbStreamStack ;;
@@ -101,8 +115,23 @@ case "$stack" in
     graphql) CDK_STACK=AppSyncDynamodbStack ;;
     s3) CDK_STACK=S3SqsStack ;;
     sqs) CDK_STACK=SqsStack ;;
-    *) echo "Error: unknown stack '$stack'"; exit 1 ;;
+    *) echo "Error: unknown stack '$usage_stack'"; exit 1 ;;
 esac
-STACK=$stack uv run cdk destroy --force --app "python infra/app.py" $CDK_STACK \
+STACK=$usage_stack uv run cdk destroy --force --app "python infra/app.py" $CDK_STACK \
     ${AWS_PROFILE:+--profile $AWS_PROFILE}
 """
+
+[shell_alias]
+# Project-specific shortcuts
+i = "mise run install"
+l = "mise run lint"
+t = "mise run test"
+d = "mise run deploy"
+D = "mise run destroy"
+
+# Common utility aliases
+ll = "ls -la"
+la = "ls -A"
+gs = "git status"
+gc = "git commit"
+gp = "git push"
