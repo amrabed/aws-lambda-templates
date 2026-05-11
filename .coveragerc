@@ -1,7 +1,0 @@
-[run]
-branch = true
-source = templates
-
-[report]
-omit = tests/*
-fail_under = 90

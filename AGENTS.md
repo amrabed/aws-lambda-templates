@@ -60,8 +60,7 @@ mise run project name=my-project description="My description" author="Name" emai
 
 ## Dependencies
 
-- Always use uv for dependency management (`uv pip install <package>`)
-- Dependencies are listed in `requirements.txt` and its variants
+- Always use uv for dependency management (`uv add <package>`)
 - Use Pydantic for data models
 - Use Pydantic-settings for environment variable configuration in a `settings.py` file
 - Use [AWS Lambda Powertools](https://docs.aws.amazon.com/powertools/python) wherever applicable: logger, tracer, metrics, parameters, event types, event handlers, etc.
@@ -84,8 +83,8 @@ Use `mise run <task>` for all common workflows: lint, test, run locally, and dep
 ## Notes
 
 - Python 3.14+ required
+- Dependencies are managed via `pyproject.toml` and locked in `uv.lock`
 - Tooling is managed via `mise.toml`
-- Dependencies are managed via `requirements.txt` files
 
 ## Coding Conventions
 

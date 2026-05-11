@@ -7,12 +7,12 @@ _.python.venv = { path = ".venv", create = true }
 
 [tasks.new]
 description = "Create new Lambda function template"
-run = "uv run python scripts/new.py -n {{ arg(n='template') }}"
+run = "uv run new -n {{ arg(n='template') }}"
 
 [tasks.project]
 description = "Rename project (run once)"
 run = """
-uv run python scripts/rename.py \
+uv run rename \
     --name '{{ arg(n='name', default='templates') }}' \
     --description '{{ arg(n='description', default='AWS Lambda Templates') }}' \
     --author '{{ arg(n='author', default='Amr Abed') }}' \
@@ -22,11 +22,11 @@ uv run python scripts/rename.py \
 
 [tasks.install]
 description = "Install dependencies and project"
-run = "uv pip install -r requirements-dev.txt"
+run = "uv sync"
 
 [tasks.update]
 description = "Update dependencies"
-run = "uv pip install --upgrade -r requirements-dev.txt -r requirements-docs.txt"
+run = "uv lock --upgrade"
 
 [tasks.precommit]
 description = "Install pre-commit hooks"
@@ -59,7 +59,7 @@ depends = ["coverage"]
 
 [tasks.install-docs]
 description = "Install documentation dependencies"
-run = "uv pip install -r requirements-docs.txt"
+run = "uv sync --group docs"
 
 [tasks.docs]
 description = "Build and deploy documentation to GitHub pages"

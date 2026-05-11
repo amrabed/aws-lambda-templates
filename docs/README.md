@@ -96,7 +96,7 @@ mise run dev
 ```
 
 ### Install dependencies
-To install the project dependencies, run:
+To install the project dependencies defined in `pyproject.toml`, run:
 ```bash
 mise run install
 ```
