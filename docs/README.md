@@ -140,9 +140,9 @@ The CDK entry point is [`infra/app.py`](/infra/app.py).
 mise run deploy stack=<stack-key>
 ```
 
-Pass `AWS_PROFILE` to use a named AWS CLI profile:
+Pass `--profile` (or `-p`) to use a named AWS CLI profile:
 ```bash
-AWS_PROFILE=<my-profile> mise run deploy stack=<stack-key>
+mise run deploy stack=<stack-key> --profile <my-profile>
 ```
 
 ### Destroy a stack
