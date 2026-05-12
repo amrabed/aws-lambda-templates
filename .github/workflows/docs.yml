@@ -17,7 +17,5 @@ jobs:
         run: |
           git config user.name github-actions[bot]
           git config user.email 41898282+github-actions[bot]@users.noreply.github.com
-      - name: Install dependencies
-        run: mise run install-docs
       - name: Publish to GitHub Pages
         run: mise run docs
