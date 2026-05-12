@@ -55,7 +55,7 @@ uv run ruff format
 # uv run pyright
 """
 
-[tasks.coverage]
+[tasks.test]
 description = "Run tests with coverage"
 run = """
 uv run coverage run -m pytest .
@@ -63,23 +63,28 @@ uv run coverage report -m
 uv run coverage xml
 """
 
-[tasks.test]
-description = "Run all tests"
-depends = ["coverage"]
-
 [tasks.install-docs]
 description = "Install documentation dependencies"
 run = "uv sync --group docs"
+hide = true
 
 [tasks.docs]
 description = "Build and deploy documentation to GitHub pages"
 run = "uv run mkdocs gh-deploy --force"
+depends = ["install-docs"]
 
 [tasks.local]
 description = "Serve documentation on a local server"
 run = "uv run mkdocs serve"
 
+[tasks.install-cdk]
+description = "Install CDK dependencies"
+run = "npm install -g aws-cdk && uv sync --group infra"
+hide = true
+
 [tasks.cdk]
+depends = ["install-cdk"]
+description = "Run CDK commands for infrastructure management"
 hide = true
 usage = """
 arg "<action>" help="CDK action to perform"
