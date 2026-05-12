@@ -11,16 +11,15 @@ usage = """
 arg "<template>" help="Template name"
 """
 run = "uv run new -n $usage_template"
-alias = ["n"]
 
 [tasks.project]
 description = "Rename project (run once)"
 usage = """
-arg "<name>" help="Project new name" default="templates"
-arg "<description>" help="Project short description" default="AWS Lambda Templates"
-arg "<author>" help="Author name" default="Amr Abed"
-arg "<email>" help="Author email" default=""
-arg "<github>" help="GitHub username" default="amrabed"
+arg "<name>" help="Project new name"
+arg "<description>" help="Project short description"
+arg "<author>" help="Author name"
+arg "<email>" help="Author email"
+arg "<github>" help="GitHub username"
 """
 run = """
 uv run rename \
@@ -34,12 +33,10 @@ uv run rename \
 [tasks.install]
 description = "Install dependencies and project"
 run = "uv sync"
-alias = ["i"]
 
 [tasks.update]
 description = "Update dependencies"
 run = "uv lock --upgrade"
-alias = ["u"]
 
 [tasks.precommit]
 description = "Install pre-commit hooks"
@@ -57,39 +54,32 @@ uv run ruff check --fix
 uv run ruff format
 # uv run pyright
 """
-alias = ["l"]
 
-[tasks.test]
+[tasks.coverage]
 description = "Run tests with coverage"
 run = """
 uv run coverage run -m pytest .
 uv run coverage report -m
 uv run coverage xml
 """
-alias = ["t"]
+
+[tasks.test]
+description = "Run all tests"
+depends = ["coverage"]
 
 [tasks.install-docs]
 description = "Install documentation dependencies"
 run = "uv sync --group docs"
-hide = true
 
 [tasks.docs]
 description = "Build and deploy documentation to GitHub pages"
 run = "uv run mkdocs gh-deploy --force"
-depends = ["install-docs"]
 
 [tasks.local]
 description = "Serve documentation on a local server"
 run = "uv run mkdocs serve"
 
-[tasks.install-cdk]
-description = "Install CDK dependencies"
-run = "npm install -g aws-cdk && uv sync --group infra"
-hide = true
-
 [tasks.cdk]
-depends = ["install-cdk"]
-description = "Run CDK commands for infrastructure management"
 hide = true
 usage = """
 arg "<action>" help="CDK action to perform"
@@ -142,7 +132,6 @@ run = "mise run cdk -- destroy $usage_stack ${usage_profile:+--profile $usage_pr
 
 [shell_alias]
 # Project-specific shortcuts
-n = "mise run new"
 i = "mise run install"
 l = "mise run lint"
 t = "mise run test"
@@ -150,7 +139,6 @@ d = "mise run deploy"
 D = "mise run destroy"
 
 # Common utility aliases
-mr = "mise run"
 ll = "ls -la"
 la = "ls -A"
 gs = "git status"

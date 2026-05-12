@@ -107,7 +107,11 @@ def update_mise_toml(name: str):
 
     if f"|{name}" not in content:
         # Update usage messages using regex
-        content = re.sub(r"(CDK stack to (?:deploy|destroy) <[a-z0-9|]+)>", r"\1|" + name + ">", content)
+        content = re.sub(
+            r"(CDK stack to (?:deploy|destroy) <[a-z0-9|]+)>",
+            r"\1|" + name + ">",
+            content
+        )
 
         # Update case statements
         lines = content.splitlines()
