@@ -11,6 +11,7 @@ usage = """
 arg "<template>" help="Template name"
 """
 run = "uv run new -n $usage_template"
+alias = ["n"]
 
 [tasks.project]
 description = "Rename project (run once)"
@@ -33,10 +34,12 @@ uv run rename \
 [tasks.install]
 description = "Install dependencies and project"
 run = "uv sync"
+alias = ["i"]
 
 [tasks.update]
 description = "Update dependencies"
 run = "uv lock --upgrade"
+alias = ["u"]
 
 [tasks.precommit]
 description = "Install pre-commit hooks"
@@ -54,6 +57,7 @@ uv run ruff check --fix
 uv run ruff format
 # uv run pyright
 """
+alias = ["l"]
 
 [tasks.test]
 description = "Run tests with coverage"
@@ -62,6 +66,7 @@ uv run coverage run -m pytest .
 uv run coverage report -m
 uv run coverage xml
 """
+alias = ["t"]
 
 [tasks.install-docs]
 description = "Install documentation dependencies"
@@ -137,6 +142,7 @@ run = "mise run cdk -- destroy $usage_stack ${usage_profile:+--profile $usage_pr
 
 [shell_alias]
 # Project-specific shortcuts
+n = "mise run new"
 i = "mise run install"
 l = "mise run lint"
 t = "mise run test"
@@ -144,6 +150,7 @@ d = "mise run deploy"
 D = "mise run destroy"
 
 # Common utility aliases
+mr = "mise run"
 ll = "ls -la"
 la = "ls -A"
 gs = "git status"
