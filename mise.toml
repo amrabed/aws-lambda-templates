@@ -1,6 +1,7 @@
 [tools]
 python = "3.14"
 uv = "latest"
+node = "latest"
 
 [settings]
 python.uv_venv_auto = "create|source"
@@ -11,35 +12,21 @@ usage = """
 arg "<template>" help="Template name"
 """
 run = "uv run new -n $usage_template"
-alias = ["n"]
+alias = "n"
 
-[tasks.project]
+[tasks.rename]
 description = "Rename project (run once)"
-usage = """
-arg "<name>" help="Project new name"
-arg "<description>" help="Project short description"
-arg "<author>" help="Author name"
-arg "<email>" help="Author email"
-arg "<github>" help="GitHub username"
-"""
-run = """
-uv run rename \
-    --name "$usage_name" \
-    --description "$usage_description" \
-    --author "$usage_author" \
-    --email "$usage_email" \
-    --github "$usage_github"
-"""
+run = "uv run rename"
 
 [tasks.install]
 description = "Install dependencies and project"
 run = "uv sync"
-alias = ["i"]
+alias = "i"
 
 [tasks.update]
 description = "Update dependencies"
 run = "uv lock --upgrade"
-alias = ["u"]
+alias = "u"
 
 [tasks.precommit]
 description = "Install pre-commit hooks"
@@ -57,7 +44,7 @@ uv run ruff check --fix
 uv run ruff format
 # uv run pyright
 """
-alias = ["l"]
+alias = "l"
 
 [tasks.test]
 description = "Run tests with coverage"
@@ -66,7 +53,7 @@ uv run coverage run -m pytest .
 uv run coverage report -m
 uv run coverage xml
 """
-alias = ["t"]
+alias = "t"
 
 [tasks.install-docs]
 description = "Install documentation dependencies"
@@ -94,7 +81,7 @@ hide = true
 usage = """
 arg "<action>" help="CDK action to perform"
 arg "<stack>" help="CDK stack to target <agent|api|eventbridge|graphql|s3|sqs|stream>"
-option "-p --profile <profile>" help="AWS profile to use"
+flag "-p --profile <profile>" help="AWS profile to use"
 """
 run = """
 #!/usr/bin/env bash
@@ -106,6 +93,7 @@ case "$usage_stack" in
     graphql) CDK_STACK=AppSyncDynamodbStack ;;
     s3) CDK_STACK=S3SqsStack ;;
     sqs) CDK_STACK=SqsStack ;;
+    kinesis) CDK_STACK=KinesisStack ;;
     *) echo "Error: unknown stack '$usage_stack'"; exit 1 ;;
 esac
 
@@ -127,18 +115,20 @@ STACK=$usage_stack uv run cdk $usage_action --app "python infra/app.py" $EXTRA_A
 [tasks.deploy]
 description = "Deploy a CDK stack"
 usage = """
-arg "<stack>" help="CDK stack to deploy <agent|api|eventbridge|graphql|s3|sqs|stream>"
-option "-p --profile <profile>" help="AWS profile to use"
+arg "<stack>" help="CDK stack to deploy <agent|api|eventbridge|graphql|s3|sqs|stream|kinesis>"
+flag "-p --profile <profile>" help="AWS profile to use"
 """
 run = "mise run cdk -- deploy $usage_stack ${usage_profile:+--profile $usage_profile}"
+alias = "d"
 
 [tasks.destroy]
 description = "Destroy a deployed CDK stack"
 usage = """
-arg "<stack>" help="CDK stack to destroy <agent|api|eventbridge|graphql|s3|sqs|stream>"
-option "-p --profile <profile>" help="AWS profile to use"
+arg "<stack>" help="CDK stack to destroy <agent|api|eventbridge|graphql|s3|sqs|stream|kinesis>"
+flag "-p --profile <profile>" help="AWS profile to use"
 """
 run = "mise run cdk -- destroy $usage_stack ${usage_profile:+--profile $usage_profile}"
+alias = "D"
 
 [shell_alias]
 # Project-specific shortcuts

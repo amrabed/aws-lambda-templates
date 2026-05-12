@@ -60,22 +60,21 @@ Click this button to create a new repository for your project, then clone the ne
 [![Use this template](https://img.shields.io/badge/Use%20this%20template-238636?style=for-the-badge)](https://github.com/amrabed/aws-lambda-templates/generate)
 
 ### Rename the project
-Run `mise run project` once after cloning, before any other setup steps:
+Run `mise run rename` once after cloning, before any other setup steps:
 
 ```bash
-mise run project name="my-project" description="My project description" author="Jane Doe" email="jane" github="janedoe"
+mise run rename --name="my-project" --description="My project description" --author="Jane Doe" --email="jane" --github="janedoe"
 ```
 
 Pass the following parameters:
 
 Parameter | Description
 --- | ---
-`NAME` | Project new name
-`DESCRIPTION` | Project short description
-`AUTHOR` | Author name
-`EMAIL` | Author email
-`GITHUB` | GitHub username (for GitHub funding)
-`SOURCE` | (optional) Source folder name
+`name` | Project new name
+`description` | Project short description
+`author` | Author name
+`email` | Author email
+`github` | GitHub username
 
 ## Prerequisites
 
@@ -84,8 +83,6 @@ Parameter | Description
 
 ### Local environment
 - [mise](https://mise.jdx.dev/)
-- Docker (for Dev Containers)
-- AWS CDK CLI (for deployment)
 
 ## Setup
 
@@ -94,29 +91,20 @@ To set up the local dev environment, run:
 ```bash
 mise run dev
 ```
-
-### Install dependencies
-To install the project dependencies defined in `pyproject.toml`, run:
-```bash
-mise run install
-```
-
-### Install pre-commit hooks
-To install the pre-commit hooks for the project to format and lint your code automatically before committing, run:
-```bash
-mise run precommit
-```
+That will:
+- Install the project dependencies defined in `pyproject.toml`
+- Install the pre-commit hooks for the project to format and lint your code automatically before committing
 
 ### Format and lint code
 To format and lint project code, run:
 ```bash
-mise run lint
+mise run lint  # alias: l
 ```
 
 ### Run tests with coverage
 To run all tests (including Hypothesis property-based tests) and show the coverage report, run:
 ```bash
-mise run test
+mise run test  # alias: t
 ```
 
 `mise run test` runs both standard pytest tests and Hypothesis property-based tests in a single command.
@@ -126,28 +114,28 @@ mise run test
 To start building a new Lambda template, use:
 
 ```bash
-mise run new template=<name>
+mise run new <name>  # alias: n <name>
 ```
 
 This runs the `new` script, which builds a skeleton for the new template from `.template`.
 
 
 ### Deploy a stack
-Infrastructure is defined as AWS CDK stacks under [`infra/stacks/`](/infra/stacks). 
-The CDK entry point is [`infra/app.py`](/infra/app.py). 
+Infrastructure is defined as AWS CDK stacks under `infra/stacks/`. 
+The CDK entry point is `infra/app.py`. 
 
 ```bash
-mise run deploy stack=<stack-key>
+mise run deploy <stack>  # alias: d <stack>
 ```
 
 Pass `--profile` (or `-p`) to use a named AWS CLI profile:
 ```bash
-mise run deploy stack=<stack-key> --profile <my-profile>
+mise run deploy <stack> --profile <my-profile>
 ```
 
 ### Destroy a stack
 ```bash
-mise run destroy stack=<stack-key>
+mise run destroy <stack>  # alias: D <stack>
 ```
 
 ### Generating documentation
@@ -195,7 +183,7 @@ mise run local
 ├── .gitignore                      # Git-ignored file list
 ├── .pre-commit-config.yaml         # Pre-commit configuration file
 ├── .vscode                         # VS Code folder
-├── Makefile                        # Make commands
+├── mise.toml                       # mise configuration and tasks
 ├── pyproject.toml                  # Configuration file for different tools
 ├── mkdocs.yml                      # MkDocs configuration file
 ├── docs                            # Documentation folder
