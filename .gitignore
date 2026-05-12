@@ -166,3 +166,6 @@ cython_debug/
 
 # AI Agent logs
 .[jJ]ules/
+
+# Dev container
+devcontainer-lock.json
