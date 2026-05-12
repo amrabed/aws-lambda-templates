@@ -30,9 +30,8 @@ To make contributing as easy and fast as possible, you'll want to run tests and 
 You'll need the following prerequisites:
 
 - **Python 3.14+**
-- **Poetry**
+- **[mise](https://mise.jdx.dev/)**
 - **git**
-- **make**
 
 ### How to contribute
 
@@ -41,7 +40,7 @@ You'll need the following prerequisites:
 - Install the project dependencies:
 
 ```bash
-make poetry install pre-commit
+mise run install
 ```
 - Create a new branch (with a descriptive name) for your changes:
 
@@ -52,7 +51,8 @@ git checkout -b my-new-feature  # use descriptive branch name
 - Run tests and linting locally to make sure everything is working as expected.
 
 ```bash
-make lint test
+mise run lint
+mise run test
 ```
 - Commit your changes and push your branch to GitHub
 ```bash
@@ -86,7 +86,7 @@ Project Documentation is written in Markdown and built using [Material for MkDoc
 
 To preview the docuementation on your local, run:
 ```bash
-make local
+mise run local
 ```
 
 ## Reporting Bugs
