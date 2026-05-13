@@ -2,11 +2,36 @@
 python = "3.14"
 uv = "latest"
 
+##### Settings and environment variables #####
+
 [settings]
 python.uv_venv_auto = "create|source"
 
 [env]
 JSII_SILENCE_WARNING_UNTESTED_NODE_VERSION = true  # silence warning about untested Node.js versions in CDK
+
+##### Shell aliases #####
+
+[shell_alias]
+# Project-specific shortcuts
+n = "mise run new"
+i = "mise run install"
+l = "mise run lint"
+t = "mise run test"
+d = "mise run deploy"
+D = "mise run destroy"
+c = "mise run clean"
+m = "mise run"
+
+# Common utility aliases
+ll = "ls -la"
+la = "ls -A"
+gs = "git status"
+ga = "git add"
+gc = "git commit"
+gp = "git push"
+
+##### Scripts #####
 
 [tasks.new]
 description = "Create new Lambda function template"
@@ -20,6 +45,8 @@ alias = "n"
 description = "Rename project (run once)"
 run = "uv run rename"
 
+##### Dev setup and maintenance #####
+ 
 [tasks.install]
 description = "Install dependencies and project"
 run = "uv sync"
@@ -36,7 +63,7 @@ run = "uv run pre-commit autoupdate && uv run pre-commit install"
 
 [tasks.dev]
 description = "Set up dev environment"
-depends = ["precommit", "install"]
+depends = ["precommit"]
 
 [tasks.lint]
 description = "Format and lint code"
@@ -57,6 +84,13 @@ uv run coverage xml
 """
 alias = "t"
 
+[tasks.clean]
+description = "Clean up build artifacts and temporary files"
+run = """rm -rf cdk.out .coverage .pytest_cache .ruff_cache .hypotheses"""
+alias = "c"
+
+##### Docs #####
+
 [tasks.install-docs]
 description = "Install documentation dependencies"
 run = "uv sync --group docs"
@@ -70,6 +104,8 @@ depends = ["install-docs"]
 [tasks.local]
 description = "Serve documentation on a local server"
 run = "uv run mkdocs serve"
+
+##### Infra #####
 
 [tasks.install-cdk]
 description = "Install CDK dependencies"
@@ -96,26 +132,3 @@ flag "-p --profile <profile>" help="AWS profile to use"
 run = "STACK=$usage_stack npx aws-cdk destroy --force ${usage_profile:+--profile $usage_profile}"
 alias = "D"
 depends = ["install-cdk"]
-
-[tasks.clean]
-description = "Clean up build artifacts and temporary files"
-run = """rm -rf cdk.out .coverage .pytest_cache .ruff_cache .hypotheses"""
-alias = "c"
-
-[shell_alias]
-# Project-specific shortcuts
-n = "mise run new"
-i = "mise run install"
-l = "mise run lint"
-t = "mise run test"
-d = "mise run deploy"
-D = "mise run destroy"
-c = "mise run clean"
-m = "mise run"
-
-# Common utility aliases
-ll = "ls -la"
-la = "ls -A"
-gs = "git status"
-gc = "git commit"
-gp = "git push"
