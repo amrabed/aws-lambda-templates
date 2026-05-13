@@ -9,7 +9,11 @@
 	"customizations": {
 		"vscode": {
 			"extensions": [
-				"hverlin.mise-vscode"
+				"hverlin.mise-vscode",
+				"tamasfe.even-better-toml",
+				"redhat.vscode-yaml",
+				"charliermarsh.ruff",
+				"ms-python.python"
 			]
 		}
 	},
