@@ -1,7 +1,6 @@
 [tools]
 python = "3.14"
 uv = "latest"
-node = "latest"
 
 [settings]
 python.uv_venv_auto = "create|source"
@@ -74,8 +73,9 @@ run = "uv run mkdocs serve"
 
 [tasks.install-cdk]
 description = "Install CDK dependencies"
-run = "npm install -g aws-cdk && uv sync --group infra"
+run = "uv sync --group infra"
 hide = true
+tools = { node = "latest" }
 
 [tasks.deploy]
 description = "Deploy a CDK stack"
@@ -110,9 +110,10 @@ l = "mise run lint"
 t = "mise run test"
 d = "mise run deploy"
 D = "mise run destroy"
+c = "mise run clean"
+m = "mise run"
 
 # Common utility aliases
-mr = "mise run"
 ll = "ls -la"
 la = "ls -A"
 gs = "git status"
