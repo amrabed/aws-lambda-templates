@@ -100,29 +100,6 @@ def update_mkdocs_file(name: str, title_name: str):
             f.write(content)
 
 
-def update_mise_toml(name: str):
-    """Update mise.toml to include new template in deploy and destroy targets."""
-    with open("mise.toml", "r") as f:
-        content = f.read()
-
-    if f"|{name}" not in content:
-        # Update usage messages using regex
-        content = re.sub(r"(CDK stack to (?:deploy|destroy) <[a-z0-9|]+)>", r"\1|" + name + ">", content)
-
-        # Update case statements
-        lines = content.splitlines()
-        new_lines = []
-        for line in lines:
-            if '*) echo "Error: unknown stack' in line:
-                components = name.split("_")
-                camel_name = "".join(x.title() for x in components)
-                new_lines.append(f"    {name}) CDK_STACK={camel_name}Stack ;;")
-            new_lines.append(line)
-
-        with open("mise.toml", "w") as f:
-            f.write("\n".join(new_lines) + "\n")
-
-
 @command(context_settings={"help_option_names": ["-h", "--help"]}, help="Generate new template")
 @option("-n", "--name", help="Template name", required=True)
 def main(name: str):
@@ -154,7 +131,6 @@ def main(name: str):
     update_infra_app_file(name, camel_name)
     update_deploy_workflow(name)
     update_mkdocs_file(name, title_name)
-    update_mise_toml(name)
 
     print(f"Successfully created template '{name}'")
 

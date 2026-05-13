@@ -6,6 +6,9 @@ node = "latest"
 [settings]
 python.uv_venv_auto = "create|source"
 
+[env]
+JSII_SILENCE_WARNING_UNTESTED_NODE_VERSION = true  # silence warning about untested Node.js versions in CDK
+
 [tasks.new]
 description = "Create new Lambda function template"
 usage = """
@@ -74,61 +77,30 @@ description = "Install CDK dependencies"
 run = "npm install -g aws-cdk && uv sync --group infra"
 hide = true
 
-[tasks.cdk]
-depends = ["install-cdk"]
-description = "Run CDK commands for infrastructure management"
-hide = true
-usage = """
-arg "<action>" help="CDK action to perform"
-arg "<stack>" help="CDK stack to target <agent|api|eventbridge|graphql|s3|sqs|stream>"
-flag "-p --profile <profile>" help="AWS profile to use"
-"""
-run = """
-#!/usr/bin/env bash
-case "$usage_stack" in
-    agent) CDK_STACK=BedrockAgentStack ;;
-    api) CDK_STACK=ApiGatewayDynamodbStack ;;
-    stream) CDK_STACK=DynamodbStreamStack ;;
-    eventbridge) CDK_STACK=EventBridgeApiCallerStack ;;
-    graphql) CDK_STACK=AppSyncDynamodbStack ;;
-    s3) CDK_STACK=S3SqsStack ;;
-    sqs) CDK_STACK=SqsStack ;;
-    kinesis) CDK_STACK=KinesisStack ;;
-    *) echo "Error: unknown stack '$usage_stack'"; exit 1 ;;
-esac
-
-EXTRA_ARGS=""
-if [ "$usage_action" == "deploy" ]; then
-    EXTRA_ARGS="--require-approval never"
-elif [ "$usage_action" == "destroy" ]; then
-    EXTRA_ARGS="--force"
-fi
-
-PROFILE="${usage_profile:-$AWS_PROFILE}"
-if [ -n "$PROFILE" ]; then
-    EXTRA_ARGS="$EXTRA_ARGS --profile $PROFILE"
-fi
-
-STACK=$usage_stack uv run cdk $usage_action --app "python infra/app.py" $EXTRA_ARGS $CDK_STACK
-"""
-
 [tasks.deploy]
 description = "Deploy a CDK stack"
 usage = """
-arg "<stack>" help="CDK stack to deploy <agent|api|eventbridge|graphql|s3|sqs|stream|kinesis>"
+arg "<stack>" help="CDK stack to deploy"
 flag "-p --profile <profile>" help="AWS profile to use"
 """
-run = "mise run cdk -- deploy $usage_stack ${usage_profile:+--profile $usage_profile}"
+run = "STACK=$usage_stack npx aws-cdk deploy ${usage_profile:+--profile $usage_profile}"
 alias = "d"
+depends = ["install-cdk"]
 
 [tasks.destroy]
 description = "Destroy a deployed CDK stack"
 usage = """
-arg "<stack>" help="CDK stack to destroy <agent|api|eventbridge|graphql|s3|sqs|stream|kinesis>"
+arg "<stack>" help="CDK stack to destroy"
 flag "-p --profile <profile>" help="AWS profile to use"
 """
-run = "mise run cdk -- destroy $usage_stack ${usage_profile:+--profile $usage_profile}"
+run = "STACK=$usage_stack npx aws-cdk destroy --force ${usage_profile:+--profile $usage_profile}"
 alias = "D"
+depends = ["install-cdk"]
+
+[tasks.clean]
+description = "Clean up build artifacts and temporary files"
+run = """rm -rf cdk.out .coverage .pytest_cache .ruff_cache .hypotheses"""
+alias = "c"
 
 [shell_alias]
 # Project-specific shortcuts
