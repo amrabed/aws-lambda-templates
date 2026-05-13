@@ -53,4 +53,4 @@ jobs:
           aws-region: ${{ vars.AWS_REGION }}
       - name: Deploy stack
         if: github.event_name != 'workflow_dispatch' || inputs.stack == 'all' || contains(inputs.stack, matrix.stack)
-        run: mise run deploy stack=${{ matrix.stack }}
+        run: mise run deploy ${{ matrix.stack }}
