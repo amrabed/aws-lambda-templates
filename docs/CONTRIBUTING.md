@@ -15,7 +15,7 @@ All types of contributions are encouraged and valued. Here are some ways you can
 
 ## Contributing to the code
 
-> ### Legal Notice 
+> ### Legal Notice
 > When contributing to this project, you must agree that you have authored 100% of the content, that you have the necessary rights to the content and that the content you contribute may be provided under the project licence.
 
 Unless your change is trivial (typo, docs tweak etc.), please create an issue to discuss the change before creating a pull request.
@@ -29,18 +29,17 @@ To make contributing as easy and fast as possible, you'll want to run tests and 
 
 You'll need the following prerequisites:
 
-- **Python 3.14+**
 - **[mise](https://mise.jdx.dev/)**
 - **git**
 
 ### How to contribute
 
-- Fork the repository on GitHub 
+- Fork the repository on GitHub
 - Clone your fork locally.
 - Install the project dependencies:
 
 ```bash
-mise run install
+mise install
 ```
 - Create a new branch (with a descriptive name) for your changes:
 
