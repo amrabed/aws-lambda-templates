@@ -1,9 +1,11 @@
 from aws_cdk import RemovalPolicy, Stack
-from aws_cdk.aws_lambda import Code, Function, Runtime
+from aws_cdk.aws_lambda import Function, Runtime
 from aws_cdk.aws_lambda_event_sources import S3EventSource
 from aws_cdk.aws_s3 import Bucket, EventType
 from aws_cdk.aws_sqs import Queue
 from constructs import Construct
+
+from infra.code import get_lambda_code
 
 
 class S3SqsStack(Stack):
@@ -27,7 +29,7 @@ class S3SqsStack(Stack):
             "S3SqsFunction",
             runtime=Runtime.PYTHON_3_14,
             handler="templates.s3.handler.main",
-            code=Code.from_asset("."),
+            code=get_lambda_code(),
             environment={
                 "SQS_QUEUE_URL": queue.queue_url,
                 "POWERTOOLS_SERVICE_NAME": "s3-sqs-processor",

@@ -1,9 +1,11 @@
 from aws_cdk import Stack
 from aws_cdk.aws_dynamodb import Attribute, AttributeType, BillingMode, Table
-from aws_cdk.aws_lambda import Code, Function, Runtime
+from aws_cdk.aws_lambda import Function, Runtime
 from aws_cdk.aws_lambda_event_sources import SqsEventSource
 from aws_cdk.aws_sqs import Queue
 from constructs import Construct
+
+from infra.code import get_lambda_code
 
 
 class SqsLambdaDynamodbStack(Stack):
@@ -33,7 +35,7 @@ class SqsLambdaDynamodbStack(Stack):
             "SqsLambdaDynamodbFunction",
             runtime=Runtime.PYTHON_3_14,
             handler="templates.sqs.handler.main",
-            code=Code.from_asset("."),
+            code=get_lambda_code(),
             environment={
                 "TABLE_NAME": table.table_name,
                 "SERVICE_NAME": "sqs-processor",

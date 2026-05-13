@@ -38,6 +38,7 @@ Templates come pre-wired with:
 - **Development environment**: [Dev Containers](https://code.visualstudio.com/docs/devcontainers/containers) for dockerized development environment
 - **Pre-commit Validations**: [pre-commit](https://pre-commit.com) hooks
 - **Workflow Automation**: [GitHub Actions](https://github.com/features/actions) for CI/CD and documentation auto-deployment to [GitHub Pages](https://pages.github.com)
+- **Tool Management & Tasks**: [mise](https://mise.jdx.dev/) for managing project tools and automating common development tasks
 
 ### GitHub files
 The repository also comes preloaded with these GitHub files:
@@ -59,22 +60,21 @@ Click this button to create a new repository for your project, then clone the ne
 [![Use this template](https://img.shields.io/badge/Use%20this%20template-238636?style=for-the-badge)](https://github.com/amrabed/aws-lambda-templates/generate)
 
 ### Rename the project
-Run `make project` once after cloning, before any other setup steps:
+Run `mise run rename` once after cloning, before any other setup steps:
 
 ```bash
-make project NAME="my-project" DESCRIPTION="My project description" AUTHOR="Jane Doe" EMAIL="jane" GITHUB="janedoe"
+mise run rename --name="my-project" --description="My project description" --author="Jane Doe" --email="jane" --github="janedoe"
 ```
 
 Pass the following parameters:
 
 Parameter | Description
 --- | ---
-`NAME` | Project new name
-`DESCRIPTION` | Project short description
-`AUTHOR` | Author name
-`EMAIL` | Author email
-`GITHUB` | GitHub username (for GitHub funding)
-`SOURCE` | (optional) Source folder name
+`name` | Project new name
+`description` | Project short description
+`author` | Author name
+`email` | Author email
+`github` | GitHub username
 
 ## Prerequisites
 
@@ -82,92 +82,67 @@ Parameter | Description
 - Docker
 
 ### Local environment
-- Python 3.14+
-- uv
-- Docker (for Dev Containers)
-- AWS CDK CLI (for deployment)
+- [mise](https://mise.jdx.dev/)
 
 ## Setup
 
 ### Set up dev environment
 To set up the local dev environment, run:
 ```bash
-make dev
+mise run dev
 ```
-
-### Install dependencies
-To install the project dependencies defined in `pyproject.toml`, run:
-```bash
-make install
-```
-
-### Install pre-commit hooks
-To install the pre-commit hooks for the project to format and lint your code automatically before committing, run:
-```bash
-make precommit
-```
-
-### Activate virtual environment
-To activate the virtual environment, run:
-```bash
-make venv
-```
+That will:
+- Install the project dependencies defined in `pyproject.toml`
+- Install the pre-commit hooks for the project to format and lint your code automatically before committing
 
 ### Format and lint code
 To format and lint project code, run:
 ```bash
-make lint
+mise run lint  # alias: l
 ```
 
 ### Run tests with coverage
 To run all tests (including Hypothesis property-based tests) and show the coverage report, run:
 ```bash
-make test
+mise run test  # alias: t
 ```
 
-`make test` runs both standard pytest tests and Hypothesis property-based tests in a single command.
+`mise run test` runs both standard pytest tests and Hypothesis property-based tests in a single command.
 
 ### Build a new template
 
 To start building a new Lambda template, use:
 
 ```bash
-make new template=<name>
-```
-
-Or, equivalently:
-
-```bash
-uv run new --name <name>
+mise run new <name>  # alias: n <name>
 ```
 
 This runs the `new` script, which builds a skeleton for the new template from `.template`.
 
 
 ### Deploy a stack
-Infrastructure is defined as AWS CDK stacks under [`infra/stacks/`](/infra/stacks). 
-The CDK entry point is [`infra/app.py`](/infra/app.py). 
-The `STACK` environment variable selects which stack to synthesise.
+Infrastructure is defined as AWS CDK stacks under `infra/stacks/`. 
+The CDK entry point is `infra/app.py`. 
 
 ```bash
-make deploy STACK=<stack-key>
+mise run deploy <stack>  # alias: d <stack>
 ```
 
-Pass `AWS_PROFILE` to use a named AWS CLI profile:
+Pass `--profile` (or `-p`) to use a named AWS CLI profile:
 ```bash
-make deploy STACK=<stack-key> AWS_PROFILE=<my-profile>
+mise run deploy <stack> --profile <my-profile>
 ```
 
 ### Destroy a stack
 ```bash
-make destroy STACK=<stack-key>
+mise run destroy <stack>  # alias: D <stack>
 ```
 
 ### Generating documentation
 
 To build and publish the project documentation to GitHub Pages, run:
 ```bash
-make docs
+mise run docs
 ```
 
 That pushes the new documentation to the `gh-pages` branch. Make sure GitHub Pages is enabled in your repository settings and using the `gh-pages` branch for the documentation to be publicly available.
@@ -175,7 +150,7 @@ That pushes the new documentation to the `gh-pages` branch. Make sure GitHub Pag
 ### Local preview
 To serve the documentation on a local server, run:
 ```bash
-make local
+mise run local
 ```
 
 ## Coding Conventions
@@ -208,7 +183,7 @@ make local
 ├── .gitignore                      # Git-ignored file list
 ├── .pre-commit-config.yaml         # Pre-commit configuration file
 ├── .vscode                         # VS Code folder
-├── Makefile                        # Make commands
+├── mise.toml                       # mise configuration and tasks
 ├── pyproject.toml                  # Configuration file for different tools
 ├── mkdocs.yml                      # MkDocs configuration file
 ├── docs                            # Documentation folder

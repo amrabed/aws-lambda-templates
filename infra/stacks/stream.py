@@ -1,9 +1,11 @@
 from aws_cdk import Stack
-from aws_cdk.aws_dynamodb import Attribute, AttributeType, BillingMode, StartingPosition, StreamViewType, Table
-from aws_cdk.aws_lambda import Code, Function, Runtime
-from aws_cdk.aws_lambda_event_sources import DynamoDBEventSource, SqsDlq
+from aws_cdk.aws_dynamodb import Attribute, AttributeType, BillingMode, StreamViewType, Table
+from aws_cdk.aws_lambda import Function, Runtime, StartingPosition
+from aws_cdk.aws_lambda_event_sources import DynamoEventSource, SqsDlq
 from aws_cdk.aws_sqs import Queue
 from constructs import Construct
+
+from infra.code import get_lambda_code
 
 
 class DynamodbStreamStack(Stack):
@@ -30,7 +32,7 @@ class DynamodbStreamStack(Stack):
             "DynamodbStreamFunction",
             runtime=Runtime.PYTHON_3_14,
             handler="templates.stream.handler.main",
-            code=Code.from_asset("."),
+            code=get_lambda_code(),
             environment={
                 "SOURCE_TABLE_NAME": source_table.table_name,
                 "DESTINATION_TABLE_NAME": destination_table.table_name,
@@ -48,7 +50,7 @@ class DynamodbStreamStack(Stack):
         )
 
         function.add_event_source(
-            DynamoDBEventSource(
+            DynamoEventSource(
                 source_table,
                 starting_position=StartingPosition.TRIM_HORIZON,
                 report_batch_item_failures=True,

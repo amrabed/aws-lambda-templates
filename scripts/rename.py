@@ -60,7 +60,7 @@ def main(name: str, description: str, author: str, email: str, github: str):
         dirs[:] = [d for d in dirs if not d.startswith(".") and d != "venv"]
 
         for file in files:
-            if file.endswith((".py", ".md", ".yml", ".pyt", "Makefile")):
+            if file.endswith((".py", ".md", ".yml", ".pyt", ".toml")):
                 path = Path(root) / file
                 if path.name == "rename.py":
                     continue

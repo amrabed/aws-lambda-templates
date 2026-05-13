@@ -2,9 +2,11 @@ from aws_cdk import Duration, RemovalPolicy, Stack
 from aws_cdk.aws_dynamodb import Attribute, AttributeType, BillingMode, Table
 from aws_cdk.aws_events import Rule, Schedule
 from aws_cdk.aws_events_targets import LambdaFunction
-from aws_cdk.aws_lambda import Code, Function, Runtime
+from aws_cdk.aws_lambda import Function, Runtime
 from aws_cdk.aws_secretsmanager import Secret
 from constructs import Construct
+
+from infra.code import get_lambda_code
 
 
 class EventBridgeApiCallerStack(Stack):
@@ -26,7 +28,7 @@ class EventBridgeApiCallerStack(Stack):
             "EventBridgeApiCallerFunction",
             runtime=Runtime.PYTHON_3_14,
             handler="templates.eventbridge.handler.main",
-            code=Code.from_asset("."),
+            code=get_lambda_code(),
             environment={
                 "API_URL": "https://api.example.com",
                 "SECRET_NAME": secret.secret_name,

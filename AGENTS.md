@@ -4,22 +4,22 @@ This file provides guidance for AI agents working in this repository.
 
 ## Project Overview
 
-Python AWS Lambda project template using [uv](https://docs.astral.sh/uv/) for dependency management, Click for CLI, and pytest for testing.
+Python AWS Lambda project template using [mise](https://mise.jdx.dev/) for tool management and [uv](https://docs.astral.sh/uv/) for dependency management.
 
 ## Setup
 
 ```bash
-make install       # install dependencies
-make precommit     # install pre-commit hooks
+mise run install       # install dependencies
+mise run precommit     # install pre-commit hooks
 ```
 
 ## Common Commands
 
 ```bash
-make lint          # run ruff (check + format) and pyright
-make test          # run pytest with coverage
-make docs          # build and deploy docs to GitHub Pages
-make local         # serve docs locally
+mise run lint          # run ruff (check + format) and pyright
+mise run test          # run pytest with coverage
+mise run docs          # build and deploy docs to GitHub Pages
+mise run local         # serve docs locally
 ```
 
 ## Code Style
@@ -27,14 +27,14 @@ make local         # serve docs locally
 - Line length: 120 characters (enforced by ruff)
 - Linting rules: `E` (pycodestyle errors) and `I` (isort) via ruff
 - Type checking: pyright in strict mode
-- All code must pass `make lint` before committing (enforced by pre-commit hooks)
+- All code must pass `mise run lint` before committing (enforced by pre-commit hooks)
 
 ## Testing
 
 Tests live in `tests/`. Run with:
 
 ```bash
-make test
+mise run test
 ```
 
 Coverage is measured with `coverage` and reported to stdout and `coverage.xml`. The source under test is `templates/`.
@@ -55,7 +55,7 @@ infra/                 # AWS CDK infrastructure stacks
 To rename the project from the default `templates` name, run:
 
 ```bash
-make project NAME=my-project DESCRIPTION="My description" AUTHOR="Name" EMAIL=handle GITHUB=username
+mise run project name=my-project description="My description" author="Name" email=handle github=username
 ```
 
 ## Dependencies
@@ -76,15 +76,15 @@ make project NAME=my-project DESCRIPTION="My description" AUTHOR="Name" EMAIL=ha
 - Use `moto.mock_aws` for mocking AWS services in tests (e.g. DynamoDB, S3, Secrets Manager)
 - Do not cheat! Never modify source code just to make a failing test pass. Fix real bugs in source code and fix incorrect assertions in tests
 
-## Make Targets
+## Mise Tasks
 
-Use `make` targets for all common workflows: lint, test, run locally, and deploy. Refer to `docs/README.md` for currently available targets. Add new targets to `Makefile` as needed.
+Use `mise run <task>` for all common workflows: lint, test, run locally, and deploy. Refer to `docs/README.md` for currently available tasks. Add new tasks to `mise.toml` as needed.
 
 ## Notes
 
 - Python 3.14+ required
 - Dependencies are managed via `pyproject.toml` and locked in `uv.lock`
-- Do not edit `uv.lock` directly; use `make update` to update dependencies
+- Tooling is managed via `mise.toml`
 
 ## Coding Conventions
 
