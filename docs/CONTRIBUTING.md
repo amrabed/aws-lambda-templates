@@ -36,10 +36,11 @@ You'll need the following prerequisites:
 
 - Fork the repository on GitHub
 - Clone your fork locally.
-- Install the project dependencies:
+- Set up development environment:
 
 ```bash
 mise install
+mise run dev
 ```
 - Create a new branch (with a descriptive name) for your changes:
 
