@@ -1,9 +1,9 @@
 // For format details, see https://aka.ms/devcontainer.json.
 {
 	"name": "dev",
-	"image": "mcr.microsoft.com/devcontainers/base:ubuntu",
+	"image": "mcr.microsoft.com/devcontainers/python:3",
 	"features": {
-		"ghcr.io/roul/devcontainer-features/mise-python:1": {},
+		"ghcr.io/devcontainers-extra/features/mise:1": {},
 		"ghcr.io/devcontainers/features/aws-cli:1": {}
 	},
 	"customizations": {
@@ -16,5 +16,8 @@
 	"mounts": [
 		"source=${localEnv:HOME}/.aws,target=/home/vscode/.aws,type=bind"
 	],
-	"postCreateCommand": "echo 'eval \"$(mise activate bash)\"' >> ~/.bashrc"
+	"postCreateCommand": "echo 'eval \"$(mise activate bash)\"' >> ~/.bashrc",
+	"forwardPorts": [
+		"8000:8000"
+	]
 }
