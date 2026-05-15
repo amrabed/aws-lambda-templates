@@ -8,10 +8,10 @@ readme = "docs/README.md"
 requires-python = ">=3.14"
 dependencies = [
     "pydantic>=2.13.4",
-    "pydantic-settings>=2.13.1",
+    "pydantic-settings>=2.14.1",
     "aws-lambda-powertools>=3.29.0",
-    "boto3>=1.43.6",
-    "requests>=2.33.1",
+    "boto3>=1.43.8",
+    "requests>=2.34.2",
 ]
 
 [project.scripts]
@@ -20,18 +20,18 @@ rename = "scripts.rename:main"
 
 [dependency-groups]
 infra = [
-    "aws-cdk-lib>=2.253.0",
+    "aws-cdk-lib>=2.254.0",
     "constructs>=10.6.0",
 ]
 dev = [
     "pytest>=9.0.1",
-    "ruff>=0.15.12",
-    "coverage>=7.6.9",
+    "ruff>=0.15.13",
+    "coverage>=7.14.0",
     "pre-commit>=4.0.1",
     "pyright>=1.1.391",
     "pytest-mock>=3.15.1",
-    "moto>=5.2.0",
-    "hypothesis>=6.152.4",
+    "moto>=5.2.1",
+    "hypothesis>=6.152.7",
     "click>=8.3.2",
 ]
 docs = [
