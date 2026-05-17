@@ -2,7 +2,7 @@ from aws_lambda_powertools import Logger, Metrics, Tracer
 from aws_lambda_powertools.event_handler import AppSyncResolver
 from aws_lambda_powertools.logging import correlation_paths
 from aws_lambda_powertools.utilities.typing import LambdaContext
-from pydantic import ValidationError
+from pydantic import TypeAdapter, ValidationError
 
 from templates.graphql.models import Item
 from templates.graphql.settings import Settings
@@ -16,6 +16,8 @@ metrics = Metrics(namespace=settings.metrics_namespace)
 
 repository = Repository(settings.table_name)
 app = AppSyncResolver()
+
+ITEMS_ADAPTER = TypeAdapter(list[Item])
 
 
 @app.resolver(type_name="Query", field_name="getItem")
@@ -47,7 +49,11 @@ def list_items() -> list[dict]:
         A list of items.
     """
     try:
-        return [Item.model_validate(item).dump() for item in repository.list_items()]
+        # Optimization: use Pydantic TypeAdapter for batch validation and serialization.
+        # This leverages Pydantic V2's Rust-based engine to process the entire list at once,
+        # which is significantly faster than individual model_validate and dump calls in a loop.
+        items = ITEMS_ADAPTER.validate_python(repository.list_items())
+        return ITEMS_ADAPTER.dump_python(items, by_alias=True, exclude_none=True)  # type: ignore
     except Exception as error:
         logger.error("Failed to list items", exc_info=error)
         raise RuntimeError("Failed to list items") from error
