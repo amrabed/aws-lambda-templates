@@ -109,6 +109,20 @@ def test_post_item_invalid_body(mock_repo, lambda_context):
     assert "errors" in body
 
 
+def test_post_item_name_too_long(mock_repo, lambda_context):
+    """POST /items returns 422 when the name exceeds the maximum length."""
+    from templates.api.handler import main
+
+    long_name = "a" * 101
+    event = _apigw_event("POST", "/items", body={"id": "xyz", "name": long_name})
+    response = main(event, lambda_context)
+
+    assert response["statusCode"] == 422
+    body = loads(response["body"])
+    assert "errors" in body
+    assert any(err["type"] == "string_too_long" for err in body["errors"])
+
+
 def test_get_item_dynamodb_error(mock_repo, lambda_context):
     """GET /items/{id} returns 500 when the repository raises an exception."""
     import templates.api.handler as handler_module
