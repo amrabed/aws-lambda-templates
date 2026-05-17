@@ -23,7 +23,7 @@ The template sets up:
 Deploy the stack using:
 
 ```bash
-make deploy STACK=eventbridge
+mise run deploy eventbridge
 ```
 
 ### Data models
