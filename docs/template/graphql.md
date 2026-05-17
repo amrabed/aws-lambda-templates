@@ -23,7 +23,7 @@ The template sets up:
 Deploy the stack using:
 
 ```bash
-make deploy STACK=graphql
+mise run deploy graphql
 ```
 
 ## Implementation

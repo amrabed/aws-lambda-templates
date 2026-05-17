@@ -23,7 +23,7 @@ The template sets up:
 Deploy the stack using:
 
 ```bash
-make deploy STACK=sqs
+mise run deploy sqs
 ```
 
 ### Data models

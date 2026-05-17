@@ -24,7 +24,7 @@ The template sets up:
 Deploy the stack using:
 
 ```bash
-make deploy STACK=stream
+mise run deploy stream
 ```
 
 

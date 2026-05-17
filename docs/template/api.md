@@ -22,7 +22,7 @@ The template sets up:
 Deploy the stack using:
 
 ```bash
-make deploy STACK=api
+mise run deploy api
 ```
 
 ### Endpoints

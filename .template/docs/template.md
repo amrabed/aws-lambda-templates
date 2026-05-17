@@ -5,7 +5,7 @@ Template description for ${title_name}.
 
 1.  **AWS Lambda function**: Handles events.
 
-![Architecture diagram](diagrams/${name}.png)
+![Architecture diagram showing ${title_name} component interaction and data flow](diagrams/${name}.png)
 
 ## Code
 
@@ -18,5 +18,5 @@ Template description for ${title_name}.
 Deploy the stack using:
 
 ```bash
-make deploy STACK=${name}
+mise run deploy ${name}
 ```
