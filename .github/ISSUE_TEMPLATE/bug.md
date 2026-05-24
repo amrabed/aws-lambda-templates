@@ -22,7 +22,7 @@ A clear and concise description of what you expected to happen.
  - OS: [e.g., MacOS 14] 
  - Template version:
  - Python version:
- - Poetry version:
+ - uv version:
 
 **Additional context**
 Add any other context about the problem here.
