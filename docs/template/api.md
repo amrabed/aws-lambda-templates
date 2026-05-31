@@ -1,4 +1,4 @@
-# REST API
+# 🚀 REST API
 A Lambda function that handles GET/POST requests from a REST API and loads/stores records into a DynamoDB table.
 
 ## Architecture
