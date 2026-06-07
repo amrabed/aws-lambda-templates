@@ -1,4 +1,4 @@
-# SQS — Batch Processing
+# 📥 SQS — Batch Processing
 A Lambda function that handles SQS messages by batch processing them and storing the processed results into a DynamoDB table.
 Partial batch failure reporting is enabled so that individual record failures do not cause the entire batch to be retried.
 

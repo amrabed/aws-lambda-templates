@@ -1,4 +1,4 @@
-# DynamoDB Stream — Batch Processing
+# 🌊 DynamoDB Stream — Batch Processing
 A Lambda function that handles INSERT/MODIFY/DELETE events on items of a source DynamoDB table by batch processing the records and upserting/deleting processed items into/from a destination DynamoDB table.
 Partial batch failure reporting is enabled so that individual record failures do not cause the entire batch to be retried. 
 

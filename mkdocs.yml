@@ -45,13 +45,13 @@ nav:
     - Contributing: CONTRIBUTING.md
     - License: LICENSE.md
   - Templates:
-    - Bedrock Agent: template/agent.md
-    - GraphQL API: template/graphql.md
-    - REST API: template/api.md
-    - DynamoDB Stream: template/stream.md
-    - EventBridge: template/eventbridge.md
-    - S3 to SQS: template/s3.md
-    - SQS to DynamoDB: template/sqs.md
+    - 🤖 Bedrock Agent: template/agent.md
+    - 🕸️ GraphQL API: template/graphql.md
+    - 🚀 REST API: template/api.md
+    - 🌊 DynamoDB Stream: template/stream.md
+    - ⚡ EventBridge: template/eventbridge.md
+    - 🪣 S3 to SQS: template/s3.md
+    - 📥 SQS to DynamoDB: template/sqs.md
   - Reference:
     - Bedrock Agent: reference/agent.md
     - GraphQL API: reference/graphql.md

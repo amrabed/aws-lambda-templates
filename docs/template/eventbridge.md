@@ -1,4 +1,4 @@
-# EventBridge — API Caller
+# ⚡ EventBridge — API Caller
 A Lambda function triggered by an Amazon EventBridge rule that loads an authentication token from AWS Secrets Manager, calls an external HTTP API, and persists the response to a DynamoDB table.
 
 ## Architecture
