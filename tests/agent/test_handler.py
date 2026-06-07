@@ -106,5 +106,19 @@ def test_sensitive_data_exposure(repository):
     assert "internal_secret" not in result
 
 
+def test_error_handling_sanitization(mocker):
+    """Verify that internal error details are NOT leaked to the agent."""
+    from templates.agent import handler
+    from templates.agent.handler import get_item
+
+    mocker.patch.object(handler.repository, "get_item", side_effect=Exception("Database connection failed"))
+
+    result = get_item("123")
+
+    assert "error" in result
+    assert "Database connection failed" not in result["error"]
+    assert "Failed to get item with ID '123'" in result["error"]
+
+
 if __name__ == "__main__":
     main()

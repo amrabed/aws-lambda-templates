@@ -70,7 +70,7 @@ class Handler:
             self._repository.put_item(item.model_dump())
         elif event_name and event_name.name == "REMOVE":
             plain_keys = SourceItem.model_validate(record.dynamodb.keys)
-            self._repository.delete_item(plain_keys.model_dump(exclude_none=True))
+            self._repository.delete_item(plain_keys.id)
 
 
 handler = Handler(repository)

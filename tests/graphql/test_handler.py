@@ -72,6 +72,7 @@ def test_error_message_information_leakage(lambda_context, mocker):
 
     assert "Database connection failed" not in str(excinfo.value)
     assert "Cause:" not in str(excinfo.value)
+    assert excinfo.value.__cause__ is None
 
 
 if __name__ == "__main__":
