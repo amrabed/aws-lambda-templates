@@ -54,9 +54,9 @@ def create_item(item_id: str, name: str, description: str | None = None) -> dict
     """
     logger.info(f"Creating item {item_id}")
     try:
-        item = Item(id=item_id, name=name, description=description)
-        repository.put_item(item.model_dump())
-        return item.dump()
+        item = Item(id=item_id, name=name, description=description).dump()
+        repository.put_item(item)
+        return item
     except Exception as error:
         logger.error(f"Failed to create item with ID '{item_id}'", exc_info=error)
         return {"error": f"Failed to create item with ID '{item_id}'"}
