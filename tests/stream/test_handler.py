@@ -104,7 +104,7 @@ def test_remove_record_calls_delete_item(mock_repo, lambda_context):
     event = _stream_event(_remove_record("abc"))
     result = handler_module.main(event, lambda_context)
 
-    mock_repo.delete_item.assert_called_once_with({"id": "abc"})
+    mock_repo.delete_item.assert_called_once_with("abc")
     mock_repo.put_item.assert_not_called()
     assert result == {"batchItemFailures": []}
 

@@ -35,7 +35,7 @@ def get_item(id: str) -> dict | None:
         return Item.model_validate(item).dump()
     except Exception as error:
         logger.error(f"Failed to get item with ID '{id}'", exc_info=error)
-        raise RuntimeError(f"Failed to get item with ID '{id}'") from error
+        raise RuntimeError(f"Failed to get item with ID '{id}'") from None
 
 
 @app.resolver(type_name="Query", field_name="listItems")
@@ -50,7 +50,7 @@ def list_items() -> list[dict]:
         return [Item.model_validate(item).dump() for item in repository.list_items()]
     except Exception as error:
         logger.error("Failed to list items", exc_info=error)
-        raise RuntimeError("Failed to list items") from error
+        raise RuntimeError("Failed to list items") from None
 
 
 @app.resolver(type_name="Mutation", field_name="createItem")
@@ -70,7 +70,7 @@ def create_item(name: str) -> dict:
         return item
     except (ValidationError, Exception) as error:
         logger.error(f"Failed to create item with name '{name}'", exc_info=error)
-        raise RuntimeError(f"Failed to create item with name '{name}'") from error
+        raise RuntimeError(f"Failed to create item with name '{name}'") from None
 
 
 @logger.inject_lambda_context(correlation_id_path=correlation_paths.APPSYNC_RESOLVER)
