@@ -55,7 +55,7 @@ infra/                 # AWS CDK infrastructure stacks
 To rename the project from the default `templates` name, run:
 
 ```bash
-mise run project name=my-project description="My description" author="Name" email=handle github=username
+mise run rename --name="my-project" --description="My description" --author="Name" --email="handle" --github="username"
 ```
 
 ## Dependencies
