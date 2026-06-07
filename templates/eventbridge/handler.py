@@ -1,10 +1,10 @@
-import requests
 from aws_lambda_powertools import Logger, Metrics, Tracer
 from aws_lambda_powertools.metrics import MetricUnit
 from aws_lambda_powertools.utilities.parameters import SecretsProvider
 from aws_lambda_powertools.utilities.parser import event_parser
 from aws_lambda_powertools.utilities.parser.models import EventBridgeModel
 from aws_lambda_powertools.utilities.typing import LambdaContext
+from requests import Session
 
 from templates.eventbridge.models import ApiResponse
 from templates.eventbridge.settings import Settings
@@ -22,9 +22,7 @@ class Handler:
     def __init__(self, secrets_provider: SecretsProvider, repository: Repository) -> None:
         self._secrets_provider = secrets_provider
         self._repository = repository
-        # Use a persistent session to enable connection pooling across Lambda warm starts.
-        # This significantly reduces latency by avoiding repeated TCP/TLS handshakes.
-        self._session = requests.Session()
+        self._session = Session()  # Use a single session for connection pooling and performance
 
     @tracer.capture_method
     def handle(self, event: EventBridgeModel) -> ApiResponse:
