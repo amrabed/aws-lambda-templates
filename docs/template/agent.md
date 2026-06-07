@@ -1,4 +1,4 @@
-# 🤖 Bedrock Agent
+# Bedrock Agent
 
 This template demonstrates how to handle Amazon Bedrock Agent events using function-based actions.
 

@@ -1,4 +1,4 @@
-# 🚀 ${title_name}
+# ${title_name}
 Template description for ${title_name}.
 
 ## Architecture

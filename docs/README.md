@@ -15,13 +15,13 @@ The templates apply best practices by using [AWS Lambda Powertools](https://docs
 
 ## Templates
 
-- [🤖 Bedrock Agent](template/agent.md): Handle Bedrock Agent function-based actions
-- [🕸️ GraphQL API](template/graphql.md): Handle AppSync GraphQL requests
-- [🚀 REST API](template/api.md): Handle REST API requests
-- [🌊 DynamoDB Stream](template/stream.md): Batch process stream events
-- [⚡ EventBridge](template/eventbridge.md): Call external API on event
-- [🪣 S3 to SQS](template/s3.md): Send messages to queue on S3 object changes
-- [📥 SQS to DynamoDB](template/sqs.md): Batch Process SQS messages
+- [Bedrock Agent](template/agent.md): Handle Bedrock Agent function-based actions
+- [GraphQL API](template/graphql.md): Handle AppSync GraphQL requests
+- [REST API](template/api.md): Handle REST API requests
+- [DynamoDB Stream](template/stream.md): Batch process stream events
+- [EventBridge](template/eventbridge.md): Call external API on event
+- [S3 to SQS](template/s3.md): Send messages to queue on S3 object changes
+- [SQS to DynamoDB](template/sqs.md): Batch Process SQS messages
 
 ## Features
 

@@ -1,4 +1,4 @@
-# 🕸️ GraphQL API
+# GraphQL API
 
 This template demonstrates how to build a GraphQL API using AWS AppSync and Lambda.
 
