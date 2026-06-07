@@ -52,7 +52,7 @@ def test_valid_event_shapes(mocker, source, detail_type, detail) -> None:
     import templates.eventbridge.handler as handler_module
 
     mock_secrets = mocker.patch.object(handler_module, "secrets_provider")
-    mock_get = mocker.patch.object(handler_module, "get")
+    mock_session = mocker.patch.object(handler_module.handler, "_session")
     mock_repo = mocker.patch.object(handler_module, "repository")
 
     handler_module.handler._secrets_provider = mock_secrets
@@ -62,7 +62,7 @@ def test_valid_event_shapes(mocker, source, detail_type, detail) -> None:
     mock_resp = mocker.MagicMock()
     mock_resp.content = dumps({"id": "test-id", "message": "ok"}).encode()
     mock_resp.raise_for_status.return_value = None
-    mock_get.return_value = mock_resp
+    mock_session.get.return_value = mock_resp
 
     from aws_lambda_powertools.utilities.parser.models import EventBridgeModel
 
@@ -87,8 +87,8 @@ def test_valid_event_shapes(mocker, source, detail_type, detail) -> None:
     mock_context.aws_request_id = "test-request-id"
 
     handler_module.main(event_dict, mock_context)
-    mock_get.assert_called_once()
-    mock_get.reset_mock()
+    mock_session.get.assert_called_once()
+    mock_session.get.reset_mock()
     mock_secrets.get.reset_mock()
     mock_repo.put_item.reset_mock()
 
@@ -102,7 +102,7 @@ def test_invalid_event_prevents_api_call(mocker, missing_key) -> None:
     import templates.eventbridge.handler as handler_module
 
     mock_secrets = mocker.patch.object(handler_module, "secrets_provider")
-    mock_get = mocker.patch.object(handler_module, "get")
+    mock_session = mocker.patch.object(handler_module.handler, "_session")
     mock_repo = mocker.patch.object(handler_module, "repository")
 
     handler_module.handler._secrets_provider = mock_secrets
@@ -129,8 +129,8 @@ def test_invalid_event_prevents_api_call(mocker, missing_key) -> None:
 
     with raises(ValidationError):
         handler_module.main(invalid_event, mock_context)
-    mock_get.assert_not_called()
-    mock_get.reset_mock()
+    mock_session.get.assert_not_called()
+    mock_session.get.reset_mock()
 
 
 # Feature: eventbridge-api-caller, Property 3: SecretClient exception propagates
@@ -140,7 +140,7 @@ def test_secret_exception_propagates(mocker, exc) -> None:
     import templates.eventbridge.handler as handler_module
 
     mock_secrets = mocker.patch.object(handler_module, "secrets_provider")
-    mock_get = mocker.patch.object(handler_module, "get")
+    mock_session = mocker.patch.object(handler_module.handler, "_session")
     mock_repo = mocker.patch.object(handler_module, "repository")
 
     handler_module.handler._secrets_provider = mock_secrets
@@ -170,7 +170,7 @@ def test_secret_exception_propagates(mocker, exc) -> None:
         handler_module.main(valid_event, mock_context)
 
     mock_secrets.get.side_effect = None
-    mock_get.reset_mock()
+    mock_session.get.reset_mock()
 
 
 # Feature: eventbridge-api-caller, Property 4: Bearer token header for any token string
@@ -180,7 +180,7 @@ def test_bearer_token_header(mocker, token) -> None:
     import templates.eventbridge.handler as handler_module
 
     mock_secrets = mocker.patch.object(handler_module, "secrets_provider")
-    mock_get = mocker.patch.object(handler_module, "get")
+    mock_session = mocker.patch.object(handler_module.handler, "_session")
     mock_repo = mocker.patch.object(handler_module, "repository")
 
     handler_module.handler._secrets_provider = mock_secrets
@@ -190,7 +190,7 @@ def test_bearer_token_header(mocker, token) -> None:
     mock_resp = mocker.MagicMock()
     mock_resp.content = dumps({"id": "test-id", "message": "ok"}).encode()
     mock_resp.raise_for_status.return_value = None
-    mock_get.return_value = mock_resp
+    mock_session.get.return_value = mock_resp
 
     mock_context = mocker.MagicMock()
     mock_context.function_name = "test-function"
@@ -211,8 +211,8 @@ def test_bearer_token_header(mocker, token) -> None:
     }
     handler_module.main(valid_event, mock_context)
 
-    mock_get.assert_called_once_with(mocker.ANY, headers={"Authorization": f"Bearer {token}"}, timeout=10)
-    mock_get.reset_mock()
+    mock_session.get.assert_called_once_with(mocker.ANY, headers={"Authorization": f"Bearer {token}"}, timeout=10)
+    mock_session.get.reset_mock()
     mock_secrets.get.reset_mock()
 
 
@@ -236,7 +236,7 @@ def test_api_failure_propagates(mocker, status_code) -> None:
     import templates.eventbridge.handler as handler_module
 
     mock_secrets = mocker.patch.object(handler_module, "secrets_provider")
-    mock_get = mocker.patch.object(handler_module, "get")
+    mock_session = mocker.patch.object(handler_module.handler, "_session")
     mock_repo = mocker.patch.object(handler_module, "repository")
 
     handler_module.handler._secrets_provider = mock_secrets
@@ -245,7 +245,7 @@ def test_api_failure_propagates(mocker, status_code) -> None:
     mock_secrets.get.return_value = "test-token"
     mock_resp = mocker.MagicMock()
     mock_resp.raise_for_status.side_effect = HTTPError(response=mocker.MagicMock(status_code=status_code))
-    mock_get.return_value = mock_resp
+    mock_session.get.return_value = mock_resp
 
     mock_context = mocker.MagicMock()
     mock_context.function_name = "test-function"
@@ -268,7 +268,7 @@ def test_api_failure_propagates(mocker, status_code) -> None:
     with raises(Exception):
         handler_module.main(valid_event, mock_context)
 
-    mock_get.reset_mock()
+    mock_session.get.reset_mock()
     mock_secrets.get.reset_mock()
 
 
@@ -346,7 +346,7 @@ def test_successful_response_persisted(mocker, status) -> None:
     import templates.eventbridge.handler as handler_module
 
     mock_secrets = mocker.patch.object(handler_module, "secrets_provider")
-    mock_get = mocker.patch.object(handler_module, "get")
+    mock_session = mocker.patch.object(handler_module.handler, "_session")
     mock_repo = mocker.patch.object(handler_module, "repository")
 
     handler_module.handler._secrets_provider = mock_secrets
@@ -356,7 +356,7 @@ def test_successful_response_persisted(mocker, status) -> None:
     mock_resp = mocker.MagicMock()
     mock_resp.content = dumps({"id": "test-id", "message": status}).encode()
     mock_resp.raise_for_status.return_value = None
-    mock_get.return_value = mock_resp
+    mock_session.get.return_value = mock_resp
 
     mock_context = mocker.MagicMock()
     mock_context.function_name = "test-function"
@@ -379,7 +379,7 @@ def test_successful_response_persisted(mocker, status) -> None:
 
     mock_repo.put_item.assert_called_once_with({"id": "test-id", "message": status})
     mock_repo.put_item.reset_mock()
-    mock_get.reset_mock()
+    mock_session.get.reset_mock()
     mock_secrets.get.reset_mock()
 
 
@@ -390,7 +390,7 @@ def test_dynamodb_write_failure_propagates(mocker, exc) -> None:
     import templates.eventbridge.handler as handler_module
 
     mock_secrets = mocker.patch.object(handler_module, "secrets_provider")
-    mock_get = mocker.patch.object(handler_module, "get")
+    mock_session = mocker.patch.object(handler_module.handler, "_session")
     mock_repo = mocker.patch.object(handler_module, "repository")
 
     handler_module.handler._secrets_provider = mock_secrets
@@ -400,7 +400,7 @@ def test_dynamodb_write_failure_propagates(mocker, exc) -> None:
     mock_resp = mocker.MagicMock()
     mock_resp.content = dumps({"id": "test-id", "message": "ok"}).encode()
     mock_resp.raise_for_status.return_value = None
-    mock_get.return_value = mock_resp
+    mock_session.get.return_value = mock_resp
     mock_repo.put_item.side_effect = exc
 
     mock_context = mocker.MagicMock()
@@ -425,7 +425,7 @@ def test_dynamodb_write_failure_propagates(mocker, exc) -> None:
         handler_module.main(valid_event, mock_context)
 
     mock_repo.put_item.side_effect = None
-    mock_get.reset_mock()
+    mock_session.get.reset_mock()
     mock_secrets.get.reset_mock()
     mock_repo.put_item.reset_mock()
 
