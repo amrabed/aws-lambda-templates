@@ -1,10 +1,10 @@
+import requests
 from aws_lambda_powertools import Logger, Metrics, Tracer
 from aws_lambda_powertools.metrics import MetricUnit
 from aws_lambda_powertools.utilities.parameters import SecretsProvider
 from aws_lambda_powertools.utilities.parser import event_parser
 from aws_lambda_powertools.utilities.parser.models import EventBridgeModel
 from aws_lambda_powertools.utilities.typing import LambdaContext
-import requests
 
 from templates.eventbridge.models import ApiResponse
 from templates.eventbridge.settings import Settings
