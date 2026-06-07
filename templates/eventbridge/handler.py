@@ -4,7 +4,7 @@ from aws_lambda_powertools.utilities.parameters import SecretsProvider
 from aws_lambda_powertools.utilities.parser import event_parser
 from aws_lambda_powertools.utilities.parser.models import EventBridgeModel
 from aws_lambda_powertools.utilities.typing import LambdaContext
-from requests import get
+from requests import Session
 
 from templates.eventbridge.models import ApiResponse
 from templates.eventbridge.settings import Settings
@@ -16,6 +16,7 @@ tracer = Tracer(service=settings.service_name)
 metrics = Metrics(namespace=settings.metrics_namespace, service=settings.service_name)
 secrets_provider = SecretsProvider()
 repository = Repository(settings.table_name)
+session = Session()  # Use a single session for connection pooling and performance
 
 
 class Handler:
@@ -27,14 +28,12 @@ class Handler:
     def handle(self, event: EventBridgeModel) -> ApiResponse:
         try:
             token = self._secrets_provider.get(settings.secret_name)
-            response = get(
+            response = session.get(
                 settings.api_url,
                 headers={"Authorization": f"Bearer {token}"},
                 timeout=settings.api_timeout_seconds,
             )
             response.raise_for_status()
-            # Optimize by using Pydantic's Rust-based JSON parser directly on the raw bytes.
-            # This avoids redundant dictionary creation and improves performance.
             api_response = ApiResponse.model_validate_json(response.content)
             self._repository.put_item(api_response.model_dump(by_alias=True, exclude_none=True))
             metrics.add_metric(name="ApiCallSuccess", unit=MetricUnit.Count, value=1)

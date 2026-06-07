@@ -52,7 +52,7 @@ def test_valid_event_shapes(mocker, source, detail_type, detail) -> None:
     import templates.eventbridge.handler as handler_module
 
     mock_secrets = mocker.patch.object(handler_module, "secrets_provider")
-    mock_get = mocker.patch.object(handler_module, "get")
+    mock_get = mocker.patch.object(handler_module.session, "get")
     mock_repo = mocker.patch.object(handler_module, "repository")
 
     handler_module.handler._secrets_provider = mock_secrets
@@ -102,7 +102,7 @@ def test_invalid_event_prevents_api_call(mocker, missing_key) -> None:
     import templates.eventbridge.handler as handler_module
 
     mock_secrets = mocker.patch.object(handler_module, "secrets_provider")
-    mock_get = mocker.patch.object(handler_module, "get")
+    mock_get = mocker.patch.object(handler_module.session, "get")
     mock_repo = mocker.patch.object(handler_module, "repository")
 
     handler_module.handler._secrets_provider = mock_secrets
@@ -140,7 +140,7 @@ def test_secret_exception_propagates(mocker, exc) -> None:
     import templates.eventbridge.handler as handler_module
 
     mock_secrets = mocker.patch.object(handler_module, "secrets_provider")
-    mock_get = mocker.patch.object(handler_module, "get")
+    mock_get = mocker.patch.object(handler_module.session, "get")
     mock_repo = mocker.patch.object(handler_module, "repository")
 
     handler_module.handler._secrets_provider = mock_secrets
@@ -180,7 +180,7 @@ def test_bearer_token_header(mocker, token) -> None:
     import templates.eventbridge.handler as handler_module
 
     mock_secrets = mocker.patch.object(handler_module, "secrets_provider")
-    mock_get = mocker.patch.object(handler_module, "get")
+    mock_get = mocker.patch.object(handler_module.session, "get")
     mock_repo = mocker.patch.object(handler_module, "repository")
 
     handler_module.handler._secrets_provider = mock_secrets
@@ -236,7 +236,7 @@ def test_api_failure_propagates(mocker, status_code) -> None:
     import templates.eventbridge.handler as handler_module
 
     mock_secrets = mocker.patch.object(handler_module, "secrets_provider")
-    mock_get = mocker.patch.object(handler_module, "get")
+    mock_get = mocker.patch.object(handler_module.session, "get")
     mock_repo = mocker.patch.object(handler_module, "repository")
 
     handler_module.handler._secrets_provider = mock_secrets
@@ -346,7 +346,7 @@ def test_successful_response_persisted(mocker, status) -> None:
     import templates.eventbridge.handler as handler_module
 
     mock_secrets = mocker.patch.object(handler_module, "secrets_provider")
-    mock_get = mocker.patch.object(handler_module, "get")
+    mock_get = mocker.patch.object(handler_module.session, "get")
     mock_repo = mocker.patch.object(handler_module, "repository")
 
     handler_module.handler._secrets_provider = mock_secrets
@@ -390,7 +390,7 @@ def test_dynamodb_write_failure_propagates(mocker, exc) -> None:
     import templates.eventbridge.handler as handler_module
 
     mock_secrets = mocker.patch.object(handler_module, "secrets_provider")
-    mock_get = mocker.patch.object(handler_module, "get")
+    mock_get = mocker.patch.object(handler_module.session, "get")
     mock_repo = mocker.patch.object(handler_module, "repository")
 
     handler_module.handler._secrets_provider = mock_secrets

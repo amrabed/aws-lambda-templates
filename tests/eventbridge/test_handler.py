@@ -64,7 +64,7 @@ def test_successful_invocation(mocker, lambda_context) -> None:
     import templates.eventbridge.handler as handler_module
 
     mock_secrets = mocker.patch.object(handler_module, "secrets_provider")
-    mock_get = mocker.patch.object(handler_module, "get")
+    mock_get = mocker.patch.object(handler_module.session, "get")
     mock_repo = mocker.patch.object(handler_module, "repository")
     mock_metrics = mocker.patch.object(handler_module, "metrics")
 
@@ -91,7 +91,7 @@ def test_secret_loading_failure(mocker, lambda_context) -> None:
     import templates.eventbridge.handler as handler_module
 
     mock_secrets = mocker.patch.object(handler_module, "secrets_provider")
-    mocker.patch.object(handler_module, "get")
+    mocker.patch.object(handler_module.session, "get")
     mock_repo = mocker.patch.object(handler_module, "repository")
     mock_metrics = mocker.patch.object(handler_module, "metrics")
 
@@ -111,7 +111,7 @@ def test_api_non_2xx_response(mocker, lambda_context) -> None:
     import templates.eventbridge.handler as handler_module
 
     mock_secrets = mocker.patch.object(handler_module, "secrets_provider")
-    mock_get = mocker.patch.object(handler_module, "get")
+    mock_get = mocker.patch.object(handler_module.session, "get")
     mock_repo = mocker.patch.object(handler_module, "repository")
     mock_metrics = mocker.patch.object(handler_module, "metrics")
 
@@ -134,7 +134,7 @@ def test_api_network_exception(mocker, lambda_context) -> None:
     import templates.eventbridge.handler as handler_module
 
     mock_secrets = mocker.patch.object(handler_module, "secrets_provider")
-    mock_get = mocker.patch.object(handler_module, "get")
+    mock_get = mocker.patch.object(handler_module.session, "get")
     mock_repo = mocker.patch.object(handler_module, "repository")
     mock_metrics = mocker.patch.object(handler_module, "metrics")
 
@@ -155,7 +155,7 @@ def test_invalid_eventbridge_event(mocker, lambda_context) -> None:
     import templates.eventbridge.handler as handler_module
 
     mock_secrets = mocker.patch.object(handler_module, "secrets_provider")
-    mock_get = mocker.patch.object(handler_module, "get")
+    mock_get = mocker.patch.object(handler_module.session, "get")
     mock_repo = mocker.patch.object(handler_module, "repository")
 
     handler_module.handler._secrets_provider = mock_secrets
@@ -174,7 +174,7 @@ def test_dynamodb_write_failure(mocker, lambda_context) -> None:
     import templates.eventbridge.handler as handler_module
 
     mock_secrets = mocker.patch.object(handler_module, "secrets_provider")
-    mock_get = mocker.patch.object(handler_module, "get")
+    mock_get = mocker.patch.object(handler_module.session, "get")
     mock_repo = mocker.patch.object(handler_module, "repository")
     mock_metrics = mocker.patch.object(handler_module, "metrics")
 
