@@ -64,7 +64,7 @@ def test_successful_invocation(mocker, lambda_context) -> None:
     import templates.eventbridge.handler as handler_module
 
     mock_secrets = mocker.patch.object(handler_module, "secrets_provider")
-    mock_session = mocker.patch.object(handler_module.handler, "_session")
+    mock_get = mocker.patch.object(handler_module.handler._session, "get")
     mock_repo = mocker.patch.object(handler_module, "repository")
     mock_metrics = mocker.patch.object(handler_module, "metrics")
 
@@ -72,12 +72,12 @@ def test_successful_invocation(mocker, lambda_context) -> None:
     handler_module.handler._repository = mock_repo
 
     mock_secrets.get.return_value = "my-token"
-    mock_session.get.return_value = _mock_response(mocker, {"id": "abc-123", "message": "ok"})
+    mock_get.return_value = _mock_response(mocker, {"id": "abc-123", "message": "ok"})
 
     handler_module.main(_valid_event(), lambda_context)
 
     mock_secrets.get.assert_called_once()
-    mock_session.get.assert_called_once_with(
+    mock_get.assert_called_once_with(
         mocker.ANY,
         headers={"Authorization": "Bearer my-token"},
         timeout=10,
@@ -91,7 +91,7 @@ def test_secret_loading_failure(mocker, lambda_context) -> None:
     import templates.eventbridge.handler as handler_module
 
     mock_secrets = mocker.patch.object(handler_module, "secrets_provider")
-    mocker.patch.object(handler_module.handler, "_session")
+    mocker.patch.object(handler_module.handler._session, "get")
     mock_repo = mocker.patch.object(handler_module, "repository")
     mock_metrics = mocker.patch.object(handler_module, "metrics")
 
@@ -111,7 +111,7 @@ def test_api_non_2xx_response(mocker, lambda_context) -> None:
     import templates.eventbridge.handler as handler_module
 
     mock_secrets = mocker.patch.object(handler_module, "secrets_provider")
-    mock_session = mocker.patch.object(handler_module.handler, "_session")
+    mock_get = mocker.patch.object(handler_module.handler._session, "get")
     mock_repo = mocker.patch.object(handler_module, "repository")
     mock_metrics = mocker.patch.object(handler_module, "metrics")
 
@@ -121,7 +121,7 @@ def test_api_non_2xx_response(mocker, lambda_context) -> None:
     mock_secrets.get.return_value = "my-token"
     mock_resp = mocker.MagicMock()
     mock_resp.raise_for_status.side_effect = HTTPError(response=mocker.MagicMock(status_code=500))
-    mock_session.get.return_value = mock_resp
+    mock_get.return_value = mock_resp
 
     with raises(HTTPError):
         handler_module.main(_valid_event(), lambda_context)
@@ -134,7 +134,7 @@ def test_api_network_exception(mocker, lambda_context) -> None:
     import templates.eventbridge.handler as handler_module
 
     mock_secrets = mocker.patch.object(handler_module, "secrets_provider")
-    mock_session = mocker.patch.object(handler_module.handler, "_session")
+    mock_get = mocker.patch.object(handler_module.handler._session, "get")
     mock_repo = mocker.patch.object(handler_module, "repository")
     mock_metrics = mocker.patch.object(handler_module, "metrics")
 
@@ -142,7 +142,7 @@ def test_api_network_exception(mocker, lambda_context) -> None:
     handler_module.handler._repository = mock_repo
 
     mock_secrets.get.return_value = "my-token"
-    mock_session.get.side_effect = ConnectionError("Connection refused")
+    mock_get.side_effect = ConnectionError("Connection refused")
 
     with raises(ConnectionError):
         handler_module.main(_valid_event(), lambda_context)
@@ -155,7 +155,7 @@ def test_invalid_eventbridge_event(mocker, lambda_context) -> None:
     import templates.eventbridge.handler as handler_module
 
     mock_secrets = mocker.patch.object(handler_module, "secrets_provider")
-    mock_session = mocker.patch.object(handler_module.handler, "_session")
+    mock_get = mocker.patch.object(handler_module.handler._session, "get")
     mock_repo = mocker.patch.object(handler_module, "repository")
 
     handler_module.handler._secrets_provider = mock_secrets
@@ -166,7 +166,7 @@ def test_invalid_eventbridge_event(mocker, lambda_context) -> None:
     with raises(ValidationError):
         handler_module.main(invalid_event, lambda_context)
 
-    mock_session.get.assert_not_called()
+    mock_get.assert_not_called()
 
 
 def test_dynamodb_write_failure(mocker, lambda_context) -> None:
@@ -174,7 +174,7 @@ def test_dynamodb_write_failure(mocker, lambda_context) -> None:
     import templates.eventbridge.handler as handler_module
 
     mock_secrets = mocker.patch.object(handler_module, "secrets_provider")
-    mock_session = mocker.patch.object(handler_module.handler, "_session")
+    mock_get = mocker.patch.object(handler_module.handler._session, "get")
     mock_repo = mocker.patch.object(handler_module, "repository")
     mock_metrics = mocker.patch.object(handler_module, "metrics")
 
@@ -182,7 +182,7 @@ def test_dynamodb_write_failure(mocker, lambda_context) -> None:
     handler_module.handler._repository = mock_repo
 
     mock_secrets.get.return_value = "my-token"
-    mock_session.get.return_value = _mock_response(mocker, {"id": "abc-123", "message": "ok"})
+    mock_get.return_value = _mock_response(mocker, {"id": "abc-123", "message": "ok"})
     mock_repo.put_item.side_effect = Exception("DynamoDB unavailable")
 
     with raises(Exception, match="DynamoDB unavailable"):
