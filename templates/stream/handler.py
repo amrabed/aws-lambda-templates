@@ -3,7 +3,6 @@ from aws_lambda_powertools.metrics import MetricUnit
 from aws_lambda_powertools.utilities.batch import BatchProcessor, EventType, process_partial_response
 from aws_lambda_powertools.utilities.data_classes.dynamo_db_stream_event import DynamoDBRecord
 from aws_lambda_powertools.utilities.typing import LambdaContext
-from boto3.dynamodb.types import TypeDeserializer
 from pydantic import ValidationError
 
 from templates.repository import Repository
@@ -42,7 +41,8 @@ class Handler:
         """
         try:
             # TODO: process here
-            return DestinationItem.model_validate(item.model_dump(by_alias=True))
+            # Use from_attributes=True to validate directly from SourceItem without redundant model_dump()
+            return DestinationItem.model_validate(item, from_attributes=True)
         except ValidationError as exc:
             logger.error("DestinationItem validation failed", exc_info=exc)
             return None
