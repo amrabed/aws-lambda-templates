@@ -19,6 +19,12 @@ metrics = Metrics(namespace=settings.metrics_namespace)
 repository = Repository(settings.table_name)
 app = APIGatewayRestResolver()
 
+SECURITY_HEADERS = {
+    "X-Content-Type-Options": "nosniff",
+    "X-Frame-Options": "DENY",
+    "Strict-Transport-Security": "max-age=31536000; includeSubDomains",
+}
+
 
 @app.get("/items/<id>")
 def get_item(id: str) -> Response:
@@ -32,17 +38,23 @@ def get_item(id: str) -> Response:
     """
     try:
         if (item := repository.get_item(id)) is None:
-            return Response(status_code=404, content_type="application/json", body=dumps({"message": "Not found"}))
+            return Response(
+                status_code=404,
+                content_type="application/json",
+                body=dumps({"message": "Not found"}),
+                headers=SECURITY_HEADERS,
+            )
         item = Item.model_validate(item)  # Validate model after retrieval to ensure data integrity
     except Exception as exc:
-        message = (
-            "Item validation failed" if isinstance(exc, ValidationError) else f"Error retrieving item with id {id}"
-        )
-        logger.error(message, exc_info=exc)
+        message = "Item validation failed" if isinstance(exc, ValidationError) else "Error retrieving item"
+        logger.error(message, exc_info=exc, extra={"item_id": id})
         return Response(
-            status_code=500, content_type="application/json", body=dumps({"message": "Internal server error"})
+            status_code=500,
+            content_type="application/json",
+            body=dumps({"message": "Internal server error"}),
+            headers=SECURITY_HEADERS,
         )
-    return Response(status_code=200, content_type="application/json", body=item.dump())
+    return Response(status_code=200, content_type="application/json", body=item.dump(), headers=SECURITY_HEADERS)
 
 
 @app.post("/items")
@@ -55,17 +67,25 @@ def create_item() -> Response:
     try:
         item = Item.model_validate_json(app.current_event.body)
     except ValidationError as exc:
-        return Response(status_code=422, content_type="application/json", body=dumps({"errors": exc.errors()}))
+        return Response(
+            status_code=422,
+            content_type="application/json",
+            body=dumps({"errors": exc.errors()}),
+            headers=SECURITY_HEADERS,
+        )
 
     try:
         repository.put_item(item.model_dump())
     except Exception as exc:
-        logger.error("DynamoDB put_item failed", exc_info=exc)
+        logger.error("DynamoDB put_item failed", exc_info=exc, extra={"item_id": item.id})
         return Response(
-            status_code=500, content_type="application/json", body=dumps({"message": "Internal server error"})
+            status_code=500,
+            content_type="application/json",
+            body=dumps({"message": "Internal server error"}),
+            headers=SECURITY_HEADERS,
         )
 
-    return Response(status_code=201, content_type="application/json", body=item.dump())
+    return Response(status_code=201, content_type="application/json", body=item.dump(), headers=SECURITY_HEADERS)
 
 
 @logger.inject_lambda_context

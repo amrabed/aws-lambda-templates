@@ -192,5 +192,21 @@ def test_get_item_validation_error_returns_500(mock_repo, lambda_context):
     assert body["message"] == "Internal server error"
 
 
+def test_response_headers_contain_security_headers(mock_repo, lambda_context):
+    """API responses should contain standard security headers."""
+    from templates.api.handler import main
+
+    mock_repo.get_item.return_value = {"id": "abc", "name": "Widget"}
+
+    event = _apigw_event("GET", "/items/abc", path_params={"id": "abc"})
+    response = main(event, lambda_context)
+
+    assert response["statusCode"] == 200
+    headers = response["multiValueHeaders"]
+    assert headers["X-Content-Type-Options"] == ["nosniff"]
+    assert headers["X-Frame-Options"] == ["DENY"]
+    assert "Strict-Transport-Security" in headers
+
+
 if __name__ == "__main__":
     main()
