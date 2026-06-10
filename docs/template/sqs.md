@@ -28,10 +28,22 @@ mise run deploy sqs
 
 ### Data models
 
-Model | Description
---- | ---
-`SqsMessage` | Parsed from the SQS message body (`id`, `content`)
-`ProcessedItem` | Written to the DynamoDB table (`id`, `content`, `status`)
+#### SqsMessage
+Parsed from the SQS message body.
+
+Field | Type | Description
+--- | --- | ---
+`id` | string | Unique identifier for the message (1-50 chars)
+`content` | string | The main content of the message (1-1000 chars)
+
+#### ProcessedItem
+Written to the DynamoDB table.
+
+Field | Type | Description
+--- | --- | ---
+`id` | string | Unique identifier for the item (partition key, 1-50 chars)
+`content` | string | The processed content (1-1000 chars)
+`status` | string | Processing status (1-50 chars)
 
 ### Environment variables
 
