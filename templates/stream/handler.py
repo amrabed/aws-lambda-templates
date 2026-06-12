@@ -41,7 +41,6 @@ class Handler:
         """
         try:
             # TODO: process here
-            # Use from_attributes=True to validate directly from SourceItem without redundant model_dump()
             return DestinationItem.model_validate(item, from_attributes=True)
         except ValidationError as exc:
             logger.error("DestinationItem validation failed", exc_info=exc)
