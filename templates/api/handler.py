@@ -1,5 +1,3 @@
-from json import dumps
-
 from aws_lambda_powertools import Logger, Metrics, Tracer
 from aws_lambda_powertools.event_handler import APIGatewayRestResolver
 from aws_lambda_powertools.event_handler.api_gateway import Response
@@ -7,6 +5,7 @@ from aws_lambda_powertools.utilities.typing import LambdaContext
 from pydantic import ValidationError
 
 from templates.api.models import Item
+from templates.api.response import JsonResponse
 from templates.api.settings import Settings
 from templates.repository import Repository
 
@@ -32,17 +31,14 @@ def get_item(id: str) -> Response:
     """
     try:
         if (item := repository.get_item(id)) is None:
-            return Response(status_code=404, content_type="application/json", body=dumps({"message": "Not found"}))
+            return JsonResponse({"message": "Not found"}, status_code=404)
         item = Item.model_validate(item)  # Validate model after retrieval to ensure data integrity
     except Exception as exc:
-        message = (
-            "Item validation failed" if isinstance(exc, ValidationError) else f"Error retrieving item with id {id}"
-        )
-        logger.error(message, exc_info=exc)
-        return Response(
-            status_code=500, content_type="application/json", body=dumps({"message": "Internal server error"})
-        )
-    return Response(status_code=200, content_type="application/json", body=item.dump())
+        message = "Item validation failed" if isinstance(exc, ValidationError) else "Error retrieving item"
+        logger.error(message, exc_info=exc, extra={"itemId": id})
+        return JsonResponse({"message": "Internal server error"}, status_code=500)
+
+    return JsonResponse(item.dump())
 
 
 @app.post("/items")
@@ -55,17 +51,15 @@ def create_item() -> Response:
     try:
         item = Item.model_validate_json(app.current_event.body)
     except ValidationError as exc:
-        return Response(status_code=422, content_type="application/json", body=dumps({"errors": exc.errors()}))
+        return JsonResponse({"errors": exc.errors()}, status_code=422)
 
     try:
         repository.put_item(item.model_dump())
     except Exception as exc:
-        logger.error("DynamoDB put_item failed", exc_info=exc)
-        return Response(
-            status_code=500, content_type="application/json", body=dumps({"message": "Internal server error"})
-        )
+        logger.error("DynamoDB put_item failed", exc_info=exc, extra={"itemId": item.id})
+        return JsonResponse({"message": "Internal server error"}, status_code=500)
 
-    return Response(status_code=201, content_type="application/json", body=item.dump())
+    return JsonResponse(item.dump(), status_code=201)
 
 
 @logger.inject_lambda_context
