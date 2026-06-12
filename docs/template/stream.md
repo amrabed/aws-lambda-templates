@@ -30,10 +30,21 @@ mise run deploy stream
 
 ### Data models
 
-Model | Description
---- | ---
-`SourceItem` | Read from the source table stream (`id`, `name`)
-`DestinationItem` | Written to the destination table (`id`, `name`)
+#### SourceItem
+Read from the source table stream.
+
+Field | Type | Description
+--- | --- | ---
+`id` | string | Unique item identifier (1-50 chars)
+`name` | string | Human-readable item name (optional, 1-100 chars)
+
+#### DestinationItem
+Written to the destination table.
+
+Field | Type | Description
+--- | --- | ---
+`id` | string | Unique item identifier (1-50 chars)
+`name` | string | Human-readable item name (optional, 1-100 chars)
 
 ### Environment variables
 

@@ -55,7 +55,7 @@ The repository also comes preloaded with these GitHub files:
 - MIT License
 
 ## How to use
-Click this button to create a new repository for your project, then clone the new repository. Enjoy!
+Click the button below (or [use this link](https://github.com/amrabed/aws-lambda-templates/generate)) to create a new repository for your project, then clone the new repository. Enjoy!
 
 [![Use this template](https://img.shields.io/badge/Use%20this%20template-238636?style=for-the-badge)](https://github.com/amrabed/aws-lambda-templates/generate)
 

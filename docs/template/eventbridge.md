@@ -31,8 +31,16 @@ mise run deploy eventbridge
 Model | Description
 --- | ---
 `EventBridgeEvent` | Incoming EventBridge event payload (`source`, `detail_type`, `detail`)
-`ApiResponse` | Response from the external HTTP API (`status`)
+`ApiResponse` | Response from the external HTTP API (`id`, `message`)
 `Settings` | Runtime configuration from environment variables
+
+#### ApiResponse
+Written to the DynamoDB table after calling the external API.
+
+Field | Type | Description
+--- | --- | ---
+`id` | string | Unique identifier of the API response record (1-50 chars)
+`message` | string | Message returned by the external API (1-1000 chars)
 
 ### Environment variables
 
