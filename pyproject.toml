@@ -10,7 +10,7 @@ dependencies = [
     "pydantic>=2.13.4",
     "pydantic-settings>=2.14.1",
     "aws-lambda-powertools>=3.29.0",
-    "boto3>=1.43.23",
+    "boto3>=1.43.28",
     "requests>=2.34.2",
 ]
 
@@ -20,12 +20,12 @@ rename = "scripts.rename:main"
 
 [dependency-groups]
 infra = [
-    "aws-cdk-lib>=2.258.0",
+    "aws-cdk-lib>=2.258.1",
     "constructs>=10.6.0",
 ]
 dev = [
     "pytest>=9.0.1",
-    "ruff>=0.15.16",
+    "ruff>=0.15.17",
     "coverage>=7.14.1",
     "pre-commit>=4.0.1",
     "pyright>=1.1.410",
