@@ -1,5 +1,3 @@
-from json import dumps
-
 from aws_lambda_powertools import Logger, Metrics, Tracer
 from aws_lambda_powertools.event_handler import APIGatewayRestResolver
 from aws_lambda_powertools.event_handler.api_gateway import Response
@@ -7,6 +5,7 @@ from aws_lambda_powertools.utilities.typing import LambdaContext
 from pydantic import ValidationError
 
 from templates.api.models import Item
+from templates.api.response import JsonResponse
 from templates.api.settings import Settings
 from templates.repository import Repository
 
@@ -18,30 +17,6 @@ metrics = Metrics(namespace=settings.metrics_namespace)
 
 repository = Repository(settings.table_name)
 app = APIGatewayRestResolver()
-
-SECURITY_HEADERS = {
-    "X-Content-Type-Options": "nosniff",
-    "X-Frame-Options": "DENY",
-    "Strict-Transport-Security": "max-age=31536000; includeSubDomains",
-}
-
-
-class JsonResponse(Response):
-    """An HTTP response with JSON body and security headers."""
-
-    def __init__(self, body: dict | str, status_code: int = 200) -> None:
-        """Initialize the JSON response.
-
-        Args:
-            body: The response body as a dictionary or JSON string.
-            status_code: The HTTP status code.
-        """
-        super().__init__(
-            status_code=status_code,
-            body=body if isinstance(body, str) else dumps(body),
-            content_type="application/json",
-            headers=SECURITY_HEADERS,
-        )
 
 
 @app.get("/items/<id>")
