@@ -26,6 +26,24 @@ SECURITY_HEADERS = {
 }
 
 
+class JsonResponse(Response):
+    """An HTTP response with JSON body and security headers."""
+
+    def __init__(self, body: dict | str, status_code: int = 200) -> None:
+        """Initialize the JSON response.
+
+        Args:
+            body: The response body as a dictionary or JSON string.
+            status_code: The HTTP status code.
+        """
+        super().__init__(
+            status_code=status_code,
+            body=body if isinstance(body, str) else dumps(body),
+            content_type="application/json",
+            headers=SECURITY_HEADERS,
+        )
+
+
 @app.get("/items/<id>")
 def get_item(id: str) -> Response:
     """Retrieve an item by ID.
@@ -38,23 +56,14 @@ def get_item(id: str) -> Response:
     """
     try:
         if (item := repository.get_item(id)) is None:
-            return Response(
-                status_code=404,
-                content_type="application/json",
-                body=dumps({"message": "Not found"}),
-                headers=SECURITY_HEADERS,
-            )
+            return JsonResponse({"message": "Not found"}, status_code=404)
         item = Item.model_validate(item)  # Validate model after retrieval to ensure data integrity
     except Exception as exc:
         message = "Item validation failed" if isinstance(exc, ValidationError) else "Error retrieving item"
         logger.error(message, exc_info=exc, extra={"item_id": id})
-        return Response(
-            status_code=500,
-            content_type="application/json",
-            body=dumps({"message": "Internal server error"}),
-            headers=SECURITY_HEADERS,
-        )
-    return Response(status_code=200, content_type="application/json", body=item.dump(), headers=SECURITY_HEADERS)
+        return JsonResponse({"message": "Internal server error"}, status_code=500)
+
+    return JsonResponse(item.dump())
 
 
 @app.post("/items")
@@ -67,25 +76,15 @@ def create_item() -> Response:
     try:
         item = Item.model_validate_json(app.current_event.body)
     except ValidationError as exc:
-        return Response(
-            status_code=422,
-            content_type="application/json",
-            body=dumps({"errors": exc.errors()}),
-            headers=SECURITY_HEADERS,
-        )
+        return JsonResponse({"errors": exc.errors()}, status_code=422)
 
     try:
         repository.put_item(item.model_dump())
     except Exception as exc:
         logger.error("DynamoDB put_item failed", exc_info=exc, extra={"item_id": item.id})
-        return Response(
-            status_code=500,
-            content_type="application/json",
-            body=dumps({"message": "Internal server error"}),
-            headers=SECURITY_HEADERS,
-        )
+        return JsonResponse({"message": "Internal server error"}, status_code=500)
 
-    return Response(status_code=201, content_type="application/json", body=item.dump(), headers=SECURITY_HEADERS)
+    return JsonResponse(item.dump(), status_code=201)
 
 
 @logger.inject_lambda_context
