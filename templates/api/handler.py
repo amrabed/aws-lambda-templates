@@ -35,7 +35,7 @@ def get_item(id: str) -> Response:
         item = Item.model_validate(item)  # Validate model after retrieval to ensure data integrity
     except Exception as exc:
         message = "Item validation failed" if isinstance(exc, ValidationError) else "Error retrieving item"
-        logger.error(message, exc_info=exc, extra={"item_id": id})
+        logger.error(message, exc_info=exc, extra={"itemId": id})
         return JsonResponse({"message": "Internal server error"}, status_code=500)
 
     return JsonResponse(item.dump())
@@ -56,7 +56,7 @@ def create_item() -> Response:
     try:
         repository.put_item(item.model_dump())
     except Exception as exc:
-        logger.error("DynamoDB put_item failed", exc_info=exc, extra={"item_id": item.id})
+        logger.error("DynamoDB put_item failed", exc_info=exc, extra={"itemId": item.id})
         return JsonResponse({"message": "Internal server error"}, status_code=500)
 
     return JsonResponse(item.dump(), status_code=201)
