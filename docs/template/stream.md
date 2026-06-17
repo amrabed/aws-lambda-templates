@@ -54,3 +54,4 @@ Variable | Description | Required | Default
 `DESTINATION_TABLE_NAME` | Destination DynamoDB table name | Yes | -
 `SERVICE_NAME` | Powertools service name | No | `dynamodb-stream`
 `METRICS_NAMESPACE` | Powertools metrics namespace | No | `DynamoDBStream`
+`LOG_LEVEL` | Log level for the Lambda Logger | No | `INFO`

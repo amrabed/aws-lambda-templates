@@ -62,3 +62,4 @@ Variable | Description | Required | Default
 `TABLE_NAME` | DynamoDB table name | Yes | -
 `SERVICE_NAME` | Powertools service name | No | `bedrock-agent`
 `METRICS_NAMESPACE` | Powertools metrics namespace | No | `BedrockAgent`
+`LOG_LEVEL` | Log level for the Lambda Logger | No | `INFO`

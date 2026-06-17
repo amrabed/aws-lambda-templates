@@ -89,3 +89,4 @@ Variable | Description | Required | Default
 `TABLE_NAME` | DynamoDB table name | Yes | -
 `SERVICE_NAME` | Powertools service name | No | `graphql-api`
 `METRICS_NAMESPACE` | Powertools metrics namespace | No | `GraphQLApi`
+`LOG_LEVEL` | Log level for the Lambda Logger | No | `INFO`

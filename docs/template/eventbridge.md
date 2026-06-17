@@ -51,3 +51,4 @@ Variable | Description | Required | Default
 `SECRET_NAME` | AWS Secrets Manager secret name holding the API token | Yes | -
 `SERVICE_NAME` | Powertools service name | No | `eventbridge`
 `METRICS_NAMESPACE` | CloudWatch metrics namespace | No | `EventBridge`
+`LOG_LEVEL` | Log level for the Lambda Logger | No | `INFO`

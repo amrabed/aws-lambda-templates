@@ -8,7 +8,6 @@ class Settings(CommonSettings, case_sensitive=False):
     queue_region: str = Field(default="us-east-1", description="AWS region for the SQS client")
     service_name: str = "s3-processor"
     metrics_namespace: str = "S3Processor"
-    log_level: str = Field(default="INFO", description="Log level for the Lambda Logger")
 
     @field_validator("queue_url")
     @classmethod
