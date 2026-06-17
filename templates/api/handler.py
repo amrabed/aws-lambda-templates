@@ -38,7 +38,7 @@ def get_item(id: str) -> Response:
         logger.error(message, exc_info=exc, extra={"itemId": id})
         return JsonResponse({"message": "Internal server error"}, status_code=500)
 
-    return JsonResponse(item.dump())
+    return JsonResponse(item.dump_json())
 
 
 @app.post("/items")
@@ -59,7 +59,7 @@ def create_item() -> Response:
         logger.error("DynamoDB put_item failed", exc_info=exc, extra={"itemId": item.id})
         return JsonResponse({"message": "Internal server error"}, status_code=500)
 
-    return JsonResponse(item.dump(), status_code=201)
+    return JsonResponse(item.dump_json(), status_code=201)
 
 
 @logger.inject_lambda_context

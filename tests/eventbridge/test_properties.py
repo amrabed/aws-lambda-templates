@@ -51,11 +51,11 @@ def stub_module_clients(mocker) -> None:
 def test_valid_event_shapes(mocker, source, detail_type, detail) -> None:
     import templates.eventbridge.handler as handler_module
 
-    mock_secrets = mocker.patch.object(handler_module, "secrets_provider")
+    mock_secrets = mocker.patch.object(handler_module, "secret_manager")
     mock_get = mocker.patch.object(handler_module.session, "get")
     mock_repo = mocker.patch.object(handler_module, "repository")
 
-    handler_module.handler._secrets_provider = mock_secrets
+    handler_module.handler._secret_manager = mock_secrets
     handler_module.handler._repository = mock_repo
 
     mock_secrets.get.return_value = "test-token"
@@ -101,11 +101,11 @@ def test_invalid_event_prevents_api_call(mocker, missing_key) -> None:
 
     import templates.eventbridge.handler as handler_module
 
-    mock_secrets = mocker.patch.object(handler_module, "secrets_provider")
+    mock_secrets = mocker.patch.object(handler_module, "secret_manager")
     mock_get = mocker.patch.object(handler_module.session, "get")
     mock_repo = mocker.patch.object(handler_module, "repository")
 
-    handler_module.handler._secrets_provider = mock_secrets
+    handler_module.handler._secret_manager = mock_secrets
     handler_module.handler._repository = mock_repo
 
     valid_event = {
@@ -133,17 +133,17 @@ def test_invalid_event_prevents_api_call(mocker, missing_key) -> None:
     mock_get.reset_mock()
 
 
-# Feature: eventbridge-api-caller, Property 3: SecretClient exception propagates
+# Feature: eventbridge-api-caller, Property 3: SecretManager exception propagates
 @given(exc=st.from_type(Exception))
 @h_settings(max_examples=100, suppress_health_check=[HealthCheck.function_scoped_fixture])
 def test_secret_exception_propagates(mocker, exc) -> None:
     import templates.eventbridge.handler as handler_module
 
-    mock_secrets = mocker.patch.object(handler_module, "secrets_provider")
+    mock_secrets = mocker.patch.object(handler_module, "secret_manager")
     mock_get = mocker.patch.object(handler_module.session, "get")
     mock_repo = mocker.patch.object(handler_module, "repository")
 
-    handler_module.handler._secrets_provider = mock_secrets
+    handler_module.handler._secret_manager = mock_secrets
     handler_module.handler._repository = mock_repo
 
     mock_secrets.get.side_effect = exc
@@ -179,11 +179,11 @@ def test_secret_exception_propagates(mocker, exc) -> None:
 def test_bearer_token_header(mocker, token) -> None:
     import templates.eventbridge.handler as handler_module
 
-    mock_secrets = mocker.patch.object(handler_module, "secrets_provider")
+    mock_secrets = mocker.patch.object(handler_module, "secret_manager")
     mock_get = mocker.patch.object(handler_module.session, "get")
     mock_repo = mocker.patch.object(handler_module, "repository")
 
-    handler_module.handler._secrets_provider = mock_secrets
+    handler_module.handler._secret_manager = mock_secrets
     handler_module.handler._repository = mock_repo
 
     mock_secrets.get.return_value = token
@@ -211,7 +211,7 @@ def test_bearer_token_header(mocker, token) -> None:
     }
     handler_module.main(valid_event, mock_context)
 
-    mock_get.assert_called_once_with(mocker.ANY, headers={"Authorization": f"Bearer {token}"}, timeout=10)
+    mock_get.assert_called_once_with(mocker.ANY, headers={"Authorization": f"Bearer {token}"})
     mock_get.reset_mock()
     mock_secrets.get.reset_mock()
 
@@ -235,11 +235,11 @@ def test_2xx_response_parsed(status_code, message) -> None:
 def test_api_failure_propagates(mocker, status_code) -> None:
     import templates.eventbridge.handler as handler_module
 
-    mock_secrets = mocker.patch.object(handler_module, "secrets_provider")
+    mock_secrets = mocker.patch.object(handler_module, "secret_manager")
     mock_get = mocker.patch.object(handler_module.session, "get")
     mock_repo = mocker.patch.object(handler_module, "repository")
 
-    handler_module.handler._secrets_provider = mock_secrets
+    handler_module.handler._secret_manager = mock_secrets
     handler_module.handler._repository = mock_repo
 
     mock_secrets.get.return_value = "test-token"
@@ -335,7 +335,7 @@ def test_api_response_round_trip(message) -> None:
 
     input_dict = {"id": "test-id", "message": message}
     response = ApiResponse.model_validate(input_dict)
-    output = response.model_dump(by_alias=True)
+    output = response.dump()
     assert output == input_dict
 
 
@@ -345,11 +345,11 @@ def test_api_response_round_trip(message) -> None:
 def test_successful_response_persisted(mocker, status) -> None:
     import templates.eventbridge.handler as handler_module
 
-    mock_secrets = mocker.patch.object(handler_module, "secrets_provider")
+    mock_secrets = mocker.patch.object(handler_module, "secret_manager")
     mock_get = mocker.patch.object(handler_module.session, "get")
     mock_repo = mocker.patch.object(handler_module, "repository")
 
-    handler_module.handler._secrets_provider = mock_secrets
+    handler_module.handler._secret_manager = mock_secrets
     handler_module.handler._repository = mock_repo
 
     mock_secrets.get.return_value = "test-token"
@@ -389,11 +389,11 @@ def test_successful_response_persisted(mocker, status) -> None:
 def test_dynamodb_write_failure_propagates(mocker, exc) -> None:
     import templates.eventbridge.handler as handler_module
 
-    mock_secrets = mocker.patch.object(handler_module, "secrets_provider")
+    mock_secrets = mocker.patch.object(handler_module, "secret_manager")
     mock_get = mocker.patch.object(handler_module.session, "get")
     mock_repo = mocker.patch.object(handler_module, "repository")
 
-    handler_module.handler._secrets_provider = mock_secrets
+    handler_module.handler._secret_manager = mock_secrets
     handler_module.handler._repository = mock_repo
 
     mock_secrets.get.return_value = "test-token"

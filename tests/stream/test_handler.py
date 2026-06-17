@@ -126,6 +126,7 @@ def test_deserialisation_failure_reports_batch_item_failure(mock_repo, lambda_co
     event = _stream_event(bad_record, good_record)
     result = handler_module.main(event, lambda_context)
 
+    # The bad record should not call put_item because validation fails
     mock_repo.put_item.assert_called_once_with({"id": "ok", "name": "Good"})
     assert len(result["batchItemFailures"]) == 1
 
