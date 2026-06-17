@@ -41,8 +41,8 @@ Field | Type | Description
 
 ### Environment variables
 
-Variable | Description | Required
---- | --- | ---
-`TABLE_NAME` | DynamoDB table name | Yes
-`SERVICE_NAME` | Powertools service name | No
-`METRICS_NAMESPACE` | Powertools metrics namespace | No
+Variable | Description | Required | Default
+--- | --- | --- | ---
+`TABLE_NAME` | DynamoDB table name | Yes | -
+`SERVICE_NAME` | Powertools service name | No | `rest-api`
+`METRICS_NAMESPACE` | Powertools metrics namespace | No | `RestApi`

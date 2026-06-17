@@ -1,8 +1,9 @@
 from pydantic import Field
-from pydantic_settings import BaseSettings
+
+from templates.settings import CommonSettings
 
 
-class Settings(BaseSettings, case_sensitive=False):
+class Settings(CommonSettings, case_sensitive=False):
     """Configuration settings for the Bedrock Agent Lambda function."""
 
     table_name: str = Field(description="Name of the DynamoDB table to store agent items.")

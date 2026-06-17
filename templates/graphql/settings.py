@@ -1,8 +1,9 @@
 from pydantic import Field
-from pydantic_settings import BaseSettings
+
+from templates.settings import CommonSettings
 
 
-class Settings(BaseSettings):
+class Settings(CommonSettings):
     """Configuration settings for the GraphQL Lambda function."""
 
     table_name: str = Field(description="The name of the DynamoDB table.")

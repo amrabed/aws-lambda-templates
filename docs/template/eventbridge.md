@@ -44,10 +44,10 @@ Field | Type | Description
 
 ### Environment variables
 
-Variable | Description | Required
---- | --- | ---
-`API_URL` | URL of the external HTTP API to call | Yes
-`SECRET_NAME` | AWS Secrets Manager secret name holding the API token | Yes
-`SERVICE_NAME` | Powertools service name | No
-`METRICS_NAMESPACE` | CloudWatch metrics namespace | No
-`TABLE_NAME` | DynamoDB table name for persisting API responses | Yes
+Variable | Description | Required | Default
+--- | --- | --- | ---
+`API_URL` | URL of the external HTTP API to call | Yes | -
+`TABLE_NAME` | DynamoDB table name for persisting API responses | Yes | -
+`SECRET_NAME` | AWS Secrets Manager secret name holding the API token | Yes | -
+`SERVICE_NAME` | Powertools service name | No | `eventbridge`
+`METRICS_NAMESPACE` | CloudWatch metrics namespace | No | `EventBridge`
