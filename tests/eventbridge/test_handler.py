@@ -76,7 +76,7 @@ def test_successful_invocation(mocker, lambda_context) -> None:
 
     handler_module.main(_valid_event(), lambda_context)
 
-    mock_secrets.get.assert_called_once()
+    mock_secrets.get.assert_called_once_with("test-secret", max_age=60)
     mock_get.assert_called_once_with(
         mocker.ANY,
         headers={"Authorization": "Bearer my-token"},

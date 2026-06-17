@@ -27,7 +27,8 @@ class Handler:
     @tracer.capture_method
     def handle(self, event: EventBridgeModel) -> ApiResponse:
         try:
-            token = self._secrets_provider.get(settings.secret_name)
+            # Cache the secret to reduce Secrets Manager API calls and improve performance on warm starts
+            token = self._secrets_provider.get(settings.secret_name, max_age=settings.secret_cache_max_age)
             response = session.get(
                 settings.api_url,
                 headers={"Authorization": f"Bearer {token}"},
@@ -35,7 +36,7 @@ class Handler:
             )
             response.raise_for_status()
             api_response = ApiResponse.model_validate_json(response.content)
-            self._repository.put_item(api_response.model_dump(by_alias=True, exclude_none=True))
+            self._repository.put_item(api_response.dump())
             metrics.add_metric(name="ApiCallSuccess", unit=MetricUnit.Count, value=1)
             logger.info("API call succeeded", extra={"api_message": api_response.message})
             return api_response
