@@ -63,12 +63,12 @@ def test_successful_invocation(mocker, lambda_context) -> None:
     """Token loaded, API called, ApiCallSuccess metric emitted, repository.put_item called."""
     import templates.eventbridge.handler as handler_module
 
-    mock_secrets = mocker.patch.object(handler_module, "secrets_provider")
+    mock_secrets = mocker.patch.object(handler_module, "secret_manager")
     mock_get = mocker.patch.object(handler_module.session, "get")
     mock_repo = mocker.patch.object(handler_module, "repository")
     mock_metrics = mocker.patch.object(handler_module, "metrics")
 
-    handler_module.handler._secrets_provider = mock_secrets
+    handler_module.handler._secret_manager = mock_secrets
     handler_module.handler._repository = mock_repo
 
     mock_secrets.get.return_value = "my-token"
@@ -76,7 +76,7 @@ def test_successful_invocation(mocker, lambda_context) -> None:
 
     handler_module.main(_valid_event(), lambda_context)
 
-    mock_secrets.get.assert_called_once_with("test-secret", max_age=60)
+    mock_secrets.get.assert_called_once_with("test-secret")
     mock_get.assert_called_once_with(
         mocker.ANY,
         headers={"Authorization": "Bearer my-token"},
@@ -86,15 +86,15 @@ def test_successful_invocation(mocker, lambda_context) -> None:
 
 
 def test_secret_loading_failure(mocker, lambda_context) -> None:
-    """SecretsProvider.get raises -> handler re-raises, ApiCallFailure emitted."""
+    """SecretManager.get raises -> handler re-raises, ApiCallFailure emitted."""
     import templates.eventbridge.handler as handler_module
 
-    mock_secrets = mocker.patch.object(handler_module, "secrets_provider")
+    mock_secrets = mocker.patch.object(handler_module, "secret_manager")
     mocker.patch.object(handler_module.session, "get")
     mock_repo = mocker.patch.object(handler_module, "repository")
     mock_metrics = mocker.patch.object(handler_module, "metrics")
 
-    handler_module.handler._secrets_provider = mock_secrets
+    handler_module.handler._secret_manager = mock_secrets
     handler_module.handler._repository = mock_repo
 
     mock_secrets.get.side_effect = Exception("Secrets Manager unavailable")
@@ -109,12 +109,12 @@ def test_api_non_2xx_response(mocker, lambda_context) -> None:
     """requests.get raises HTTPError on non-2xx -> handler re-raises, ApiCallFailure emitted."""
     import templates.eventbridge.handler as handler_module
 
-    mock_secrets = mocker.patch.object(handler_module, "secrets_provider")
+    mock_secrets = mocker.patch.object(handler_module, "secret_manager")
     mock_get = mocker.patch.object(handler_module.session, "get")
     mock_repo = mocker.patch.object(handler_module, "repository")
     mock_metrics = mocker.patch.object(handler_module, "metrics")
 
-    handler_module.handler._secrets_provider = mock_secrets
+    handler_module.handler._secret_manager = mock_secrets
     handler_module.handler._repository = mock_repo
 
     mock_secrets.get.return_value = "my-token"
@@ -132,12 +132,12 @@ def test_api_network_exception(mocker, lambda_context) -> None:
     """requests.get raises ConnectionError -> handler re-raises, ApiCallFailure emitted."""
     import templates.eventbridge.handler as handler_module
 
-    mock_secrets = mocker.patch.object(handler_module, "secrets_provider")
+    mock_secrets = mocker.patch.object(handler_module, "secret_manager")
     mock_get = mocker.patch.object(handler_module.session, "get")
     mock_repo = mocker.patch.object(handler_module, "repository")
     mock_metrics = mocker.patch.object(handler_module, "metrics")
 
-    handler_module.handler._secrets_provider = mock_secrets
+    handler_module.handler._secret_manager = mock_secrets
     handler_module.handler._repository = mock_repo
 
     mock_secrets.get.return_value = "my-token"
@@ -153,11 +153,11 @@ def test_invalid_eventbridge_event(mocker, lambda_context) -> None:
     """Missing required fields -> @event_parser raises ValidationError before handler is called."""
     import templates.eventbridge.handler as handler_module
 
-    mock_secrets = mocker.patch.object(handler_module, "secrets_provider")
+    mock_secrets = mocker.patch.object(handler_module, "secret_manager")
     mock_get = mocker.patch.object(handler_module.session, "get")
     mock_repo = mocker.patch.object(handler_module, "repository")
 
-    handler_module.handler._secrets_provider = mock_secrets
+    handler_module.handler._secret_manager = mock_secrets
     handler_module.handler._repository = mock_repo
 
     invalid_event = {"source": "aws.events", "detail-type": "Scheduled Event"}
@@ -172,12 +172,12 @@ def test_dynamodb_write_failure(mocker, lambda_context) -> None:
     """repository.put_item raises -> handler re-raises, ApiCallFailure emitted."""
     import templates.eventbridge.handler as handler_module
 
-    mock_secrets = mocker.patch.object(handler_module, "secrets_provider")
+    mock_secrets = mocker.patch.object(handler_module, "secret_manager")
     mock_get = mocker.patch.object(handler_module.session, "get")
     mock_repo = mocker.patch.object(handler_module, "repository")
     mock_metrics = mocker.patch.object(handler_module, "metrics")
 
-    handler_module.handler._secrets_provider = mock_secrets
+    handler_module.handler._secret_manager = mock_secrets
     handler_module.handler._repository = mock_repo
 
     mock_secrets.get.return_value = "my-token"

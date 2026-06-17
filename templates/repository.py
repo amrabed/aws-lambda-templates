@@ -1,5 +1,4 @@
 from boto3 import resource
-from botocore.config import Config
 
 
 class Repository:
@@ -7,14 +6,13 @@ class Repository:
 
     _PRIMARY_KEY = "id"
 
-    def __init__(self, table_name: str, boto_config: Config | None = None) -> None:
+    def __init__(self, table_name: str) -> None:
         """Initialize the repository with a DynamoDB table.
 
         Args:
             table_name: The name of the DynamoDB table to operate on.
-            boto_config: Optional Botocore configuration for the DynamoDB client.
         """
-        self._table = resource("dynamodb", config=boto_config).Table(table_name)
+        self._table = resource("dynamodb").Table(table_name)
 
     def get_item(self, item_id: str) -> dict | None:
         """Retrieve an item by its ID.
