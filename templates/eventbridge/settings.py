@@ -1,9 +1,13 @@
+"""Configuration settings for the EventBridge template."""
+
 from pydantic import Field
 
 from templates.settings import CommonSettings
 
 
 class Settings(CommonSettings):
+    """Configuration settings for the EventBridge template."""
+
     api_url: str = Field(description="URL of the external HTTP API to call")
     api_timeout_seconds: int = Field(description="Timeout for the external API call in seconds", default=10)
     api_max_retries: int = Field(description="Maximum number of retries for the external API call", default=3)

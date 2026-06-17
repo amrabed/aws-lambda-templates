@@ -1,0 +1,1 @@
+"""EventBridge template package."""
