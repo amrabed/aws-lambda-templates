@@ -48,9 +48,9 @@ Field | Type | Description
 
 ### Environment variables
 
-Variable | Description
---- | ---
-`SOURCE_TABLE_NAME` | Source DynamoDB table name (stream source)
-`DESTINATION_TABLE_NAME` | Destination DynamoDB table name
-`SERVICE_NAME` | Powertools service name
-`METRICS_NAMESPACE` | Powertools metrics namespace
+Variable | Description | Required
+--- | --- | ---
+`SOURCE_TABLE_NAME` | Source DynamoDB table name (stream source) | Yes
+`DESTINATION_TABLE_NAME` | Destination DynamoDB table name | Yes
+`SERVICE_NAME` | Powertools service name | No
+`METRICS_NAMESPACE` | Powertools metrics namespace | No

@@ -57,8 +57,8 @@ Field | Type | Description
 
 ### Environment variables
 
-Variable | Description
---- | ---
-`TABLE_NAME` | DynamoDB table name
-`SERVICE_NAME` | Powertools service name
-`METRICS_NAMESPACE` | Powertools metrics namespace
+Variable | Description | Required
+--- | --- | ---
+`TABLE_NAME` | DynamoDB table name | Yes
+`SERVICE_NAME` | Powertools service name | No
+`METRICS_NAMESPACE` | Powertools metrics namespace | No

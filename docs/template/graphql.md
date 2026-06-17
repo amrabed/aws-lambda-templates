@@ -81,3 +81,11 @@ Field | Type | Description
 --- | --- | ---
 `id` | UUID string | Unique item identifier (auto-generated, 1-50 chars)
 `name` | string | Human-readable item name (1-100 chars)
+
+### Environment variables
+
+Variable | Description | Required
+--- | --- | ---
+`TABLE_NAME` | DynamoDB table name | Yes
+`SERVICE_NAME` | Powertools service name | No
+`METRICS_NAMESPACE` | Powertools metrics namespace | No
