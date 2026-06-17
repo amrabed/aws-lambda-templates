@@ -59,7 +59,7 @@ def main(event: S3Event, context: LambdaContext) -> dict:
     metrics.add_metric(name="records_processed", unit="Count", value=processed)
 
     if errors:
-        logger.error("Batch processing failed", extra={"errorCount": len(errors)})
+        logger.error("Batch processing failed", extra={"errorCount": len(errors), "firstError": str(errors[0])})
         raise Exception("Batch processing failed") from None
 
     return {"batchItemFailures": []}
