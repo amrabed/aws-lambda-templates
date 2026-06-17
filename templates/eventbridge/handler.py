@@ -4,6 +4,7 @@ from aws_lambda_powertools.utilities.parameters import SecretsProvider
 from aws_lambda_powertools.utilities.parser import event_parser
 from aws_lambda_powertools.utilities.parser.models import EventBridgeModel
 from aws_lambda_powertools.utilities.typing import LambdaContext
+from botocore.config import Config
 from requests import Session
 import socket
 
@@ -19,8 +20,9 @@ settings = Settings()  # type: ignore
 logger = Logger(service=settings.service_name)
 tracer = Tracer(service=settings.service_name)
 metrics = Metrics(namespace=settings.metrics_namespace, service=settings.service_name)
-secrets_provider = SecretsProvider()
-repository = Repository(settings.table_name)
+boto_config = Config(tcp_keepalive=True, retries={"max_attempts": 3, "mode": "standard"})
+secrets_provider = SecretsProvider(boto_config=boto_config)
+repository = Repository(settings.table_name, boto_config=boto_config)
 session = Session()
 
 # Configure retries and connection pooling with TCP keep-alive
