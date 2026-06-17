@@ -23,7 +23,7 @@ def handle_record(record: S3EventRecord) -> None:
     Args:
         record: The S3 event record to process.
     """
-    message = {"bucket": record.s3.bucket.name, "key": record.s3.get_object.key, "event_time": record.event_time}
+    message = {"bucket": record.s3.bucket.name, "key": record.s3.get_object.key, "eventTime": record.event_time}
     queue.publish(ProcessedMessage.model_validate(message).model_dump_json(by_alias=True, exclude_none=True))
     logger.info("Processed record", extra=message)
 
@@ -59,6 +59,7 @@ def main(event: S3Event, context: LambdaContext) -> dict:
     metrics.add_metric(name="records_processed", unit="Count", value=processed)
 
     if errors:
-        raise Exception(f"Batch processing failed with {len(errors)} errors. First error: {errors[0]}")
+        logger.error("Batch processing failed", extra={"errorCount": len(errors), "firstError": str(errors[0])})
+        raise Exception("Batch processing failed") from None
 
     return {"batchItemFailures": []}
