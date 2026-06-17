@@ -1,13 +1,11 @@
 from pydantic import Field
 
-from templates.models import BaseTemplateModel
+from templates.models import Entity
 
 
-class SourceItem(BaseTemplateModel, from_attributes=True):
-    id: str = Field(description="Unique item identifier", min_length=1, max_length=50)
+class SourceItem(Entity, from_attributes=True):
     name: str | None = Field(default=None, description="Human-readable item name", min_length=1, max_length=100)
 
 
-class DestinationItem(BaseTemplateModel, from_attributes=True):
-    id: str = Field(description="Unique item identifier", min_length=1, max_length=50)
+class DestinationItem(Entity, from_attributes=True):
     name: str | None = Field(default=None, description="Human-readable item name", min_length=1, max_length=100)

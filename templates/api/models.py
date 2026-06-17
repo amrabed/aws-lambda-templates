@@ -2,10 +2,10 @@ from uuid import uuid4
 
 from pydantic import Field
 
-from templates.models import BaseTemplateModel
+from templates.models import Entity
 
 
-class Item(BaseTemplateModel):
+class Item(Entity):
     id: str = Field(
         description="Unique item identifier", default_factory=lambda: str(uuid4()), min_length=1, max_length=50
     )

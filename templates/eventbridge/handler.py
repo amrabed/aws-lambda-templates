@@ -2,45 +2,27 @@ from aws_lambda_powertools import Logger, Metrics, Tracer
 from aws_lambda_powertools.metrics import MetricUnit
 from aws_lambda_powertools.utilities.parameters import SecretsProvider
 from aws_lambda_powertools.utilities.parser import event_parser
+import boto3
 from aws_lambda_powertools.utilities.parser.models import EventBridgeModel
 from aws_lambda_powertools.utilities.typing import LambdaContext
 from botocore.config import Config
-from requests import Session
-import socket
-
-from requests.adapters import HTTPAdapter
-from urllib3.connection import HTTPConnection
-from urllib3.util import Retry
 
 from templates.eventbridge.models import ApiResponse
 from templates.eventbridge.settings import Settings
 from templates.repository import Repository
+from templates.session import SessionManager
 
 settings = Settings()  # type: ignore
 logger = Logger(service=settings.service_name)
 tracer = Tracer(service=settings.service_name)
 metrics = Metrics(namespace=settings.metrics_namespace, service=settings.service_name)
-boto_config = Config(tcp_keepalive=True, retries={"max_attempts": 3, "mode": "standard"})
-secrets_provider = SecretsProvider(boto_config=boto_config)
+boto_config = Config(tcp_keepalive=True, retries={"max_attempts": settings.boto_max_attempts, "mode": "standard"})
+secrets_provider = SecretsProvider(boto3_client=boto3.client("secretsmanager", config=boto_config))
 repository = Repository(settings.table_name, boto_config=boto_config)
-session = Session()
-
-# Configure retries and connection pooling with TCP keep-alive
-retry_strategy = Retry(
-    total=settings.api_max_retries,
+session = SessionManager(
+    max_retries=settings.api_max_retries,
     backoff_factor=settings.api_backoff_factor,
-    status_forcelist=[429, 500, 502, 503, 504],
-)
-socket_options = HTTPConnection.default_socket_options + [(socket.SOL_SOCKET, socket.SO_KEEPALIVE, 1)]
-adapter = HTTPAdapter(
-    max_retries=retry_strategy,
-    pool_connections=10,
-    pool_maxsize=10,
-)
-adapter.poolmanager.connection_pool_kw["socket_options"] = socket_options
-
-session.mount("http://", adapter)
-session.mount("https://", adapter)
+).get_session()
 
 
 class Handler:
