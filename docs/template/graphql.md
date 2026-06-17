@@ -81,3 +81,12 @@ Field | Type | Description
 --- | --- | ---
 `id` | UUID string | Unique item identifier (auto-generated, 1-50 chars)
 `name` | string | Human-readable item name (1-100 chars)
+
+### Environment variables
+
+Variable | Description | Required | Default
+--- | --- | --- | ---
+`TABLE_NAME` | DynamoDB table name | Yes | -
+`SERVICE_NAME` | Powertools service name | No | `graphql-api`
+`METRICS_NAMESPACE` | Powertools metrics namespace | No | `GraphQLApi`
+`LOG_LEVEL` | Log level for the Lambda Logger | No | `INFO`

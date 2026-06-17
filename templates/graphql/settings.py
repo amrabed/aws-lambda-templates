@@ -1,10 +1,11 @@
 from pydantic import Field
-from pydantic_settings import BaseSettings
+
+from templates.settings import CommonSettings
 
 
-class Settings(BaseSettings):
+class Settings(CommonSettings):
     """Configuration settings for the GraphQL Lambda function."""
 
     table_name: str = Field(description="The name of the DynamoDB table.")
-    service_name: str = Field(description="The name of the service.", default="graphql-api")
-    metrics_namespace: str = Field(description="The CloudWatch Metrics namespace.", default="GraphQLApi")
+    service_name: str = "graphql-api"
+    metrics_namespace: str = "GraphQLApi"

@@ -1,8 +1,9 @@
 from pydantic import Field
-from pydantic_settings import BaseSettings
+
+from templates.settings import CommonSettings
 
 
-class Settings(BaseSettings):
+class Settings(CommonSettings):
     table_name: str = Field(description="DynamoDB table name")
-    service_name: str = Field(description="Powertools service name")
-    metrics_namespace: str = Field(description="Powertools metrics namespace")
+    service_name: str = "rest-api"
+    metrics_namespace: str = "RestApi"

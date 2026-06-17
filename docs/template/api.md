@@ -41,8 +41,9 @@ Field | Type | Description
 
 ### Environment variables
 
-Variable | Description
---- | ---
-`TABLE_NAME` | DynamoDB table name
-`SERVICE_NAME` | Powertools service name
-`METRICS_NAMESPACE` | Powertools metrics namespace
+Variable | Description | Required | Default
+--- | --- | --- | ---
+`TABLE_NAME` | DynamoDB table name | Yes | -
+`SERVICE_NAME` | Powertools service name | No | `rest-api`
+`METRICS_NAMESPACE` | Powertools metrics namespace | No | `RestApi`
+`LOG_LEVEL` | Log level for the Lambda Logger | No | `INFO`

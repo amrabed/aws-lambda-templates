@@ -273,7 +273,7 @@ def test_api_failure_propagates(mocker, status_code) -> None:
 
 
 # Feature: eventbridge-api-caller, Property 7: Missing required env var raises ValidationError
-@given(var_name=st.sampled_from(["API_URL", "SECRET_NAME", "SERVICE_NAME", "METRICS_NAMESPACE", "TABLE_NAME"]))
+@given(var_name=st.sampled_from(["API_URL", "SECRET_NAME", "TABLE_NAME"]))
 @h_settings(max_examples=100, suppress_health_check=[HealthCheck.function_scoped_fixture])
 def test_missing_env_var_raises(monkeypatch, var_name) -> None:
     from pydantic import ValidationError
