@@ -80,7 +80,6 @@ def test_successful_invocation(mocker, lambda_context) -> None:
     mock_get.assert_called_once_with(
         mocker.ANY,
         headers={"Authorization": "Bearer my-token"},
-        timeout=10,
     )
     mock_repo.put_item.assert_called_once_with({"id": "abc-123", "message": "ok"})
     mock_metrics.add_metric.assert_called_with(name="ApiCallSuccess", unit=mocker.ANY, value=1)

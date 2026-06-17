@@ -1,11 +1,12 @@
 from typing import Any
+from uuid import uuid4
 
 from pydantic import BaseModel, Field
 from pydantic.alias_generators import to_camel
 
 
-class Object(BaseModel, populate_by_name=True, alias_generator=to_camel):
-    """Base model for all template data objects with common configuration and helper methods."""
+class Object(BaseModel, populate_by_name=True, alias_generator=to_camel, from_attributes=True):
+    """Base model for all data objects with common configuration and helper methods."""
 
     def dump(self, **kwargs: Any) -> dict[str, Any]:
         """Dump the model to a dictionary with default settings (camelCase, exclude None)."""
@@ -23,4 +24,9 @@ class Object(BaseModel, populate_by_name=True, alias_generator=to_camel):
 class Entity(Object):
     """Base model for entities with a unique identifier."""
 
-    id: str = Field(description="Unique identifier for the entity.", min_length=1, max_length=50)
+    id: str = Field(
+        description="Unique identifier for the entity.",
+        default_factory=lambda: str(uuid4()),
+        min_length=1,
+        max_length=50,
+    )
