@@ -34,7 +34,7 @@ def get_item(id: str) -> dict | None:
             return None
         return Item.model_validate(item).dump()
     except Exception as error:
-        logger.error("Failed to get item", extra={"item_id": id}, exc_info=error)
+        logger.error("Failed to get item", extra={"itemId": id}, exc_info=error)
         raise RuntimeError(f"Failed to get item with ID '{id}'") from None
 
 
@@ -69,7 +69,7 @@ def create_item(name: str) -> dict:
         repository.put_item(item)
         return item
     except (ValidationError, Exception) as error:
-        logger.error("Failed to create item", extra={"item_name": name}, exc_info=error)
+        logger.error("Failed to create item", extra={"itemName": name}, exc_info=error)
         raise RuntimeError(f"Failed to create item with name '{name}'") from None
 
 
