@@ -6,8 +6,8 @@ from templates.settings import CommonSettings
 class Settings(CommonSettings, case_sensitive=False):
     queue_url: str = Field(description="SQS queue URL to publish processed messages to")
     queue_region: str = Field(default="us-east-1", description="AWS region for the SQS client")
-    service_name: str = Field(default="s3-processor", description="Powertools service name")
-    metrics_namespace: str = Field(default="S3Processor", description="CloudWatch Metrics namespace")
+    service_name: str = "s3-processor"
+    metrics_namespace: str = "S3Processor"
     log_level: str = Field(default="INFO", description="Log level for the Lambda Logger")
 
     @field_validator("queue_url")
