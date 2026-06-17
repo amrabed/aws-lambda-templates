@@ -3,7 +3,7 @@ from pydantic import Field, field_validator
 from templates.settings import CommonSettings
 
 
-class Settings(CommonSettings, case_sensitive=False):
+class Settings(CommonSettings):
     queue_url: str = Field(description="SQS queue URL to publish processed messages to")
     queue_region: str = Field(default="us-east-1", description="AWS region for the SQS client")
     service_name: str = "s3-processor"

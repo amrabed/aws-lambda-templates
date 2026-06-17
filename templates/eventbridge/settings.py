@@ -3,7 +3,7 @@ from pydantic import Field
 from templates.settings import CommonSettings
 
 
-class Settings(CommonSettings, case_sensitive=False):
+class Settings(CommonSettings):
     api_url: str = Field(description="URL of the external HTTP API to call")
     api_timeout_seconds: int = Field(description="Timeout for the external API call in seconds", default=10)
     secret_name: str = Field(description="AWS Secrets Manager secret name holding the API token")
