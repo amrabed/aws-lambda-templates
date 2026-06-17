@@ -5,6 +5,11 @@ from aws_lambda_powertools.utilities.parser import event_parser
 from aws_lambda_powertools.utilities.parser.models import EventBridgeModel
 from aws_lambda_powertools.utilities.typing import LambdaContext
 from requests import Session
+import socket
+
+from requests.adapters import HTTPAdapter
+from urllib3.connection import HTTPConnection
+from urllib3.util import Retry
 
 from templates.eventbridge.models import ApiResponse
 from templates.eventbridge.settings import Settings
@@ -16,7 +21,24 @@ tracer = Tracer(service=settings.service_name)
 metrics = Metrics(namespace=settings.metrics_namespace, service=settings.service_name)
 secrets_provider = SecretsProvider()
 repository = Repository(settings.table_name)
-session = Session()  # Use a single session for connection pooling and performance
+session = Session()
+
+# Configure retries and connection pooling with TCP keep-alive
+retry_strategy = Retry(
+    total=settings.api_max_retries,
+    backoff_factor=settings.api_backoff_factor,
+    status_forcelist=[429, 500, 502, 503, 504],
+)
+socket_options = HTTPConnection.default_socket_options + [(socket.SOL_SOCKET, socket.SO_KEEPALIVE, 1)]
+adapter = HTTPAdapter(
+    max_retries=retry_strategy,
+    pool_connections=10,
+    pool_maxsize=10,
+)
+adapter.poolmanager.connection_pool_kw["socket_options"] = socket_options
+
+session.mount("http://", adapter)
+session.mount("https://", adapter)
 
 
 class Handler:
@@ -27,7 +49,6 @@ class Handler:
     @tracer.capture_method
     def handle(self, event: EventBridgeModel) -> ApiResponse:
         try:
-            # Cache the secret to reduce Secrets Manager API calls and improve performance on warm starts
             token = self._secrets_provider.get(settings.secret_name, max_age=settings.secret_cache_max_age)
             response = session.get(
                 settings.api_url,
