@@ -1,3 +1,7 @@
+"""Secrets management for the EventBridge template."""
+
+from typing import cast
+
 from aws_lambda_powertools.utilities.parameters import SecretsProvider
 from botocore.config import Config
 
@@ -25,4 +29,4 @@ class SecretManager:
         Returns:
             The secret value as a string.
         """
-        return self._provider.get(name, max_age=self._max_age)
+        return cast(str, self._provider.get(name, max_age=self._max_age))

@@ -1,3 +1,5 @@
+"""EventBridge event handler implementation."""
+
 from aws_lambda_powertools import Logger, Metrics, Tracer
 from aws_lambda_powertools.metrics import MetricUnit
 from aws_lambda_powertools.utilities.parser import event_parser
@@ -28,12 +30,28 @@ session = ApiSession(
 
 
 class Handler:
+    """Handles EventBridge events by calling an external API and persisting the response."""
+
     def __init__(self, secret_manager: SecretManager, repository: Repository) -> None:
+        """Initialize the Handler.
+
+        Args:
+            secret_manager: Manager for AWS Secrets Manager.
+            repository: Repository for DynamoDB access.
+        """
         self._secret_manager = secret_manager
         self._repository = repository
 
     @tracer.capture_method
     def handle(self, event: EventBridgeModel) -> ApiResponse:
+        """Process an EventBridge event.
+
+        Args:
+            event: The parsed EventBridge event.
+
+        Returns:
+            The validated API response.
+        """
         try:
             token = self._secret_manager.get(settings.secret_name)
             response = session.get(settings.api_url, headers={"Authorization": f"Bearer {token}"})
@@ -57,4 +75,10 @@ handler = Handler(secret_manager=secret_manager, repository=repository)
 @metrics.log_metrics
 @event_parser(model=EventBridgeModel)
 def main(event: EventBridgeModel, context: LambdaContext) -> None:
+    """Lambda entry point for the EventBridge handler.
+
+    Args:
+        event: The EventBridge event.
+        context: The Lambda execution context.
+    """
     handler.handle(event)
