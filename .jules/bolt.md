@@ -17,3 +17,7 @@
 ## 2026-06-10 - [Stream] Faster Cross-Model Validation with from_attributes
 **Learning:** When validating a Pydantic model using data from another Pydantic model (e.g., transforming a `SourceItem` to a `DestinationItem`), using `Model.model_validate(other_model, from_attributes=True)` is significantly faster and more memory-efficient than `Model.model_validate(other_model.model_dump())`. It bypasses the overhead of serializing the source model into an intermediate Python dictionary.
 **Action:** Use `from_attributes=True` for efficient model-to-model transformations, especially in high-throughput data processing paths like DynamoDB Streams or SQS batch processing.
+
+## 2026-06-11 - [General] Optimized AWS Service Clients with botocore.config.Config
+**Learning:** Configuring Boto3 clients with `tcp_keepalive=True` and `retries={"max_attempts": 3, "mode": "standard"}` in the `botocore.config.Config` significantly improves connection resilience and reduces latency in AWS Lambda. TCP keep-alive ensures that connections in the pool remain active, avoiding the overhead of re-establishing TCP/TLS handshakes, while the 'standard' retry mode provides more robust exponential backoff.
+**Action:** Always use a centralized `botocore.config.Config` when instantiating Boto3 resources or clients in Lambda templates to optimize performance and reliability.
