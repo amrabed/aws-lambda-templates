@@ -95,6 +95,8 @@ def test_get_item_not_found(mock_repo, lambda_context):
     response = handler_module.main(event, lambda_context)
 
     assert response["statusCode"] == 404
+    body = loads(response["body"])
+    assert body["message"] == "Item 'missing' not found"
 
 
 def test_post_item_invalid_body(mock_repo, lambda_context):
