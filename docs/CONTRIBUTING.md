@@ -84,7 +84,7 @@ The project uses [Hypothesis](https://hypothesis.readthedocs.io) for property-ba
 
 Project Documentation is written in Markdown and built using [Material for MkDocs](https://squidfunk.github.io/mkdocs-material/). API documentation is built from docstrings using [mkdocstrings](https://mkdocstrings.github.io/).
 
-To preview the documentation on your local, run:
+To preview the documentation locally, run:
 ```bash
 mise run local
 ```
@@ -96,7 +96,7 @@ A good bug report shouldn't leave others needing to chase you up for more inform
 
 - Make sure that you are using the latest version.
 - Determine if your bug is really a bug and not an error on your side e.g. using incompatible environment components/versions.
-- Search exisitng issues to see if other users have experienced (and potentially already solved) the same issue you are having.
+- Search existing issues to see if other users have experienced (and potentially already solved) the same issue you are having.
 - Also make sure to search the internet (including Stack Overflow) to see if users outside of the GitHub community have discussed the issue.
 - Collect information about the bug, e.g., Stack trace (Traceback), OS, platform, and version, .. etc
 

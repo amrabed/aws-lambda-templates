@@ -31,7 +31,7 @@ def get_item(id: str) -> Response:
     """
     try:
         if (item := repository.get_item(id)) is None:
-            return JsonResponse({"message": "Not found"}, status_code=404)
+            return JsonResponse({"message": f"Item '{id}' not found"}, status_code=404)
         item = Item.model_validate(item)  # Validate model after retrieval to ensure data integrity
     except Exception as exc:
         message = "Item validation failed" if isinstance(exc, ValidationError) else "Error retrieving item"
