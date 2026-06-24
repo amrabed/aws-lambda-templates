@@ -32,11 +32,11 @@ def get_item(item_id: str) -> dict:
     try:
         item = repository.get_item(item_id)
         if not item:
-            return {"error": f"Item {item_id} not found"}
+            return {"error": "Item not found"}
         return Item.model_validate(item).dump()
     except Exception as error:
         logger.error("Failed to get item", extra={"itemId": item_id}, exc_info=error)
-        return {"error": f"Failed to get item with ID '{item_id}'"}
+        return {"error": "Failed to get item"}
 
 
 @tracer.capture_method
@@ -59,7 +59,7 @@ def create_item(item_id: str, name: str, description: str | None = None) -> dict
         return item
     except Exception as error:
         logger.error("Failed to create item", extra={"itemId": item_id}, exc_info=error)
-        return {"error": f"Failed to create item with ID '{item_id}'"}
+        return {"error": "Failed to create item"}
 
 
 @logger.inject_lambda_context

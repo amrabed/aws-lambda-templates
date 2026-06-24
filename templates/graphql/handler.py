@@ -35,7 +35,7 @@ def get_item(id: str) -> dict | None:
         return Item.model_validate(item).dump()
     except Exception as error:
         logger.error("Failed to get item", extra={"itemId": id}, exc_info=error)
-        raise RuntimeError(f"Failed to get item with ID '{id}'") from None
+        raise RuntimeError("Failed to get item") from None
 
 
 @app.resolver(type_name="Query", field_name="listItems")
@@ -70,7 +70,7 @@ def create_item(name: str) -> dict:
         return item
     except (ValidationError, Exception) as error:
         logger.error("Failed to create item", extra={"itemName": name}, exc_info=error)
-        raise RuntimeError(f"Failed to create item with name '{name}'") from None
+        raise RuntimeError("Failed to create item") from None
 
 
 @logger.inject_lambda_context(correlation_id_path=correlation_paths.APPSYNC_RESOLVER)

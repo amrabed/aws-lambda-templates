@@ -44,7 +44,7 @@ def test_handler_get_item_not_found():
     result = get_item("2")
 
     assert "error" in result
-    assert "not found" in result["error"]
+    assert result["error"] == "Item not found"
 
 
 def test_handler_create_item(repository):
@@ -117,7 +117,7 @@ def test_error_handling_sanitization(mocker):
 
     assert "error" in result
     assert "Database connection failed" not in result["error"]
-    assert "Failed to get item with ID '123'" in result["error"]
+    assert result["error"] == "Failed to get item"
 
 
 if __name__ == "__main__":
