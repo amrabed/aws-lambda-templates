@@ -1,4 +1,5 @@
 from boto3 import resource
+from botocore.config import Config
 
 
 class Repository:
@@ -12,7 +13,9 @@ class Repository:
         Args:
             table_name: The name of the DynamoDB table to operate on.
         """
-        self._table = resource("dynamodb").Table(table_name)
+        # Optimize connection resilience and performance with TCP keepalive and standard retries
+        config = Config(tcp_keepalive=True, retries={"max_attempts": 3, "mode": "standard"})
+        self._table = resource("dynamodb", config=config).Table(table_name)
 
     def get_item(self, item_id: str) -> dict | None:
         """Retrieve an item by its ID.
