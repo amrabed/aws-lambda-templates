@@ -16,12 +16,12 @@ All types of contributions are encouraged and valued. Here are some ways you can
 ## Contributing to the code
 
 > ### Legal Notice
-> When contributing to this project, you must agree that you have authored 100% of the content, that you have the necessary rights to the content and that the content you contribute may be provided under the project licence.
+> When contributing to this project, you must agree that you have authored 100% of the content, that you have the necessary rights to the content and that the content you contribute may be provided under the project license.
 
 Unless your change is trivial (typo, docs tweak etc.), please create an issue to discuss the change before creating a pull request.
 
 If you're looking for something to get your teeth into, check out issues with the
-`help wanted` label on GitHub.
+[help wanted](https://github.com/amrabed/aws-lambda-templates/issues?q=is%3Aopen+is%3Aissue+label%3A%22help+wanted%22) label on GitHub.
 
 To make contributing as easy and fast as possible, you'll want to run tests and linting locally.
 
@@ -39,7 +39,7 @@ You'll need the following prerequisites:
 - Set up development environment:
 
 ```bash
-mise install
+mise run install
 mise run dev
 ```
 - Create a new branch (with a descriptive name) for your changes:
@@ -98,7 +98,7 @@ A good bug report shouldn't leave others needing to chase you up for more inform
 - Determine if your bug is really a bug and not an error on your side e.g. using incompatible environment components/versions.
 - Search existing issues to see if other users have experienced (and potentially already solved) the same issue you are having.
 - Also make sure to search the internet (including Stack Overflow) to see if users outside of the GitHub community have discussed the issue.
-- Collect information about the bug, e.g., Stack trace (Traceback), OS, platform, and version, .. etc
+- Collect information about the bug, e.g., Stack trace (Traceback), OS, platform, and version, etc.
 
 
 #### How to submit a good bug report?
