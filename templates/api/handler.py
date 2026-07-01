@@ -27,8 +27,11 @@ def get_item(id: str) -> Response:
         id: The unique identifier of the item.
 
     Returns:
-        200 with the item, 404 if not found, or 500 on error.
+        200 with the item, 400 on invalid ID, 404 if not found, or 500 on error.
     """
+    if not (1 <= len(id) <= 50):
+        return JsonResponse({"message": "Invalid item ID length"}, status_code=400)
+
     try:
         if (item := repository.get_item(id)) is None:
             return JsonResponse({"message": f"Item '{id}' not found"}, status_code=404)
@@ -51,10 +54,10 @@ def create_item() -> Response:
     try:
         item = Item.model_validate_json(app.current_event.body)
     except ValidationError as exc:
-        return JsonResponse({"errors": exc.errors()}, status_code=422)
+        return JsonResponse({"errors": exc.errors(include_input=False, include_url=False)}, status_code=422)
 
     try:
-        repository.put_item(item.model_dump())
+        repository.put_item(item.dump())
     except Exception as exc:
         logger.error("DynamoDB put_item failed", exc_info=exc, extra={"itemId": item.id})
         return JsonResponse({"message": "Internal server error"}, status_code=500)
