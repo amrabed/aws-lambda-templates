@@ -99,6 +99,19 @@ def test_get_item_not_found(mock_repo, lambda_context):
     assert body["message"] == "Item 'missing' not found"
 
 
+def test_get_item_id_too_long(mock_repo, lambda_context):
+    """GET /items/{id} returns 400 when the ID exceeds 50 characters."""
+    import templates.api.handler as handler_module
+
+    long_id = "a" * 51
+    event = _apigw_event("GET", f"/items/{long_id}", path_params={"id": long_id})
+    response = handler_module.main(event, lambda_context)
+
+    assert response["statusCode"] == 400
+    body = loads(response["body"])
+    assert body["message"] == "Invalid item ID length"
+
+
 def test_post_item_invalid_body(mock_repo, lambda_context):
     """POST /items returns 422 when the request body fails Pydantic validation."""
     import templates.api.handler as handler_module
@@ -123,6 +136,10 @@ def test_post_item_name_too_long(mock_repo, lambda_context):
     body = loads(response["body"])
     assert "errors" in body
     assert any(err["type"] == "string_too_long" for err in body["errors"])
+    # Verify sanitization (no input, no url)
+    for error in body["errors"]:
+        assert "input" not in error
+        assert "url" not in error
 
 
 def test_get_item_dynamodb_error(mock_repo, lambda_context):
