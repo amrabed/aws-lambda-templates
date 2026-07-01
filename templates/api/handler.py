@@ -6,6 +6,7 @@ from pydantic import ValidationError
 
 from templates.api.models import Item
 from templates.api.response import JsonResponse
+from templates.models import Entity
 from templates.api.settings import Settings
 from templates.repository import Repository
 
@@ -29,7 +30,9 @@ def get_item(id: str) -> Response:
     Returns:
         200 with the item, 400 on invalid ID, 404 if not found, or 500 on error.
     """
-    if not (1 <= len(id) <= 50):
+    try:
+        Entity(id=id)
+    except ValidationError:
         return JsonResponse({"message": "Invalid item ID length"}, status_code=400)
 
     try:
