@@ -21,3 +21,7 @@
 ## 2026-06-11 - [General] Optimized AWS Service Clients with botocore.config.Config
 **Learning:** Configuring Boto3 clients with `tcp_keepalive=True` and `retries={"max_attempts": 3, "mode": "standard"}` in the `botocore.config.Config` significantly improves connection resilience and reduces latency in AWS Lambda. TCP keep-alive ensures that connections in the pool remain active, avoiding the overhead of re-establishing TCP/TLS handshakes, while the 'standard' retry mode provides more robust exponential backoff.
 **Action:** Always use a centralized `botocore.config.Config` when instantiating Boto3 resources or clients in Lambda templates to optimize performance and reliability.
+
+## 2026-07-01 - [Stream] Bypassing Redundant Validation in Stream Hot Path
+**Learning:** In high-throughput DynamoDB Stream handlers, validating against multiple Pydantic models (e.g., `SourceItem` then `DestinationItem`) adds significant CPU overhead. Since AWS Lambda Powertools already deserializes the DynamoDB event into plain Python dictionaries, we can validate directly into the destination model. Furthermore, for `REMOVE` events, direct dictionary access to keys avoids the overhead of model instantiation entirely.
+**Action:** Minimize the number of model instantiations in stream and batch processing hot paths by validating directly against the final required model and using direct dictionary access for simple key lookups.

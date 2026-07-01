@@ -6,7 +6,7 @@ from aws_lambda_powertools.utilities.typing import LambdaContext
 from pydantic import ValidationError
 
 from templates.repository import Repository
-from templates.stream.models import DestinationItem, SourceItem
+from templates.stream.models import DestinationItem
 from templates.stream.settings import Settings
 
 settings = Settings()
@@ -30,18 +30,20 @@ class Handler:
         self._repository = repository
 
     @tracer.capture_method
-    def _process(self, item: SourceItem) -> DestinationItem | None:
-        """Transform a source item into a destination item.
+    def _process(self, item_dict: dict) -> DestinationItem | None:
+        """Transform a source item dictionary into a destination item.
 
         Args:
-            item: The source item to process.
+            item_dict: The source item dictionary to process.
 
         Returns:
             A `DestinationItem` on success, or `None` if validation fails.
         """
+        # Optimize performance by validating directly into the destination model,
+        # bypassing redundant intermediate validation steps.
         try:
             # TODO: process here
-            return DestinationItem.model_validate(item, from_attributes=True)
+            return DestinationItem.model_validate(item_dict)
         except ValidationError as exc:
             logger.error("DestinationItem validation failed", exc_info=exc)
             return None
@@ -63,13 +65,17 @@ class Handler:
         event_name = record.event_name
 
         if event_name and event_name.name in ("INSERT", "MODIFY"):
-            item = self._process(SourceItem.model_validate(record.dynamodb.new_image))
+            # Powertools already deserializes the DynamoDB NewImage into a plain dict
+            item = self._process(record.dynamodb.new_image)
             if item is None:
                 raise ValueError("Failed to process record into DestinationItem")
             self._repository.put_item(item.model_dump())
         elif event_name and event_name.name == "REMOVE":
-            plain_keys = SourceItem.model_validate(record.dynamodb.keys)
-            self._repository.delete_item(plain_keys.id)
+            # Direct access to the key dictionary avoids redundant model instantiation on the removal hot path
+            item_id = record.dynamodb.keys.get("id")
+            if not item_id:
+                raise ValueError("Missing 'id' in REMOVE record keys")
+            self._repository.delete_item(item_id)
 
 
 handler = Handler(repository)
