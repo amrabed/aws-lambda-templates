@@ -43,7 +43,6 @@ class Handler:
         try:
             message = SqsMessage.model_validate_json(record.body)
             processed = ProcessedItem(id=message.id, content=message.content, status="PROCESSED")
-            # Optimize: Use the optimized .dump() method for consistent serialization
             self._repository.put_item(processed.dump())
             logger.info("Successfully processed and stored message", extra={"messageId": message.id})
         except Exception as exc:
