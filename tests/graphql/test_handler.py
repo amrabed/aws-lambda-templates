@@ -58,6 +58,17 @@ def test_sensitive_data_exposure(repository, lambda_context):
     assert "internal_secret" not in result_list[0]
 
 
+def test_get_item_invalid_id(lambda_context):
+    import pytest
+
+    from templates.graphql.handler import main
+
+    event = {"info": {"parentTypeName": "Query", "fieldName": "getItem"}, "arguments": {"id": "invalid!"}}
+    with pytest.raises(RuntimeError) as excinfo:
+        main(event, lambda_context)
+    assert "Invalid item ID" in str(excinfo.value)
+
+
 def test_error_message_information_leakage(lambda_context, mocker):
     """Verify that internal error details are NOT leaked to the client."""
     from templates.graphql import handler
