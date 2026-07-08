@@ -2,9 +2,11 @@ from aws_lambda_powertools import Logger, Metrics, Tracer
 from aws_lambda_powertools.event_handler import BedrockAgentFunctionResolver
 from aws_lambda_powertools.utilities.data_classes import BedrockAgentEvent
 from aws_lambda_powertools.utilities.typing import LambdaContext
+from pydantic import ValidationError
 
 from templates.agent.models import Item
 from templates.agent.settings import Settings
+from templates.models import Entity
 from templates.repository import Repository
 
 settings = Settings()  # type: ignore
@@ -30,10 +32,19 @@ def get_item(item_id: str) -> dict:
     """
     logger.info("Retrieving item", extra={"itemId": item_id})
     try:
+        Entity(id=item_id)
+    except ValidationError:
+        logger.warning("Invalid item ID provided", extra={"itemId": item_id})
+        return {"error": f"Invalid item ID '{item_id}'"}
+
+    try:
         item = repository.get_item(item_id)
         if not item:
             return {"error": f"Item {item_id} not found"}
         return Item.model_validate(item).dump()
+    except ValidationError as error:
+        logger.error("Item validation failed", extra={"itemId": item_id}, exc_info=error)
+        return {"error": "Internal server error"}
     except Exception as error:
         logger.error("Failed to get item", extra={"itemId": item_id}, exc_info=error)
         return {"error": f"Failed to get item with ID '{item_id}'"}
@@ -57,6 +68,9 @@ def create_item(item_id: str, name: str, description: str | None = None) -> dict
         item = Item(id=item_id, name=name, description=description).dump()
         repository.put_item(item)
         return item
+    except ValidationError as error:
+        logger.warning("Invalid item data provided", extra={"itemId": item_id}, exc_info=error)
+        return {"error": "Invalid item data"}
     except Exception as error:
         logger.error("Failed to create item", extra={"itemId": item_id}, exc_info=error)
         return {"error": f"Failed to create item with ID '{item_id}'"}
