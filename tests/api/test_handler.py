@@ -109,7 +109,7 @@ def test_get_item_id_too_long(mock_repo, lambda_context):
 
     assert response["statusCode"] == 400
     body = loads(response["body"])
-    assert body["message"] == "Invalid item ID length"
+    assert body["message"] == "Item ID must be between 1 and 50 characters"
 
 
 def test_post_item_invalid_body(mock_repo, lambda_context):
@@ -121,6 +121,7 @@ def test_post_item_invalid_body(mock_repo, lambda_context):
 
     assert response["statusCode"] == 422
     body = loads(response["body"])
+    assert body["message"] == "Validation failed"
     assert "errors" in body
 
 
@@ -134,6 +135,7 @@ def test_post_item_name_too_long(mock_repo, lambda_context):
 
     assert response["statusCode"] == 422
     body = loads(response["body"])
+    assert body["message"] == "Validation failed"
     assert "errors" in body
     assert any(err["type"] == "string_too_long" for err in body["errors"])
     # Verify sanitization (no input, no url)
