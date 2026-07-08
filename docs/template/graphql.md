@@ -77,10 +77,10 @@ def create_item(name: str) -> dict:
 
 ### Item model
 
-Field | Type | Description
---- | --- | ---
-`id` | UUID string | Unique item identifier (auto-generated, 1-50 chars)
-`name` | string | Human-readable item name (1-100 chars)
+Field | Type | Description | Required
+--- | --- | --- | ---
+`id` | UUID string | Unique item identifier (auto-generated, 1-50 chars) | No
+`name` | string | Human-readable item name (1-100 chars) | Yes
 
 ### Environment variables
 

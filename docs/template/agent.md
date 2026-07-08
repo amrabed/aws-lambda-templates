@@ -48,11 +48,11 @@ def get_item(item_id: str) -> dict:
 
 ### Item model
 
-Field | Type | Description
---- | --- | ---
-`id` | UUID string | Unique item identifier (auto-generated, 1-50 chars)
-`name` | string | Human-readable item name (1-100 chars)
-`description` | string | Human-readable item description (max 500 chars)
+Field | Type | Description | Required
+--- | --- | --- | ---
+`id` | UUID string | Unique item identifier (auto-generated, 1-50 chars) | No
+`name` | string | Human-readable item name (1-100 chars) | Yes
+`description` | string | Human-readable item description (max 500 chars) | No
 
 
 ### Environment variables

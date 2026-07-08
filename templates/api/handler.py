@@ -33,7 +33,7 @@ def get_item(id: str) -> Response:
     try:
         Entity(id=id)
     except ValidationError:
-        return JsonResponse({"message": "Invalid item ID length"}, status_code=400)
+        return JsonResponse({"message": "Item ID must be between 1 and 50 characters"}, status_code=400)
 
     try:
         if (item := repository.get_item(id)) is None:
@@ -57,7 +57,10 @@ def create_item() -> Response:
     try:
         item = Item.model_validate_json(app.current_event.body)
     except ValidationError as exc:
-        return JsonResponse({"errors": exc.errors(include_input=False, include_url=False)}, status_code=422)
+        return JsonResponse(
+            {"message": "Validation failed", "errors": exc.errors(include_input=False, include_url=False)},
+            status_code=422,
+        )
 
     try:
         repository.put_item(item.dump())
