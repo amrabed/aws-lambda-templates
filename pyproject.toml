@@ -10,7 +10,7 @@ dependencies = [
     "pydantic>=2.13.4",
     "pydantic-settings>=2.14.2",
     "aws-lambda-powertools>=3.31.0",
-    "boto3>=1.43.40",
+    "boto3>=1.43.45",
     "requests>=2.34.2",
 ]
 
@@ -25,13 +25,13 @@ infra = [
 ]
 dev = [
     "pytest>=9.1.1",
-    "ruff>=0.15.20",
+    "ruff>=0.15.21",
     "coverage>=7.15.0",
     "pre-commit>=4.0.1",
     "pyright>=1.1.411",
     "pytest-mock>=3.15.1",
     "moto>=5.2.1",
-    "hypothesis>=6.155.7",
+    "hypothesis>=6.156.4",
     "click>=8.4.2",
 ]
 docs = [
