@@ -2,9 +2,11 @@ from aws_lambda_powertools import Logger, Metrics, Tracer
 from aws_lambda_powertools.event_handler import BedrockAgentFunctionResolver
 from aws_lambda_powertools.utilities.data_classes import BedrockAgentEvent
 from aws_lambda_powertools.utilities.typing import LambdaContext
+from pydantic import ValidationError
 
 from templates.agent.models import Item
 from templates.agent.settings import Settings
+from templates.models import Entity
 from templates.repository import Repository
 
 settings = Settings()  # type: ignore
@@ -29,6 +31,11 @@ def get_item(item_id: str) -> dict:
         The item details or an error message.
     """
     logger.info("Retrieving item", extra={"itemId": item_id})
+    try:
+        Entity(id=item_id)  # Validate ID format before querying repository
+    except ValidationError:
+        return {"error": "Invalid item ID format"}
+
     try:
         item = repository.get_item(item_id)
         if not item:

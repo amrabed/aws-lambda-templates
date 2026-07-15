@@ -6,6 +6,7 @@ from pydantic import ValidationError
 
 from templates.graphql.models import Item
 from templates.graphql.settings import Settings
+from templates.models import Entity
 from templates.repository import Repository
 
 settings = Settings()  # type: ignore
@@ -29,6 +30,11 @@ def get_item(id: str) -> dict | None:
     Returns:
         The item if found, or None.
     """
+    try:
+        Entity(id=id)  # Validate ID format before querying repository
+    except ValidationError:
+        raise RuntimeError("Invalid item ID format") from None
+
     try:
         if (item := repository.get_item(id)) is None:
             return None
