@@ -32,10 +32,10 @@ def get_item(item_id: str) -> dict:
     """
     logger.info("Retrieving item", extra={"itemId": item_id})
     try:
-        Entity(id=item_id)
+        Entity(id=item_id)  # Validate ID format before querying repository
     except ValidationError:
         logger.warning("Invalid item ID provided", extra={"itemId": item_id})
-        return {"error": f"Invalid item ID '{item_id}'"}
+        return {"error": "Invalid item ID format"}
 
     try:
         item = repository.get_item(item_id)

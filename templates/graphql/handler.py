@@ -31,10 +31,10 @@ def get_item(id: str) -> dict | None:
         The item if found, or None.
     """
     try:
-        Entity(id=id)
+        Entity(id=id)  # Validate ID format before querying repository
     except ValidationError:
         logger.warning("Invalid item ID provided", extra={"itemId": id})
-        raise RuntimeError(f"Invalid item ID '{id}'") from None
+        raise RuntimeError("Invalid item ID format") from None
 
     try:
         if (item := repository.get_item(id)) is None:
