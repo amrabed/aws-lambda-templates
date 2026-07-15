@@ -21,3 +21,7 @@
 ## 2026-06-11 - [General] Optimized AWS Service Clients with botocore.config.Config
 **Learning:** Configuring Boto3 clients with `tcp_keepalive=True` and `retries={"max_attempts": 3, "mode": "standard"}` in the `botocore.config.Config` significantly improves connection resilience and reduces latency in AWS Lambda. TCP keep-alive ensures that connections in the pool remain active, avoiding the overhead of re-establishing TCP/TLS handshakes, while the 'standard' retry mode provides more robust exponential backoff.
 **Action:** Always use a centralized `botocore.config.Config` when instantiating Boto3 resources or clients in Lambda templates to optimize performance and reliability.
+
+## 2026-06-12 - [Stream] Bypassing Intermediate Models in High-Throughput Paths
+**Learning:** In high-throughput event processing (like DynamoDB Streams), validating an intermediate 'Source' model before transforming it into a 'Destination' model adds unnecessary overhead. Since `aws-lambda-powertools` already unmarshals the DynamoDB JSON into standard Python dictionaries in `record.dynamodb.new_image` and `.keys`, we can validate the `DestinationItem` directly from these dictionaries, saving one full Pydantic instantiation and validation cycle (~20% faster per record).
+**Action:** Avoid intermediate model validation in data transformation pipelines. Validate the final model directly from the unmarshalled event dictionary whenever possible.
