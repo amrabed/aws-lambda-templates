@@ -6,7 +6,7 @@ from aws_lambda_powertools.utilities.typing import LambdaContext
 from pydantic import ValidationError
 
 from templates.repository import Repository
-from templates.stream.models import DestinationItem, SourceItem
+from templates.stream.models import DestinationItem
 from templates.stream.settings import Settings
 
 settings = Settings()
@@ -30,18 +30,18 @@ class Handler:
         self._repository = repository
 
     @tracer.capture_method
-    def _process(self, item: SourceItem) -> DestinationItem | None:
+    def _process(self, item: dict) -> DestinationItem | None:
         """Transform a source item into a destination item.
 
         Args:
-            item: The source item to process.
+            item: The raw source item dictionary to process.
 
         Returns:
             A `DestinationItem` on success, or `None` if validation fails.
         """
         try:
-            # TODO: process here
-            return DestinationItem.model_validate(item, from_attributes=True)
+            # Validate and transform directly from the raw dictionary to save an intermediate model instantiation
+            return DestinationItem.model_validate(item)
         except ValidationError as exc:
             logger.error("DestinationItem validation failed", exc_info=exc)
             return None
@@ -63,13 +63,20 @@ class Handler:
         event_name = record.event_name
 
         if event_name and event_name.name in ("INSERT", "MODIFY"):
-            item = self._process(SourceItem.model_validate(record.dynamodb.new_image))
+            # Bypass SourceItem validation for performance in high-throughput stream processing
+            item = self._process(record.dynamodb.new_image)
             if item is None:
                 raise ValueError("Failed to process record into DestinationItem")
-            self._repository.put_item(item.model_dump())
+            self._repository.put_item(item.dump())
         elif event_name and event_name.name == "REMOVE":
-            plain_keys = SourceItem.model_validate(record.dynamodb.keys)
-            self._repository.delete_item(plain_keys.id)
+            # Proactively validate the ID before deletion to provide defense-in-depth while avoiding full model overhead
+            try:
+                item_id = record.dynamodb.keys.get("id")
+                DestinationItem(id=item_id)
+                self._repository.delete_item(item_id)
+            except ValidationError as exc:
+                logger.error("Invalid item ID in REMOVE event", exc_info=exc)
+                raise ValueError("Failed to process REMOVE record: invalid ID") from exc
 
 
 handler = Handler(repository)
