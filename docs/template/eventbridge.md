@@ -52,3 +52,6 @@ Variable | Description | Required | Default
 `SERVICE_NAME` | Powertools service name | No | `eventbridge`
 `METRICS_NAMESPACE` | CloudWatch metrics namespace | No | `EventBridge`
 `LOG_LEVEL` | Log level for the Lambda Logger | No | `INFO`
+
+
+[← Back to Overview](../README.md)
