@@ -90,3 +90,6 @@ Variable | Description | Required | Default
 `SERVICE_NAME` | Powertools service name | No | `graphql-api`
 `METRICS_NAMESPACE` | Powertools metrics namespace | No | `GraphQLApi`
 `LOG_LEVEL` | Log level for the Lambda Logger | No | `INFO`
+
+
+[← Back to Overview](../README.md)

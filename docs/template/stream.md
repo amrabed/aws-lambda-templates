@@ -55,3 +55,6 @@ Variable | Description | Required | Default
 `SERVICE_NAME` | Powertools service name | No | `dynamodb-stream`
 `METRICS_NAMESPACE` | Powertools metrics namespace | No | `DynamoDBStream`
 `LOG_LEVEL` | Log level for the Lambda Logger | No | `INFO`
+
+
+[← Back to Overview](../README.md)
