@@ -37,10 +37,10 @@ Model | Description
 #### ApiResponse
 Written to the DynamoDB table after calling the external API.
 
-Field | Type | Description
---- | --- | ---
-`id` | string | Unique identifier of the API response record (1-50 chars)
-`message` | string | Message returned by the external API (1-1000 chars)
+Field | Type | Description | Required
+--- | --- | --- | ---
+`id` | string | Unique identifier of the API response record (1-50 chars) | No
+`message` | string | Message returned by the external API (1-1000 chars) | Yes
 
 ### Environment variables
 

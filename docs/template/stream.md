@@ -33,18 +33,18 @@ mise run deploy stream
 #### SourceItem
 Read from the source table stream.
 
-Field | Type | Description
---- | --- | ---
-`id` | string | Unique item identifier (1-50 chars)
-`name` | string | Human-readable item name (optional, 1-100 chars)
+Field | Type | Description | Required
+--- | --- | --- | ---
+`id` | string | Unique item identifier (1-50 chars) | Yes
+`name` | string | Human-readable item name (optional, 1-100 chars) | No
 
 #### DestinationItem
 Written to the destination table.
 
-Field | Type | Description
---- | --- | ---
-`id` | string | Unique item identifier (1-50 chars)
-`name` | string | Human-readable item name (optional, 1-100 chars)
+Field | Type | Description | Required
+--- | --- | --- | ---
+`id` | string | Unique item identifier (1-50 chars) | Yes
+`name` | string | Human-readable item name (optional, 1-100 chars) | No
 
 ### Environment variables
 

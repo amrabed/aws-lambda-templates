@@ -29,15 +29,15 @@ mise run deploy api
 
 Endpoint | Description | Response codes
 --- | --- | ---
-`GET /items/{id}` | Retrieve an item by ID | 200 (OK), 404 (Not Found), 500 (Internal Server Error)
+`GET /items/{id}` | Retrieve an item by ID | 200 (OK), 400 (Bad Request), 404 (Not Found), 500 (Internal Server Error)
 `POST /items` | Create a new item | 201 (Created), 422 (Unprocessable Entity), 500 (Internal Server Error)
 
 ### Item model
 
-Field | Type | Description
---- | --- | ---
-`id` | UUID string | Unique item identifier (auto-generated, 1-50 chars)
-`name` | string | Human-readable item name (1-100 chars)
+Field | Type | Description | Required
+--- | --- | --- | ---
+`id` | UUID string | Unique item identifier (auto-generated, 1-50 chars) | No
+`name` | string | Human-readable item name (1-100 chars) | Yes
 
 ### Environment variables
 

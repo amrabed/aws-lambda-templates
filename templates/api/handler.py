@@ -57,7 +57,10 @@ def create_item() -> Response:
     try:
         item = Item.model_validate_json(app.current_event.body)
     except ValidationError as exc:
-        return JsonResponse({"errors": exc.errors(include_input=False, include_url=False)}, status_code=422)
+        return JsonResponse(
+            {"message": "Validation failed", "errors": exc.errors(include_input=False, include_url=False)},
+            status_code=422,
+        )
 
     try:
         repository.put_item(item.dump())
