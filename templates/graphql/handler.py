@@ -40,9 +40,12 @@ def get_item(id: str) -> dict | None:
         if (item := repository.get_item(id)) is None:
             return None
         return Item.model_validate(item).dump()
+    except ValidationError as error:
+        message = "Item validation failed"
+        logger.error(message, extra={"itemId": id}, exc_info=error)
+        raise RuntimeError(message) from None
     except Exception as error:
-        is_val_error = isinstance(error, ValidationError)
-        message = "Item validation failed" if is_val_error else f"Failed to get item with ID '{id}'"
+        message = f"Failed to get item with ID '{id}'"
         logger.error(message, extra={"itemId": id}, exc_info=error)
         raise RuntimeError(message) from None
 
