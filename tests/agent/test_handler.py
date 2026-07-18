@@ -47,6 +47,15 @@ def test_handler_get_item_not_found():
     assert "not found" in result["error"]
 
 
+def test_handler_get_item_invalid_id():
+    from templates.agent.handler import get_item
+
+    result = get_item("invalid!")
+
+    assert "error" in result
+    assert "Invalid item ID" in result["error"]
+
+
 def test_handler_create_item(repository):
     from templates.agent.handler import create_item
 

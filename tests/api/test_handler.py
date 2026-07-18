@@ -109,7 +109,19 @@ def test_get_item_id_too_long(mock_repo, lambda_context):
 
     assert response["statusCode"] == 400
     body = loads(response["body"])
-    assert body["message"] == "Item ID must be between 1 and 50 characters"
+    assert body["message"] == "Invalid item ID"
+
+
+def test_get_item_id_invalid_pattern(mock_repo, lambda_context):
+    """GET /items/{id} returns 400 when the ID contains invalid characters."""
+    import templates.api.handler as handler_module
+
+    event = _apigw_event("GET", "/items/invalid!", path_params={"id": "invalid!"})
+    response = handler_module.main(event, lambda_context)
+
+    assert response["statusCode"] == 400
+    body = loads(response["body"])
+    assert body["message"] == "Invalid item ID"
 
 
 def test_post_item_invalid_body(mock_repo, lambda_context):

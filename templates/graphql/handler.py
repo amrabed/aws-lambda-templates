@@ -6,6 +6,7 @@ from pydantic import ValidationError
 
 from templates.graphql.models import Item
 from templates.graphql.settings import Settings
+from templates.models import Entity
 from templates.repository import Repository
 
 settings = Settings()  # type: ignore
@@ -30,12 +31,23 @@ def get_item(id: str) -> dict | None:
         The item if found, or None.
     """
     try:
+        Entity(id=id)
+    except ValidationError:
+        logger.warning("Invalid item ID provided", extra={"itemId": id})
+        raise RuntimeError(f"Invalid item ID '{id}'") from None
+
+    try:
         if (item := repository.get_item(id)) is None:
             return None
         return Item.model_validate(item).dump()
+    except ValidationError as error:
+        message = "Item validation failed"
+        logger.error(message, extra={"itemId": id}, exc_info=error)
+        raise RuntimeError(message) from None
     except Exception as error:
-        logger.error("Failed to get item", extra={"itemId": id}, exc_info=error)
-        raise RuntimeError(f"Failed to get item with ID '{id}'") from None
+        message = f"Failed to get item with ID '{id}'"
+        logger.error(message, extra={"itemId": id}, exc_info=error)
+        raise RuntimeError(message) from None
 
 
 @app.resolver(type_name="Query", field_name="listItems")
@@ -68,7 +80,10 @@ def create_item(name: str) -> dict:
         item = Item(name=name).dump()
         repository.put_item(item)
         return item
-    except (ValidationError, Exception) as error:
+    except ValidationError as error:
+        logger.warning("Invalid item data provided", extra={"itemName": name}, exc_info=error)
+        raise RuntimeError("Invalid item data") from None
+    except Exception as error:
         logger.error("Failed to create item", extra={"itemName": name}, exc_info=error)
         raise RuntimeError(f"Failed to create item with name '{name}'") from None
 
