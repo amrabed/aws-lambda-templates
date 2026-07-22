@@ -34,7 +34,7 @@ def get_item(id: str) -> dict | None:
         Entity(id=id)
     except ValidationError:
         logger.warning("Invalid item ID provided", extra={"itemId": id})
-        raise RuntimeError(f"Invalid item ID '{id}'") from None
+        raise RuntimeError("Invalid item ID format") from None
 
     try:
         if (item := repository.get_item(id)) is None:
@@ -45,7 +45,7 @@ def get_item(id: str) -> dict | None:
         logger.error(message, extra={"itemId": id}, exc_info=error)
         raise RuntimeError(message) from None
     except Exception as error:
-        message = f"Failed to get item with ID '{id}'"
+        message = "Failed to get item"
         logger.error(message, extra={"itemId": id}, exc_info=error)
         raise RuntimeError(message) from None
 
@@ -85,7 +85,7 @@ def create_item(name: str) -> dict:
         raise RuntimeError("Invalid item data") from None
     except Exception as error:
         logger.error("Failed to create item", extra={"itemName": name}, exc_info=error)
-        raise RuntimeError(f"Failed to create item with name '{name}'") from None
+        raise RuntimeError("Failed to create item") from None
 
 
 @logger.inject_lambda_context(correlation_id_path=correlation_paths.APPSYNC_RESOLVER)
