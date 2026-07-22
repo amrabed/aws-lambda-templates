@@ -35,19 +35,19 @@ def get_item(item_id: str) -> dict:
         Entity(id=item_id)
     except ValidationError:
         logger.warning("Invalid item ID provided", extra={"itemId": item_id})
-        return {"error": f"Invalid item ID '{item_id}'"}
+        return {"error": "Invalid item ID format"}
 
     try:
         item = repository.get_item(item_id)
         if not item:
-            return {"error": f"Item {item_id} not found"}
+            return {"error": "Item not found"}
         return Item.model_validate(item).dump()
     except ValidationError as error:
         logger.error("Item validation failed", extra={"itemId": item_id}, exc_info=error)
         return {"error": "Internal server error"}
     except Exception as error:
         logger.error("Failed to get item", extra={"itemId": item_id}, exc_info=error)
-        return {"error": f"Failed to get item with ID '{item_id}'"}
+        return {"error": "Failed to get item"}
 
 
 @tracer.capture_method
@@ -73,7 +73,7 @@ def create_item(item_id: str, name: str, description: str | None = None) -> dict
         return {"error": "Invalid item data"}
     except Exception as error:
         logger.error("Failed to create item", extra={"itemId": item_id}, exc_info=error)
-        return {"error": f"Failed to create item with ID '{item_id}'"}
+        return {"error": "Failed to create item"}
 
 
 @logger.inject_lambda_context

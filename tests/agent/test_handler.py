@@ -126,7 +126,7 @@ def test_error_handling_sanitization(mocker):
 
     assert "error" in result
     assert "Database connection failed" not in result["error"]
-    assert "Failed to get item with ID '123'" in result["error"]
+    assert result["error"] == "Failed to get item"
 
 
 if __name__ == "__main__":
