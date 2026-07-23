@@ -123,6 +123,7 @@ celerybeat.pid
 
 # Environments
 .env
+.env.local
 .venv
 env/
 venv/
@@ -172,3 +173,9 @@ devcontainer-lock.json
 
 # CDK
 cdk.out/
+
+# Localstack
+.localstack/
+
+# Node.js
+node_modules/

@@ -20,6 +20,7 @@ l = "mise run lint"
 t = "mise run test"
 d = "mise run deploy"
 D = "mise run destroy"
+v = "mise run verify"
 c = "mise run clean"
 m = "mise run"
 
@@ -30,6 +31,9 @@ gs = "git status"
 ga = "git add"
 gc = "git commit"
 gp = "git push"
+gco = "git checkout"
+gb = "git branch"
+g  = "git"
 
 ##### Scripts #####
 
@@ -53,7 +57,7 @@ flag "--github <github>" help="GitHub username"
 run = "uv run rename"
 
 ##### Dev setup and maintenance #####
- 
+
 [tasks.install]
 description = "Install dependencies and project"
 run = "uv sync"
@@ -91,9 +95,14 @@ uv run coverage xml
 """
 alias = "t"
 
+[tasks.verify]
+description = "Run lint and test"
+depends = ["lint", "test"]
+alias = "v"
+
 [tasks.clean]
 description = "Clean up build artifacts and temporary files"
-run = """rm -rf cdk.out .coverage .pytest_cache .ruff_cache .hypotheses"""
+run = """rm -rf cdk.out .coverage coverage.xml .pytest_cache .ruff_cache .hypothesis .localstack node_modules"""
 alias = "c"
 
 ##### Docs #####
@@ -102,13 +111,14 @@ alias = "c"
 description = "Install documentation dependencies"
 run = "uv sync --group docs"
 hide = true
+tools = { node = "latest" }
 
 [tasks.docs]
 description = "Build and deploy documentation to GitHub pages"
 run = "uv run mkdocs gh-deploy --force"
 depends = ["install-docs"]
 
-[tasks.local]
+[tasks.docs-local]
 description = "Serve documentation on a local server"
 run = "uv run mkdocs serve"
 
@@ -118,7 +128,6 @@ run = "uv run mkdocs serve"
 description = "Install CDK dependencies"
 run = "uv sync --group infra"
 hide = true
-tools = { node = "latest" }
 
 [tasks.deploy]
 description = "Deploy a CDK stack"
@@ -139,3 +148,41 @@ flag "-p --profile <profile>" help="AWS profile to use"
 run = "STACK=$usage_stack npx aws-cdk destroy --force ${usage_profile:+--profile $usage_profile}"
 alias = "D"
 depends = ["install-cdk"]
+
+[tasks."local:setup"]
+description = "Install CDK dependencies in local environment"
+run = "pnpm i"
+hide = true
+tools = { node = "latest" }
+depends = ["install-cdk"]
+
+[tasks."local:deploy"]
+description = "Deploy a CDK stack to LocalStack"
+usage = """
+arg "<stack>" env=STACK help="CDK stack to deploy"
+"""
+run = "STACK=$usage_stack pnpm run deploy"
+alias = ["local"]
+depends = ["local:setup", "local:up"]
+
+[tasks."local:destroy"]
+description = "Destroy a deployed CDK stack from LocalStack"
+usage = """
+arg "<stack>" env=STACK help="CDK stack to destroy"
+"""
+run = "STACK=$usage_stack pnpm run destroy"
+depends = ["local:setup"]
+
+[tasks."local:up"]
+description = "Start LocalStack via docker compose"
+run = "docker compose up -d --wait localstack"
+
+[tasks."local:down"]
+description = "Stop LocalStack via docker compose"
+run = "docker compose down localstack"
+
+[tasks."local:deploy".env]
+_.file = ".env.local"
+
+[tasks."local:destroy".env]
+_.file = ".env.local"

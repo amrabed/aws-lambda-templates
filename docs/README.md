@@ -31,6 +31,7 @@ Templates come pre-wired with:
 - **Clean Architecture**: Separation of concerns using the Repository pattern for data access
 - **Data Modeling**: Strong typing and validation using [Pydantic](https://docs.pydantic.dev)
 - **Infrastructure as Code**: [AWS CDK](https://aws.amazon.com/cdk) stacks
+- **Local AWS Deployment**: [LocalStack](https://localstack.cloud) integration for local CDK deployment and testing without an AWS account
 - **Testing**: Comprehensive [pytest](https://pytest.org) suite with [moto](http://docs.getmoto.org) for AWS mocking and [hypothesis](https://hypothesis.readthedocs.io) for property-based testing
 - **Code Quality**: [ruff](https://docs.astral.sh/ruff) for linting and formatting, [pyright](https://microsoft.github.io/pyright) for type checking, and test coverage using [coverage](https://coverage.readthedocs.io)
 - **Dependency Control**: [uv](https://docs.astral.sh/uv/) for dependency management and [Dependabot](https://docs.github.com/en/code-security/dependabot) for automated dependency updates
@@ -83,6 +84,7 @@ Parameter | Description
 
 ### Local environment
 - [mise](https://mise.jdx.dev/)
+- Docker (for running LocalStack locally)
 
 ## Setup
 
@@ -121,8 +123,8 @@ This runs the `new` script, which builds a skeleton for the new template from `.
 
 
 ### Deploy a stack
-Infrastructure is defined as AWS CDK stacks under `infra/stacks/`. 
-The CDK entry point is `infra/app.py`. 
+Infrastructure is defined as AWS CDK stacks under `infra/stacks/`.
+The CDK entry point is `infra/app.py`.
 
 ```bash
 mise run deploy <stack>  # alias: d <stack>
@@ -138,6 +140,34 @@ mise run deploy <stack> --profile <my-profile>
 mise run destroy <stack>  # alias: D <stack>
 ```
 
+### Deploy a stack locally (LocalStack)
+To deploy CDK stacks locally without an AWS account:
+
+1. Copy `.env.local.example` to `.env.local` and set your auth token from [app.localstack.cloud](https://app.localstack.cloud):
+```bash
+cp .env.local.example .env.local
+```
+
+2. Start LocalStack via Docker Compose:
+```bash
+mise run local:up
+```
+
+3. Deploy the stack to LocalStack:
+```bash
+mise run local:deploy <stack>  # aliases: local <stack>, dl <stack>
+```
+
+### Destroy a local stack
+```bash
+mise run local:destroy <stack>  # alias: Dl <stack>
+```
+
+To stop the LocalStack container when finished:
+```bash
+mise run local:down
+```
+
 ### Generating documentation
 
 To build and publish the project documentation to GitHub Pages, run:
@@ -150,7 +180,7 @@ That pushes the new documentation to the `gh-pages` branch. Make sure GitHub Pag
 ### Local preview
 To serve the documentation on a local server, run:
 ```bash
-mise run local
+mise run docs-local
 ```
 
 ## Coding Conventions
@@ -182,7 +212,9 @@ mise run local
 │       └── docs.yml                # Workflow to publish documentation
 ├── .gitignore                      # Git-ignored file list
 ├── .pre-commit-config.yaml         # Pre-commit configuration file
+├── .vibe                           # Feature specification
 ├── .vscode                         # VS Code folder
+├── compose.yml                     # Docker Compose configuration for LocalStack
 ├── mise.toml                       # mise configuration and tasks
 ├── pyproject.toml                  # Configuration file for different tools
 ├── mkdocs.yml                      # MkDocs configuration file

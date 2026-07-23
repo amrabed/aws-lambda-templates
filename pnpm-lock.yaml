@@ -1,0 +1,71 @@
+lockfileVersion: "9.0"
+
+settings:
+  autoInstallPeers: true
+  excludeLinksFromLockfile: false
+
+importers:
+  .:
+    dependencies:
+      aws-cdk:
+        specifier: ^2.1133.0
+        version: 2.1133.0
+      aws-cdk-local:
+        specifier: ^3.0.4
+        version: 3.0.4
+      prettier:
+        specifier: ^3.9.6
+        version: 3.9.6
+
+packages:
+  aws-cdk-local@3.0.4:
+    resolution:
+      {
+        integrity: sha512-u8c62rfZNGqB9oW+RSW8YAqLLFAcgc5y2aQrgqQTBUVKLTN6r54g/IUbTq/dM1fqvT1GqtylzQjQ8ytACMSGTQ==,
+      }
+    hasBin: true
+
+  aws-cdk@2.1133.0:
+    resolution:
+      {
+        integrity: sha512-DGlCBwqxSHTe1u/IoT5WV+Bbd2K3UhwFHsdMqb2nQa1fkJmaQgoNFu0It+p3HxyMWeW+gKsVzT5KcjQPQ6Kzuw==,
+      }
+    engines: { node: ">= 18.0.0" }
+    hasBin: true
+
+  diff@5.2.2:
+    resolution:
+      {
+        integrity: sha512-vtcDfH3TOjP8UekytvnHH1o1P4FcUdt4eQ1Y+Abap1tk/OB2MWQvcwS2ClCd1zuIhc3JKOx6p3kod8Vfys3E+A==,
+      }
+    engines: { node: ">=0.3.1" }
+
+  prettier@3.9.6:
+    resolution:
+      {
+        integrity: sha512-OpN0zzVdiaiAhxpuuj5efpIS4sY9j7bY6uR5mnj5yPzGkdkjNKSJeUThPb60Jw29QuAZgA4o+/iB49kFiaBX6g==,
+      }
+    engines: { node: ">=14" }
+    hasBin: true
+
+  semver@7.8.5:
+    resolution:
+      {
+        integrity: sha512-Y7/KDsb8LjooZpwaqGyulO6DQlksgCncchHGk+sZIY4SBvUocMBEFH5Ur1fI4dV+Jvl0w6cjvucaIi40puRioA==,
+      }
+    engines: { node: ">=10" }
+    hasBin: true
+
+snapshots:
+  aws-cdk-local@3.0.4:
+    dependencies:
+      diff: 5.2.2
+      semver: 7.8.5
+
+  aws-cdk@2.1133.0: {}
+
+  diff@5.2.2: {}
+
+  prettier@3.9.6: {}
+
+  semver@7.8.5: {}
