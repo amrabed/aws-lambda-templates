@@ -1,0 +1,12 @@
+{
+  "scripts": {
+    "format": "prettier --write .",
+    "deploy": "cdklocal bootstrap && cdklocal deploy",
+    "destroy": "cdklocal destroy --force"
+  },
+  "dependencies": {
+    "aws-cdk": "^2.1133.0",
+    "aws-cdk-local": "^3.0.4",
+    "prettier": "^3.9.6"
+  }
+}

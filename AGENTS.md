@@ -18,8 +18,13 @@ mise run precommit     # install pre-commit hooks
 ```bash
 mise run lint          # run ruff (check + format) and pyright
 mise run test          # run pytest with coverage
+mise run infra:synth   # synthesize CDK stack(s) (alias: synth, s)
 mise run docs          # build and deploy docs to GitHub Pages
-mise run local         # serve docs locally
+mise run docs-local    # serve docs locally
+mise run local:up      # start LocalStack via Docker Compose
+mise run local:deploy  # deploy CDK stack to LocalStack (alias: local, dl)
+mise run local:destroy # destroy CDK stack from LocalStack (alias: Dl)
+mise run local:down    # stop LocalStack via Docker Compose
 ```
 
 ## Code Style
@@ -48,6 +53,7 @@ templates/              # main package
 tests/                 # pytest tests
 docs/                  # MkDocs documentation
 infra/                 # AWS CDK infrastructure stacks
+compose.yml            # LocalStack container configuration
 ```
 
 ## Renaming the Template
@@ -67,7 +73,12 @@ mise run rename --name="my-project" --description="My description" --author="Nam
 
 ## Infrastructure
 
-- Define and deploy infrastructure using AWS CDK under the `infra/` folder
+- Define infrastructure using AWS CDK under the `infra/` folder.
+- Synthesize CloudFormation templates: `mise run infra:synth [stack]` (alias `synth [stack]`, `s [stack]`).
+- Deploy to AWS: `mise run deploy <stack>` (alias `d <stack>`).
+- Deploy locally using LocalStack: copy `.env.local.example` to `.env.local` and set token from [app.localstack.cloud](https://app.localstack.cloud), then `mise run local:deploy <stack>` (alias `local <stack>`, `dl <stack>`).
+- Destroy locally from LocalStack: `mise run local:destroy <stack>` (alias `Dl <stack>`).
+
 
 ## Testing Guidelines
 

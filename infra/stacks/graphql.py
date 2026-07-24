@@ -1,7 +1,8 @@
-from aws_cdk import Expiration, Stack
+from aws_cdk import Duration, Expiration, Stack
 from aws_cdk.aws_appsync import (
     ApiKeyConfig,
     AuthorizationConfig,
+    AuthorizationMode,
     AuthorizationType,
     Definition,
     GraphqlApi,
@@ -46,8 +47,10 @@ class AppSyncDynamodbStack(Stack):
             name="AppSyncDynamodbApi",
             definition=Definition.from_schema(SchemaFile.from_asset("templates/graphql/schema.graphql")),
             authorization_config=AuthorizationConfig(
-                default_authorization=AuthorizationType.API_KEY,
-                api_key_config=ApiKeyConfig(expires=Expiration.after_days(365)),
+                default_authorization=AuthorizationMode(
+                    authorization_type=AuthorizationType.API_KEY,
+                    api_key_config=ApiKeyConfig(expires=Expiration.after(Duration.days(365))),
+                ),
             ),
         )
 
