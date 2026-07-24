@@ -1,19 +1,17 @@
-name: Format, Lint, and Test
+name: Verify code and infra
 
 on:
   workflow_call:
   push:
 
 jobs:
-  check:
+  verify:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v7
       - name: Install mise
         uses: jdx/mise-action@v4
-      - name: Format and lint
-        run: mise run lint
-      - name: Run tests
-        run: mise run test
+      - name: Verify code and infra
+        run: mise run verify
         env:
           AWS_DEFAULT_REGION: us-east-1

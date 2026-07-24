@@ -96,8 +96,8 @@ uv run coverage xml
 alias = "t"
 
 [tasks.verify]
-description = "Run lint and test"
-depends = ["lint", "test"]
+description = "Run lint, test, and infra synth"
+depends = ["lint", "test", "infra:synth"]
 alias = "v"
 
 [tasks.clean]
@@ -124,37 +124,46 @@ run = "uv run mkdocs serve"
 
 ##### Infra #####
 
-[tasks.install-cdk]
+[tasks."infra:setup"]
 description = "Install CDK dependencies"
 run = "uv sync --group infra"
 hide = true
 
-[tasks.deploy]
+[tasks."infra:synth"]
+description = "Synthesize CDK stack(s)"
+usage = """
+arg "[stack]" help="CDK stack to synthesize"
+"""
+run = "STACK=${usage_stack:-all} npx aws-cdk synth"
+alias = ["synth", "s"]
+depends = ["infra:setup"]
+
+[tasks."infra:deploy"]
 description = "Deploy a CDK stack"
 usage = """
 arg "<stack>" help="CDK stack to deploy"
 flag "-p --profile <profile>" help="AWS profile to use"
 """
 run = "STACK=$usage_stack npx aws-cdk deploy ${usage_profile:+--profile $usage_profile}"
-alias = "d"
-depends = ["install-cdk"]
+alias = ["d", "deploy"]
+depends = ["infra:synth"]
 
-[tasks.destroy]
+[tasks."infra:destroy"]
 description = "Destroy a deployed CDK stack"
 usage = """
 arg "<stack>" help="CDK stack to destroy"
 flag "-p --profile <profile>" help="AWS profile to use"
 """
 run = "STACK=$usage_stack npx aws-cdk destroy --force ${usage_profile:+--profile $usage_profile}"
-alias = "D"
-depends = ["install-cdk"]
+alias = ["destroy", "D"]
+depends = ["infra:setup"]
 
 [tasks."local:setup"]
 description = "Install CDK dependencies in local environment"
 run = "pnpm i"
 hide = true
 tools = { node = "latest" }
-depends = ["install-cdk"]
+depends = ["infra:setup"]
 
 [tasks."local:deploy"]
 description = "Deploy a CDK stack to LocalStack"

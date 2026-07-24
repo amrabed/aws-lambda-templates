@@ -23,13 +23,15 @@ STACK_REGISTRY: dict[str, type] = {
 
 stack_name = os.environ.get("STACK")
 
-if not stack_name:
-    sys.exit("Error: STACK environment variable is not set. Valid values: " + ", ".join(STACK_REGISTRY))
-
-if stack_name not in STACK_REGISTRY:
-    sys.exit(f"Error: unknown stack '{stack_name}'. Valid values: " + ", ".join(STACK_REGISTRY))
-
-stack_class = STACK_REGISTRY[stack_name]
 app = App()
-stack_class(app, stack_class.__name__)
+
+if not stack_name or stack_name == "all":
+    for stack_class in STACK_REGISTRY.values():
+        stack_class(app, stack_class.__name__)
+elif stack_name in STACK_REGISTRY:
+    stack_class = STACK_REGISTRY[stack_name]
+    stack_class(app, stack_class.__name__)
+else:
+    sys.exit(f"Error: unknown stack '{stack_name}'. Valid values: all, " + ", ".join(STACK_REGISTRY))
+
 app.synth()

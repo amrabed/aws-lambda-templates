@@ -122,9 +122,15 @@ mise run new <name>  # alias: n <name>
 This runs the `new` script, which builds a skeleton for the new template from `.template`.
 
 
-### Deploy a stack
+### Synthesize infrastructure
 Infrastructure is defined as AWS CDK stacks under `infra/stacks/`.
 The CDK entry point is `infra/app.py`.
+
+```bash
+mise run infra:synth [stack]  # aliases: synth [stack], s [stack]
+```
+
+### Deploy a stack
 
 ```bash
 mise run deploy <stack>  # alias: d <stack>
